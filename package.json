@@ -1,0 +1,83 @@
+{
+  "name": "vue-cf",
+  "version": "0.0.1",
+  "description": "基于antd和vue的中后台前端快速开发组件",
+  "main": "index.js",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitee.com:VYuan/vue-cf.git"
+  },
+  "keywords": [
+    "antd",
+    "vue",
+    "component",
+    "快速开发"
+  ],
+  "author": "VYuan",
+  "private": false,
+  "license": "Apache-2.0",
+  "dependencies": {
+    "ant-design-vue": "^1.4.12",
+    "vue": "^2.6.11",
+    "vue-router": "^3.1.6",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "devDependencies": {
+    "@rollup/plugin-auto-install": "^2.0.0",
+    "@rollup/plugin-commonjs": "^11.0.2",
+    "@rollup/plugin-node-resolve": "^7.1.1",
+    "@rollup/plugin-sucrase": "^3.0.0",
+    "rollup": "^1.32.1"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "rules": {
+      "quotes": "off",
+      "object-curly-spacing": "off",
+      "semi": "off",
+      "comma-dangle": [
+        "error",
+        {
+          "arrays": "ignore",
+          "objects": "ignore",
+          "imports": "ignore",
+          "exports": "ignore",
+          "functions": "never"
+        }
+      ],
+      "no-sequences": "off",
+      "vue/no-unused-vars": "warn",
+      "eqeqeq": "warn",
+      "no-trailing-spaces": "off",
+      "space-before-blocks": "off",
+      "space-infix-ops": "warn",
+      "space-unary-ops": "warn",
+      "space-in-parens": "warn",
+      "space-before-function-paren": "off",
+      "keyword-spacing": "off",
+      "arrow-spacing": "off",
+      "indent": "off"
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "@vue/standard",
+      "@vue/typescript"
+    ],
+    "parserOptions": {
+      "parser": "@typescript-eslint/parser"
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ]
+}
