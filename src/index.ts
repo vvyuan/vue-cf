@@ -11,19 +11,19 @@ import CFCommonView from './components/CFCommonView.vue';
 import CFCommonForm from './components/CFCommonForm.vue';
 import CFCommonViewWithDrawer from './components/CFCommonViewWithDrawer.vue';
 import CFCommonFormWithDrawer from './components/CFCommonFormWithDrawer.vue';
-import CommonParentView from './components/CommonParentView.vue';
+import CFCommonParentView from './components/CFCommonParentView.vue';
 const components: any[] = [
   CFCommonView,
   CFCommonForm,
   CFCommonViewWithDrawer,
   CFCommonFormWithDrawer,
-  CommonParentView,
+  CFCommonParentView,
 ];
 export {CFCommonView};
 export {CFCommonForm};
 export {CFCommonViewWithDrawer};
 export {CFCommonFormWithDrawer};
-export {CommonParentView};
+export {CFCommonParentView};
 
 const install = function (Vue: any) {
   components.forEach(component => {

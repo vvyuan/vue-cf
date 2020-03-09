@@ -11,7 +11,7 @@ class MockStorage {
         this.dbName = name;
     }
     deleteDB() {
-        return window.indexedDB.deleteCFDataBase(this.dbName);
+        return window.indexedDB.deleteDatabase(this.dbName);
     }
     exportDB(filter) {
         let names = this.getStoreNames();
@@ -302,7 +302,7 @@ class MockStorage {
                                         // 为该数据库创建一个对象仓库
                                         let objectStore = db.createObjectStore(osName, { keyPath: 'id' });
                                         // 使用事务的 oncomplete 事件确保在插入数据前对象仓库已经创建完毕
-                                        objectStore.transaction.oncomplete = function (event) {
+                                        objectStore.transaction.oncomplete = function () {
                                             // console.log('创建表结束', osName)
                                             resolve();
                                         };
@@ -495,6 +495,7 @@ class MockRequestEx extends MockRequest {
 }
 var MockRequest$1 = new MockRequestEx();
 
+// @ts-ignore
 var CFButtonPosition;
 (function (CFButtonPosition) {
     // table
@@ -618,6 +619,12 @@ class CFConfig {
         }
         return this._map;
     }
+    /**
+     * 获取所有按钮清单，此处可继承后根据权限处理按钮是否允许显示
+     */
+    buttonFilter(buttons) {
+        return buttons;
+    }
     get buttonList() {
         if (!this._buttonList) {
             let result = { ...this.defaultButtons, ...this.buttons };
@@ -629,7 +636,8 @@ class CFConfig {
                     buttonList.push(button);
                 }
             }
-            this._buttonList = buttonList.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+            buttonList = buttonList.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+            this._buttonList = this.buttonFilter(buttonList);
         }
         // @ts-ignore
         return this._buttonList;
@@ -1527,7 +1535,7 @@ staticRenderFns: [],
 stub: 1
 };
 
-var CommonParentView = {
+var CFCommonParentView = {
 render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('router-view')},
 staticRenderFns: [],
     name: 'CommonParentView',
@@ -1539,7 +1547,7 @@ const components = [
     CFCommonForm,
     CFCommonViewWithDrawer,
     CFCommonFormWithDrawer,
-    CommonParentView,
+    CFCommonParentView,
 ];
 const install = function (Vue) {
     components.forEach(component => {
@@ -1554,5 +1562,5 @@ if (typeof window !== 'undefined' && window.Vue) {
 }
 
 export default install;
-export { CFButtonPosition, CFConfig, CFRequest, CascaderField, CheckboxField, CFCommonForm, CFCommonFormWithDrawer, CommonParentView, CFCommonView, CFCommonViewWithDrawer, DateField, DateFieldBase, DateRangeField, DateTimeField, FieldConfig, FieldPosition, FieldWithDict, MultipleSelectField, NumberField, CFNumberFieldFormatter, PasswordField, RadioField, ReadonlyField, ReadonlyFieldWithDict, RichTextField, RuleForText, SingleSelectField, TagField, TextField, TextareaField, TimeField, TimeRangeField, menuCreator };
+export { CFButtonPosition, CFCommonForm, CFCommonFormWithDrawer, CFCommonParentView, CFCommonView, CFCommonViewWithDrawer, CFConfig, Field as CFField, CFNumberFieldFormatter, menuCreator };
 //# sourceMappingURL=index.js.map
