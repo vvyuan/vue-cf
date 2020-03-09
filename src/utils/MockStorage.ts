@@ -1,5 +1,4 @@
 import {v4 as uuid} from "uuid"
-import {message, notification} from "ant-design-vue";
 
 let dbMap: {[key: string]: IDBDatabase} = {};
 let queueId: number = 0;
@@ -285,11 +284,11 @@ class MockStorage {
                 // console.log('创建表开始', osName)
                 return new Promise(resolve => {
                   // @ts-ignore
-                  let db: IDBDatabase = (event.target as IDBRequest).result;
+                  let db: IDBDataBase = (event.target as IDBRequest).result;
                   // 为该数据库创建一个对象仓库
                   let objectStore = db.createObjectStore(osName, { keyPath: 'id' });
                   // 使用事务的 oncomplete 事件确保在插入数据前对象仓库已经创建完毕
-                  objectStore.transaction.oncomplete = function(event) {
+                  objectStore.transaction.oncomplete = function() {
                     // console.log('创建表结束', osName)
                     resolve()
                   }

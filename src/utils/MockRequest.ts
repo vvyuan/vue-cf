@@ -1,15 +1,15 @@
 import mockStorage from './MockStorage'
-import IRequest, {DataBase, ListResponse} from "../define/IRequest";
+import CFIRequest, {CFDataBase, CFListResponse} from "../define/CFIRequest";
 
-abstract class ARequest implements IRequest {
-  abstract request (url: string, method: 'GET'|'POST'|'PUT'|'DELETE', data?: DataBase | any, header?: any, map?: {[key: string]: string}): Promise<any>;
-  get<T extends DataBase> (url: string, data?: DataBase | any, header?: any, map?: {[key: string]: string}): Promise<T | ListResponse<T> | any> {
+abstract class ARequest implements CFIRequest {
+  abstract request (url: string, method: 'GET'|'POST'|'PUT'|'DELETE', data?: CFDataBase | any, header?: any, map?: {[key: string]: string}): Promise<any>;
+  get<T extends CFDataBase> (url: string, data?: CFDataBase | any, header?: any, map?: {[key: string]: string}): Promise<T | CFListResponse<T> | any> {
     return this.request(url, 'GET', data, header, map)
   }
   post<T> (url: string, data?: T, header?: any, map?: {[key: string]: string}): Promise<any> {
     return this.request(url, 'POST', data, header, map)
   }
-  put<T extends DataBase> (url: string, data?: T, header?: any, map?: {[key: string]: string}): Promise<any> {
+  put<T extends CFDataBase> (url: string, data?: T, header?: any, map?: {[key: string]: string}): Promise<any> {
     return this.request(url, 'PUT', data, header, map)
   }
   delete (url: string, data?: any, header?: any, map?: {[key: string]: string}): Promise<any> {
@@ -18,7 +18,7 @@ abstract class ARequest implements IRequest {
 }
 
 export class MockRequest extends ARequest {
-  request (url: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE', data?: DataBase | any, header?: any): Promise<any> {
+  request (url: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE', data?: CFDataBase | any, header?: any): Promise<any> {
     return mockStorage.ready().then(() => {
       let id = data ? data.id : undefined;
       return new Promise((resolve, reject) => {
@@ -99,7 +99,7 @@ class MockRequestEx extends MockRequest {
     '#b14242', '#f18e3a', '#179c07', '#6bc1b9', '#75c16b',
     '#169e92', '#1859a9', '#7651d0', '#cc72d2', '#e299bb',
   ];
-  request(url: string, method: "GET" | "POST" | "PUT" | "DELETE", data?: DataBase | any, header?: any, map?: {[key: string]: string}): Promise<any> {
+  request(url: string, method: "GET" | "POST" | "PUT" | "DELETE", data?: CFDataBase | any, header?: any, map?: {[key: string]: string}): Promise<any> {
     this.counter += 1;
     const counter = this.counter;
     const color = this.colors[counter % 10];

@@ -1,13 +1,13 @@
 import {WrappedFormUtils} from "ant-design-vue/types/form/form";
 
-export interface ICommonForm {
+export interface CFICFCommonForm {
   cancel(): void;
   loadData(): void;
   save(e?: Event, otherData?: any): void;
   form: WrappedFormUtils;
 }
 
-export interface ICommonView {
+export interface CFICFCommonView {
   reload(): void;
   deleteRecord(record: any): void;
   // 清空当前inlineForm数据，清除内部id，可用于创建新数据

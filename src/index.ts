@@ -1,15 +1,41 @@
+import {__importDefault} from "tslib";
 
-interface ABC {
-  a: string;
-}
+export * from './define/CFDefine';
+import * as CFField from './define/FieldDefine';
+export {CFField}
+export * from './define/FieldUtil';
+export * from './define/CFIRequest';
+export * from './define/MenuDefine';
+export * from './define/ViewDefine';
+import CFCommonView from './components/CFCommonView.vue';
+import CFCommonForm from './components/CFCommonForm.vue';
+import CFCommonViewWithDrawer from './components/CFCommonViewWithDrawer.vue';
+import CFCommonFormWithDrawer from './components/CFCommonFormWithDrawer.vue';
+import CommonParentView from './components/CommonParentView.vue';
+const components: any[] = [
+  CFCommonView,
+  CFCommonForm,
+  CFCommonViewWithDrawer,
+  CFCommonFormWithDrawer,
+  CommonParentView,
+];
+export {CFCommonView};
+export {CFCommonForm};
+export {CFCommonViewWithDrawer};
+export {CFCommonFormWithDrawer};
+export {CommonParentView};
 
-export class AD implements ABC {
-  a: string = '1';
-}
-
-let b = new AD();
-
-let a = ()=>{
-  console.log(b.a)
+const install = function (Vue: any) {
+  components.forEach(component => {
+    Vue.component(component.name, component)
+  })
 };
-export default a;
+
+// 自动注册组件
+// @ts-ignore
+if (typeof window !== 'undefined' && window.Vue) {
+  // @ts-ignore
+  install(window.Vue);
+}
+
+export default install

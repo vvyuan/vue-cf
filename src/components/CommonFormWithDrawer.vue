@@ -1,7 +1,7 @@
 <template>
   <div>
     <a-drawer
-      wrapClassName="common-form-drawer"
+      wrapClassName="cf-common-form-drawer"
       placement="right"
       :closable="false"
       :maskClosable="false"
@@ -30,12 +30,12 @@
 <script lang="ts">
   import { Component, Prop, Vue } from 'vue-property-decorator'
   import {CFConfig} from "../define/CFDefine";
-  import CommonForm from "@/components/CommonForm.vue";
-  import {ICommonForm} from "../define/ViewDefine";
-  import {DataBase} from "../define/IRequest";
+  import CFCommonForm from "./CFCommonForm.vue";
+  import {CFICFCommonForm} from "../define/ViewDefine";
+  import {CFDataBase} from "../define/CFIRequest";
 
-  @Component({components: {CommonForm}})
-  export default class CommonFormWithDrawer<T extends DataBase> extends Vue {
+  @Component({components: {CFCommonForm}})
+  export default class CFCommonFormWithDrawer<T extends CFDataBase> extends Vue {
     // [x: string]: any;
     @Prop() id?: number | string;
     @Prop() title!: String;
@@ -59,7 +59,7 @@
       addEventListener('keyup', this.keyPressEventHandle);
       this.$nextTick(()=>{
         // @ts-ignore
-        (this.$refs.form as ICommonForm).loadData();
+        (this.$refs.form as CFICFCommonForm).loadData();
       })
     }
     destroyed(): void {
@@ -68,9 +68,8 @@
     }
   }
 </script>
-
 <style lang="less">
-  .common-form-drawer {
+  .cf-common-form-drawer {
     .ant-drawer-wrapper-body {
       display: flex;
       flex-direction: column;

@@ -2,16 +2,16 @@ import {ValidationRule} from "ant-design-vue/types/form/form";
 import moment, {relativeTimeRounding} from "moment";
 import md5 from "md5";
 import {CascaderOptionType} from "ant-design-vue/types/cascader";
+import {CFDictData} from "./FieldUtil";
 // children 和 isLeaf属性为CascaderField专用
-export type DictData = {value: string | number, label: string, children?: DictData[], isLeaf?: Boolean}
 /**
  * 获取字典数据方法
  * 参数仅针对级联选择生效
  * level默认为0
  * value是当前的值，根据该值查询
  */
-type GetDictDataFn = (level: number, value?: any)=>Promise<DictData[]>;
-type WatchValueFn = ()=>{value: DictData[]};
+type GetCFDictDataFn = (level: number, value?: any)=>Promise<CFDictData[]>;
+type WatchValueFn = ()=>{value: CFDictData[]};
 export enum FieldPosition {
   both = 3,
   filter = 2,
@@ -25,7 +25,7 @@ export abstract class FieldConfig {
   readonly rules?: ValidationRule[];
   readonly print?: string; // 对应打印模板中的变量名
   // onChange事件响应队列
-  private onChangeFnList: {fn: GetDictDataFn, watch: {value: DictData[]}}[] = [];
+  private onChangeFnList: {fn: GetCFDictDataFn, watch: {value: CFDictData[]}}[] = [];
   private onChangeHandleDelayTimer: number = 0;
   /**
    * 输入值转换函数，默认为原始值
@@ -68,12 +68,12 @@ export abstract class FieldConfig {
   /**
    * 选中事件处理方法，方法存在两个含义
    * 用于级联选择
-   * 当dataSource: GetDictDataFn时，onChange作为事件处理方法，将dataSource放入响应处理队列
+   * 当dataSource: GetCFDictDataFn时，onChange作为事件处理方法，将dataSource放入响应处理队列
    * 用于组件事件响应
    * 当dataSource: string | string[]时，onChange作为事件响应方法，执行响应处理队列
    * @param dataSource
    */
-  onChange(dataSource: GetDictDataFn | string | string[] | Event): WatchValueFn {
+  onChange(dataSource: GetCFDictDataFn | string | string[] | Event): WatchValueFn {
     if(typeof dataSource === "function") {
       // 创建一个被监听对象
       let obj = {value: []};
@@ -180,15 +180,15 @@ export class TimeRangeField extends DateFieldBase {}
 // 带有字典数据的表单
 export class FieldWithDict extends FieldConfig {
   // 构造方法传入的dataSource，有可能是一个onChange
-  private readonly _dataSource: GetDictDataFn | WatchValueFn;
-  private isLoadData: Boolean = false;
-  options: DictData[] = [];
-  constructor(dataSource: GetDictDataFn | WatchValueFn, placeholder?: string, position?: FieldPosition, rules?: ValidationRule[] | true, print?: string) {
+  private readonly _dataSource: GetCFDictDataFn | WatchValueFn;
+  private isLoadData: boolean = false;
+  options: CFDictData[] = [];
+  constructor(dataSource: GetCFDictDataFn | WatchValueFn, placeholder?: string, position?: FieldPosition, rules?: ValidationRule[] | true, print?: string) {
     super(placeholder, position, rules, print);
     this._dataSource = dataSource;
   }
-  dataSource(): Promise<DictData[]> {
-  // | {value: DictData[]}
+  dataSource(): Promise<CFDictData[]> {
+  // | {value: CFDictData[]}
     let result = this._dataSource(0);
     if(result instanceof Promise) {
       return result;
@@ -205,7 +205,7 @@ export class FieldWithDict extends FieldConfig {
       return Promise.resolve([])
     }
   }
-  loadData(): Promise<DictData[]> {
+  loadData(): Promise<CFDictData[]> {
     if(this.isLoadData) {
       // console.log("load dict from cache");
       return Promise.resolve(this.options);
@@ -228,12 +228,12 @@ export class MultipleSelectField extends FieldWithDict {}
 export class TagField extends FieldWithDict {}
 // 级联选择
 export class CascaderField extends FieldWithDict {
-  private readonly mutilDataSource: ((level: number, parentValue?: string | number)=>Promise<DictData[]>)[] = [];
+  private readonly mutilDataSource: ((level: number, parentValue?: string | number)=>Promise<CFDictData[]>)[] = [];
 
   /**
    * 构造方法
-   * @param dataSource 数据源：对于可提供完整数据的单一数据源，传入()=>Promise<DictData[]>类型的参数，DictData中必须包含children，不允许包含isLeaf
-   *                           对于逐级获取数据的数据源，传入一个()=>Promise<DictData[]>数组，DictData中必须包含isLeaf，标记是否为叶子节点
+   * @param dataSource 数据源：对于可提供完整数据的单一数据源，传入()=>Promise<CFDictData[]>类型的参数，CFDictData中必须包含children，不允许包含isLeaf
+   *                           对于逐级获取数据的数据源，传入一个()=>Promise<CFDictData[]>数组，CFDictData中必须包含isLeaf，标记是否为叶子节点
    *                           数据源的顺序对应级联选择的层级，数据初始化时，会调用第一个数据源提供第一级数据
    *                           根据级联选择的层级自动调用对应层级的数据源，如果对应层级的数据源不存在，则调用最后一个数据源
    * @param placeholder
@@ -241,7 +241,7 @@ export class CascaderField extends FieldWithDict {
    * @param rules
    * @param print
    */
-  constructor(dataSource: GetDictDataFn | WatchValueFn | GetDictDataFn[], placeholder?: string, position?: FieldPosition, rules?: ValidationRule[] | true, print?: string) {
+  constructor(dataSource: GetCFDictDataFn | WatchValueFn | GetCFDictDataFn[], placeholder?: string, position?: FieldPosition, rules?: ValidationRule[] | true, print?: string) {
     super(Array.isArray(dataSource) ? dataSource[0] : dataSource, placeholder, position, rules, print);
     if(Array.isArray(dataSource)) {
       if(dataSource.length === 0) {
@@ -253,8 +253,8 @@ export class CascaderField extends FieldWithDict {
       console.log(this.needLoadData)
     }
   }
-  readonly needLoadData: Boolean = false;
-  loadData(selectedOptions?: CascaderOptionType[]): Promise<DictData[]> {
+  readonly needLoadData: boolean = false;
+  loadData(selectedOptions?: CascaderOptionType[]): Promise<CFDictData[]> {
     if(selectedOptions && this.needLoadData) {
       const targetOption = selectedOptions[selectedOptions.length - 1];
       // @ts-ignore

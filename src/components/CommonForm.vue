@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="cf-common-form-container">
     <component v-if="cfConfig && cfConfig.formPrintTemplate" v-bind:is="cfConfig.formPrintTemplate"/>
     <div>
       <a-form ref="form" :form="form" @submit="save">
@@ -221,14 +221,14 @@
   import {WrappedFormUtils} from "ant-design-vue/types/form/form";
   import * as FieldDefine from '../define/FieldDefine';
   import { filterOption, cascaderFilterOption } from '../utils/util';
-  import {DataBase} from "@/define/IRequest";
+  import {CFDataBase} from "../define/CFIRequest";
 
   @Component
-  export default class CommonForm<T extends DataBase> extends Vue {
+  export default class CFCommonForm<T extends CFDataBase> extends Vue {
     @Prop() id?: number | string;
     @Prop() cfConfig?: CFConfig<T>;
     @Prop() initFormValues?: {[key: string]: any};
-    @Prop() inlineForm?: Boolean;
+    @Prop() inlineForm?: boolean;
     form?: WrappedFormUtils;
     FieldDefine = FieldDefine;
     visible: boolean = false;
@@ -237,7 +237,7 @@
     readonly = false;
     cascaderFilterOption = cascaderFilterOption;
 
-    get _inlineForm(): Boolean {
+    get _inlineForm(): boolean {
       if(typeof this.inlineForm === 'undefined' && this.cfConfig) {
         return this.cfConfig.inlineForm
       }
@@ -321,29 +321,32 @@
   }
 </script>
 
-<style scoped lang="less">
-  .form-item {
-    .input {
-      width: 100% !important;
+<style lang="less">
+  .cf-common-form-container {
+    .form-item {
+      .input {
+        width: 100% !important;
+      }
     }
-  }
-  .footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 50px;
-    background: white;
-    z-index: 1;
+    .footer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 50px;
+      background: white;
+      z-index: 1;
 
-    .left-buttons > *,  .right-buttons > *  {
-      margin-left: 8px;
+      .left-buttons > *,  .right-buttons > *  {
+        margin-left: 8px;
+      }
+      .left-buttons > *:first-child,  .right-buttons > *:first-child {
+        margin-left: 0;
+      }
     }
-    .left-buttons > *:first-child,  .right-buttons > *:first-child {
-      margin-left: 0;
+    .footer-placeholder {
+      height: 0;
     }
   }
-  .footer-placeholder {
-    height: 0;
-  }
+
 </style>

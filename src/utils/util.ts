@@ -1,5 +1,5 @@
 import Pinyin from "./Pinyin";
-import {DictData} from "../define/FieldDefine";
+import {CFDictData} from "../define/FieldUtil";
 
 /**
  * select组件filterOption处理方法，同时支持value、text和text拼音首字母查询
@@ -24,7 +24,7 @@ export function filterOption() {
  */
 export function cascaderFilterOption() {
   let pinyin = new Pinyin();
-  return function(input: string, path: DictData[]) {
+  return function(input: string, path: CFDictData[]) {
     return path.some(option => {
       let pinyinFirstForText = pinyin.getCamelChars(option.label);
       let search = option.value + '\n' + (option.label || '') + '\n' + pinyinFirstForText;

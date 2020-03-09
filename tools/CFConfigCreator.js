@@ -35,7 +35,7 @@ let dbConfig = null;
     {
       type: 'input',
       message: '请输入数据库名称:',
-      name: 'database',
+      name: 'CFDataBase',
       default: "his2020",
     },
   ];
@@ -45,7 +45,7 @@ let dbConfig = null;
   dbConfig = dbConfigA;
   db = mysql.createConnection(dbConfig);
   db.connect();
-  db.query(`select table_name from information_schema.tables where table_schema="${dbConfig.database}"`, function (error, results, fields) {
+  db.query(`select table_name from information_schema.tables where table_schema="${dbConfig.CFDataBase}"`, function (error, results, fields) {
     if (error) {
       reject(error);
       return;
@@ -84,7 +84,7 @@ let dbConfig = null;
 FROM
     information_schema.COLUMNS
 WHERE
-    TABLE_SCHEMA = '${dbConfig.database}'
+    TABLE_SCHEMA = '${dbConfig.CFDataBase}'
     AND TABLE_NAME = '${name}'
 ORDER BY
     TABLE_NAME,
@@ -118,13 +118,13 @@ ORDER BY
       let propName = props.colName.toLowerCase().replace(/_\w/g, (char)=>char[1].toUpperCase());
       let inFormString = "";
       if(props.dataType === 'date') {
-        inFormString = `new FormField.DateField(undefined, '请选择${props.title}', undefined, true, undefined)`;
+        inFormString = `new CFField.DateField(undefined, '请选择${props.title}', undefined, true, undefined)`;
       } else if(props.dataType === 'datetime') {
-        inFormString = `new FormField.DateTimeField(undefined, '请选择${props.title}', undefined, true, undefined)`;
+        inFormString = `new CFField.DateTimeField(undefined, '请选择${props.title}', undefined, true, undefined)`;
       } else if(isNumber) {
-        inFormString = `new FormField.NumberField('请输入${props.title}', undefined, true, undefined)`;
+        inFormString = `new CFField.NumberField('请输入${props.title}', undefined, true, undefined)`;
       } else {
-        inFormString = `new FormField.TextField('请输入${props.title}', undefined, true, undefined)`;
+        inFormString = `new CFField.TextField('请输入${props.title}', undefined, true, undefined)`;
       }
       return `    {
       name: '${propName}',
@@ -136,9 +136,7 @@ ORDER BY
       },
     },`
     }).join("\n");
-    let content = `import {CFConfig, CFFConfig} from '@/define/CFDefine'
-import * as FormField from "@/define/FieldDefine";
-import Request from "@/utils/Request";
+    let content = `import {CFConfig, CFFConfig, CFIRequest, CFDictData, CFField} from 'vue-cf'
 
 /**
  * CF${tableName}
@@ -150,9 +148,9 @@ export type CF${tableName}Data = {
 
 const url = '${url}';
 
-export function getDictFor${tableName}(): Promise<FormField.DictData[]> {
-  return Request.get<CF${tableName}Data>(url).then(res=>res.list.map((item: CF${tableName}Data)=>({value: item.id, label: item.id})))
-}
+// export function getDictFor${tableName}(): Promise<CFDictData[]> {
+//   return CFIRequest.get<CF${tableName}Data>(url).then(res=>res.list.map((item: CF${tableName}Data)=>({value: item.id, label: item.id})))
+// }
 
 export default class CF${tableName} extends CFConfig<CF${tableName}Data> {
   url = url;

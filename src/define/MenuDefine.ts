@@ -1,8 +1,8 @@
 import { Component } from 'vue'
 import { CFConfig } from './CFDefine';
 import {Route} from "vue-router";
-import {DataBase} from "@/define/IRequest";
-export type ViewProps<T extends DataBase> = {
+import {CFDataBase} from "./CFIRequest";
+export type CFViewProps<T extends CFDataBase> = {
   title?: string[],
   type?: string,
   path?: string,
@@ -10,7 +10,7 @@ export type ViewProps<T extends DataBase> = {
   [propName: string]: any;
 }
 
-export type MenuUnit<T extends DataBase> = {
+export type CFMenuUnit<T extends CFDataBase> = {
   display?: boolean, // 是否显示到菜单中，默认true
   title: string, // 菜单名称
   path: string, // 当前层级菜单的相对路径
@@ -18,9 +18,9 @@ export type MenuUnit<T extends DataBase> = {
   auth?: string, // 权限名（对应后端数据），undefined表示不受控,
   icon?: string, // AntD icon name
   description?: string,
-  children?: MenuUnit<T>[],
+  children?: CFMenuUnit<T>[],
   component?: Component,
-  props?: ViewProps<T> | ((route: Route)=> ViewProps<T>),
+  props?: CFViewProps<T> | ((route: Route)=> CFViewProps<T>),
   meta?: any,
 }
 

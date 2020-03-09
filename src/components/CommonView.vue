@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="cf-common-view-container">
     <div v-show="cfConfig">
       <div v-show="cfConfig && cfConfig.inlineForm">
         <a-divider v-show="cfConfig && cfConfig.pageTitle">{{cfConfig && cfConfig.pageTitle}}</a-divider>
@@ -127,7 +127,7 @@
     </div>
     <div v-show="!cfConfig">
       <h5>{{title}}</h5>
-      <a-alert message="[CommonView:props] cfConfig无效" type="error"/>
+      <a-alert message="[CFCommonView:props] cfConfig无效" type="error"/>
     </div>
   </div>
 </template>
@@ -136,11 +136,11 @@
   import { objectToQueryString } from '../utils/util'
   import * as Field from '../define/FieldDefine'
   import moment from 'moment';
-  import CommonForm from './CommonForm';
+  import CFCommonForm from './CFCommonForm.vue';
 
   export default {
-    name: 'CommonView',
-    components: {CommonForm},
+    name: 'CFCommonView',
+    components: {CFCommonForm},
     props: {
       title: Array,
       cfConfig: null,
@@ -398,32 +398,34 @@
   }
 </script>
 
-<style scoped lang="less">
-  .operation {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .buttons {
-    > * {
-      margin-left: 8px;
+<style lang="less">
+  .cf-common-view-container {
+    .operation {
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    > *:first-child {
-      margin-left: 0;
+    .buttons {
+      > * {
+        margin-left: 8px;
+      }
+      > *:first-child {
+        margin-left: 0;
+      }
     }
-  }
-  .filter-container {
-    display: none;
-    margin: 16px 0;
-    border: solid #77d0ea 1px;
-    border-radius: 5px;
-    overflow: hidden;
-    .content {
+    .filter-container {
+      display: none;
+      margin: 16px 0;
+      border: solid #77d0ea 1px;
+      border-radius: 5px;
+      overflow: hidden;
+      .content {
+        display: block;
+        padding-bottom: 16px;
+      }
+    }
+    .filter-container.active {
       display: block;
-      padding-bottom: 16px;
     }
-  }
-  .filter-container.active {
-    display: block;
   }
 </style>

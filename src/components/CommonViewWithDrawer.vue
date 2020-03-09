@@ -127,20 +127,20 @@
     </div>
     <div v-show="!cfConfig">
       <h5>{{title}}</h5>
-      <a-alert message="[CommonView:props] cfConfig无效" type="error"/>
+      <a-alert message="[CFCommonView:props] cfConfig无效" type="error"/>
     </div>
   </div>
 </template>
 
 <script>
-  import { objectToQueryString } from '@/utils/MockRequest'
-  import * as Field from '@/define/FieldDefine'
+  import * as Field from '../define/FieldDefine'
   import moment from 'moment';
-  import CommonForm from './CommonForm';
+  import CFCommonForm from './CFCommonForm';
+  import {objectToQueryString} from "../utils/util";
 
   export default {
-    name: 'CommonViewWithDrawer',
-    components: {CommonForm},
+    name: 'CFCommonViewWithDrawer',
+    components: {CFCommonForm},
     props: {
       title: Array,
       cfConfig: null,
@@ -399,33 +399,3 @@
     }
   }
 </script>
-
-<style scoped lang="less">
-  .operation {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .buttons {
-    > * {
-      margin-left: 8px;
-    }
-    > *:first-child {
-      margin-left: 0;
-    }
-  }
-  .filter-container {
-    display: none;
-    margin: 16px 0;
-    border: solid #77d0ea 1px;
-    border-radius: 5px;
-    overflow: hidden;
-    .content {
-      display: block;
-      padding-bottom: 16px;
-    }
-  }
-  .filter-container.active {
-    display: block;
-  }
-</style>

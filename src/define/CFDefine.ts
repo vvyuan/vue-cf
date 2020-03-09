@@ -1,12 +1,13 @@
 import { FieldConfig } from './FieldDefine'
 import {Component} from "vue";
 import {VueRouter} from "vue-router/types/router";
+// @ts-ignore
 import {Modal} from "ant-design-vue";
-import {ICommonForm, ICommonView} from "./ViewDefine";
-import IRequest, {DataBase, ListResponse} from "@/define/IRequest";
-import MockRequest from "@/utils/MockRequest";
+import {CFICFCommonForm, CFICFCommonView} from "./ViewDefine";
+import CFIRequest, {CFDataBase, CFListResponse} from "./CFIRequest";
+import MockRequest from "../utils/MockRequest";
 
-export type TableConfig = {
+export type CFTableConfig = {
   display: boolean // 是否在table中显示
   formatter?: (value: string | number) => string; // 格式转换，在table的显示中优先级高于Form中的formatter
   print?: string, // 对应打印模板中的变量名
@@ -17,7 +18,7 @@ export type CFFConfig = {
   name: string, // 字段名称
   packetFieldName?: string, // 映射在报文中的字段名称，默认等于name
   title: string, // 字段标题
-  inTable?: TableConfig, // 字段对于table的配置
+  inTable?: CFTableConfig, // 字段对于table的配置
   inForm?: FieldConfig, // 字段对于form的配置
 }
 
@@ -55,7 +56,7 @@ export type CFButton = {
    * @param selectedRecords 已选中的记录，仅在CFButtonPosition.tableHeader中生效
    * @param record 当前记录，仅在CFButtonPosition.tableRowOperations中生效
    */
-  onClick(router: VueRouter, cfConfig: any, view?: ICommonView, form?: ICommonForm, selectedRecords?: any[], record?: any): void,
+  onClick(router: VueRouter, cfConfig: any, view?: CFICFCommonView, form?: CFICFCommonForm, selectedRecords?: any[], record?: any): void,
   /**
    * table中选中行事件的响应
    * @param selectedRecords
@@ -77,12 +78,12 @@ type CFButtons = {
   drawerFooterRight: CFButton[],
 }
 
-export class CFRequest {
-  static request?: IRequest;
+class CFRequest {
+  static request?: CFIRequest;
 }
 
-export abstract class CFConfig<T extends DataBase> {
-  static useRequest(request: IRequest) {
+export abstract class CFConfig<T extends CFDataBase> {
+  static useRequest(request: CFIRequest) {
     if(CFRequest.request) {
       return
     }
@@ -186,6 +187,12 @@ export abstract class CFConfig<T extends DataBase> {
   protected readonly buttons: {[key: string]: CFButton | null | undefined} = {};
 
   private _buttonList?: CFButton[];
+  /**
+   * 获取所有按钮清单，此处可继承后根据权限处理按钮是否允许显示
+   */
+  buttonFilter(buttons: CFButton[]): CFButton[] {
+    return buttons;
+  }
   get buttonList(): CFButton[] {
     if(!this._buttonList) {
       let result = {...this.defaultButtons, ...this.buttons};
@@ -197,7 +204,8 @@ export abstract class CFConfig<T extends DataBase> {
           buttonList.push(button);
         }
       }
-      this._buttonList = buttonList.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+      buttonList = buttonList.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+      this._buttonList = this.buttonFilter(buttonList);
     }
     // @ts-ignore
     return this._buttonList;
@@ -221,7 +229,7 @@ export abstract class CFConfig<T extends DataBase> {
   // 表单是否内嵌到view中
   inlineForm: boolean = false;
   // 是否启用行选择模式
-  enableSelect: Boolean = false;
+  enableSelect: boolean = false;
   // 表格打印模板
   tablePrintTemplate?: Component;
   // 表单打印模板
@@ -231,7 +239,7 @@ export abstract class CFConfig<T extends DataBase> {
   get request() {
     return CFRequest.request || MockRequest;
   }
-  getList(filter?: any): Promise<ListResponse<T>>{
+  getList(filter?: any): Promise<CFListResponse<T>>{
     return this.request.get(this.url, filter, {}, this.map);
   }
   getOne(id: number | string): Promise<T> {
