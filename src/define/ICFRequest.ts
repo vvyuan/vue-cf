@@ -14,7 +14,7 @@ export type CFListResponse<T extends CFDataBase> = {
   [propName: string]: any,
 }
 
-export default interface CFIRequest {
+export default interface ICFRequest {
   request (url: string, method: 'GET'|'POST'|'PUT'|'DELETE', data?: CFDataBase | any, header?: any, map?: {[key: string]: string}): Promise<any>;
   get<T extends CFDataBase> (url: string, data?: CFDataBase | any, header?: any, map?: {[key: string]: string}): Promise<T | CFListResponse<T> | any>;
   post<T> (url: string, data?: T, header?: any, map?: {[key: string]: string}): Promise<any>;

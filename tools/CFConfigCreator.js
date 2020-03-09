@@ -136,7 +136,7 @@ ORDER BY
       },
     },`
     }).join("\n");
-    let content = `import {CFConfig, CFFConfig, CFIRequest, CFDictData, CFField} from 'vue-cf'
+    let content = `import {CFConfig, CFFConfig, ICFRequest, CFDictData, CFField} from 'vue-cf'
 
 /**
  * CF${tableName}
@@ -149,7 +149,7 @@ export type CF${tableName}Data = {
 const url = '${url}';
 
 // export function getDictFor${tableName}(): Promise<CFDictData[]> {
-//   return CFIRequest.get<CF${tableName}Data>(url).then(res=>res.list.map((item: CF${tableName}Data)=>({value: item.id, label: item.id})))
+//   return ICFRequest.get<CF${tableName}Data>(url).then(res=>res.list.map((item: CF${tableName}Data)=>({value: item.id, label: item.id})))
 // }
 
 export default class CF${tableName} extends CFConfig<CF${tableName}Data> {

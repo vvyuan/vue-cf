@@ -3,8 +3,8 @@ import {Component} from "vue";
 import {VueRouter} from "vue-router/types/router";
 // @ts-ignore
 import {Modal} from "ant-design-vue";
-import {CFICFCommonForm, CFICFCommonView} from "./ViewDefine";
-import CFIRequest, {CFDataBase, CFListResponse} from "./CFIRequest";
+import {ICFCommonForm, ICFCommonView} from "./ViewDefine";
+import ICFRequest, {CFDataBase, CFListResponse} from "./ICFRequest";
 import MockRequest from "../utils/MockRequest";
 
 export type CFTableConfig = {
@@ -56,7 +56,7 @@ export type CFButton = {
    * @param selectedRecords 已选中的记录，仅在CFButtonPosition.tableHeader中生效
    * @param record 当前记录，仅在CFButtonPosition.tableRowOperations中生效
    */
-  onClick(router: VueRouter, cfConfig: any, view?: CFICFCommonView, form?: CFICFCommonForm, selectedRecords?: any[], record?: any): void,
+  onClick(router: VueRouter, cfConfig: any, view?: ICFCommonView, form?: ICFCommonForm, selectedRecords?: any[], record?: any): void,
   /**
    * table中选中行事件的响应
    * @param selectedRecords
@@ -79,11 +79,11 @@ type CFButtons = {
 }
 
 class CFRequest {
-  static request?: CFIRequest;
+  static request?: ICFRequest;
 }
 
 export abstract class CFConfig<T extends CFDataBase> {
-  static useRequest(request: CFIRequest) {
+  static useRequest(request: ICFRequest) {
     if(CFRequest.request) {
       return
     }

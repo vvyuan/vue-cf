@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import {WrappedFormUtils} from "ant-design-vue/types/form/form";
-import Vue, {Component} from "vue";
+import Vue, {Component, PluginFunction} from "vue";
 import {VueRouter} from "vue-router/types/router";
 import {ValidationRule} from "ant-design-vue/types/form/form";
 import {Moment}from "moment";
@@ -23,7 +23,7 @@ export type CFListResponse<T extends CFDataBase> = {
   [propName: string]: any,
 }
 
-export interface CFIRequest {
+export interface ICFRequest {
   request (url: string, method: 'GET'|'POST'|'PUT'|'DELETE', data?: CFDataBase | any, header?: any, map?: {[key: string]: string}): Promise<any>;
   get<T extends CFDataBase> (url: string, data?: CFDataBase | any, header?: any, map?: {[key: string]: string}): Promise<T | CFListResponse<T> | any>;
   post<T> (url: string, data?: T, header?: any, map?: {[key: string]: string}): Promise<any>;
@@ -35,7 +35,7 @@ export interface CFIRequest {
  * FieldUtil
  */
 export class CFNumberFieldFormatter {
-  static get moneyRMB(): {
+  static moneyRMB: {
     parser: (value: string) => number,
     formatter: (value: number) => string,
   }
@@ -229,7 +229,7 @@ export type CFButton = {
    * @param selectedRecords 已选中的记录，仅在CFButtonPosition.tableHeader中生效
    * @param record 当前记录，仅在CFButtonPosition.tableRowOperations中生效
    */
-  onClick(router: VueRouter, cfConfig: any, view?: CFICFCommonView, form?: CFICFCommonForm, selectedRecords?: any[], record?: any): void,
+  onClick(router: VueRouter, cfConfig: any, view?: ICFCommonView, form?: ICFCommonForm, selectedRecords?: any[], record?: any): void,
   /**
    * table中选中行事件的响应
    * @param selectedRecords
@@ -253,7 +253,7 @@ type CFButtons = {
 
 export abstract class CFConfig<T extends CFDataBase> {
   // 全局配置使用的请求类
-  static useRequest(request: CFIRequest): void;
+  static useRequest(request: ICFRequest): void;
   // 资源url
   abstract url: string;
   // 字段列表
@@ -263,7 +263,7 @@ export abstract class CFConfig<T extends CFDataBase> {
    * key: 视图字段
    * value: 报文字段
    */
-  get map(): {[key: string]: string};
+  readonly map: {[key: string]: string};
   // 默认的按钮组，可以通过覆盖本属性来取消默认按钮，一般情况下只重写buttons属性即可
   protected readonly defaultButtons: {[key: string]: CFButton};
   // 自定义按钮组，可增量覆盖默认按钮组
@@ -274,9 +274,9 @@ export abstract class CFConfig<T extends CFDataBase> {
    */
   buttonFilter(buttons: CFButton[]): CFButton[];
   // 按钮列表
-  get buttonList(): CFButton[];
+  readonly buttonList: CFButton[];
   // 实际使用的按钮数据
-  get realButtons(): CFButtons;
+  readonly realButtons: CFButtons;
 
   // 页面标题
   pageTitle: string;
@@ -285,8 +285,6 @@ export abstract class CFConfig<T extends CFDataBase> {
   // 是否启用行选择模式
   enableSelect: boolean;
 
-  // 数据请求及数据整理
-  get request(): CFIRequest;
   getList(filter?: any): Promise<CFListResponse<T>>;
   getOne(id: number | string): Promise<T>;
   createOne(data: T): Promise<any>;
@@ -297,14 +295,14 @@ export abstract class CFConfig<T extends CFDataBase> {
 /**
  * ViewDefine
  */
-export interface CFICFCommonForm {
+export interface ICFCommonForm {
   cancel(): void;
   loadData(): void;
   save(e?: Event, otherData?: any): void;
   form: WrappedFormUtils;
 }
 
-export interface CFICFCommonView {
+export interface ICFCommonView {
   reload(): void;
   deleteRecord(record: any): void;
   // 清空当前inlineForm数据，清除内部id，可用于创建新数据
@@ -340,21 +338,22 @@ export type CFMenuUnit<T extends CFDataBase> = {
 
 export function menuCreator(): void
 
-export class CFCommonView extends Vue implements CFICFCommonView {
+export class CFCommonView extends Vue implements ICFCommonView {
   createForInlineForm(): void;
   deleteRecord(record: any): void;
   loadDataForForm(id: number | string): void;
   reload(): void;
 }
-export class CFCommonForm extends Vue implements CFICFCommonForm {
+export class CFCommonForm extends Vue implements ICFCommonForm {
   form: WrappedFormUtils;
   cancel(): void;
   loadData(): void;
   save(e?: Event, otherData?: any): void;
 }
 
-export class CommonParentView extends Vue{}
+export class CFCommonParentView extends Vue{}
 export class CFCommonFormWithDrawer extends Vue{}
 export class CFCommonViewWithDrawer extends Vue{}
 
-export default function install(Vue: Vue): void;
+declare let defaultExport: PluginFunction<any>;
+export default defaultExport

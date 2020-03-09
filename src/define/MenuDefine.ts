@@ -1,7 +1,7 @@
 import { Component } from 'vue'
 import { CFConfig } from './CFDefine';
 import {Route} from "vue-router";
-import {CFDataBase} from "./CFIRequest";
+import {CFDataBase} from "./ICFRequest";
 export type CFViewProps<T extends CFDataBase> = {
   title?: string[],
   type?: string,

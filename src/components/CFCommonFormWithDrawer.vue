@@ -21,50 +21,52 @@
         </div>
       </template>
       <div>
-        <common-form ref="form" :id="id" @on-saved="onClose" :cfConfig="cfConfig" :inlineForm="false" :initFormValues="initFormValues"/>
+        <CFCommonForm ref="form" :id="id" @on-saved="onClose" :cfConfig="cfConfig" :inlineForm="false" :initFormValues="initFormValues"/>
       </div>
     </a-drawer>
   </div>
 </template>
 
-<script lang="ts">
-  import { Component, Prop, Vue } from 'vue-property-decorator'
+<script>
   import {CFConfig} from "../define/CFDefine";
   import CFCommonForm from "./CFCommonForm.vue";
-  import {CFICFCommonForm} from "../define/ViewDefine";
-  import {CFDataBase} from "../define/CFIRequest";
-
-  @Component({components: {CFCommonForm}})
-  export default class CFCommonFormWithDrawer<T extends CFDataBase> extends Vue {
-    // [x: string]: any;
-    @Prop() id?: number | string;
-    @Prop() title!: String;
-    @Prop() cfConfig?: CFConfig<T>;
-    @Prop() initFormValues?: {[key: string]: any};
-    visible: boolean = false;
-
-    onClose() {
-      this.visible = false;
-      setTimeout(()=>{
-        this.$router.go(-1);
-      }, 600)
-    }
-    keyPressEventHandle(event: { code: string; }) {
-      if(event.code === 'Escape') {
-        this.onClose()
+  export default {
+    name: 'CFCommonFormWithDrawer',
+    components: {CFCommonForm},
+    props: {
+      id: null,
+      title: String,
+      cfConfig: CFConfig,
+      initFormValues: null,
+    },
+    data() {
+      return {
+        visible: false,
       }
-    }
-    mounted(): void {
+    },
+    mounted() {
       this.visible = true;
       addEventListener('keyup', this.keyPressEventHandle);
       this.$nextTick(()=>{
-        // @ts-ignore
-        (this.$refs.form as CFICFCommonForm).loadData();
+        this.$refs.form.loadData();
       })
-    }
-    destroyed(): void {
+    },
+    destroyed() {
       console.log('form-destroyed', this);
       removeEventListener('keyup', this.keyPressEventHandle)
+    },
+    methods: {
+      onClose() {
+        this.visible = false;
+        setTimeout(()=>{
+          this.$router.go(-1);
+        }, 600)
+      },
+      keyPressEventHandle(event) {
+        if(event.code === 'Escape') {
+          this.onClose()
+        }
+      }
     }
   }
 </script>

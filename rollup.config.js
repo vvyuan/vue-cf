@@ -14,8 +14,8 @@ export default {
   input: 'src/index.ts',
   // input: 'src/components/CFCommonForm.vue',
   output: {
-    file: 'index.js',
-    sourcemap: false,
+    file: 'index.min.js',
+    sourcemap: true,
     // format: 'cjs'
   },
   plugins: [

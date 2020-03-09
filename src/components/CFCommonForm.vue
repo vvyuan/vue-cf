@@ -215,109 +215,106 @@
   </div>
 </template>
 
-<script lang="ts">
-  import { Component, Prop, Vue, Emit } from 'vue-property-decorator'
-  import {CFConfig, CFFConfig} from "../define/CFDefine";
-  import {WrappedFormUtils} from "ant-design-vue/types/form/form";
+<script>
+  import {CFConfig} from "../define/CFDefine";
   import * as FieldDefine from '../define/FieldDefine';
   import { filterOption, cascaderFilterOption } from '../utils/util';
-  import {CFDataBase} from "../define/CFIRequest";
 
-  @Component
-  export default class CFCommonForm<T extends CFDataBase> extends Vue {
-    @Prop() id?: number | string;
-    @Prop() cfConfig?: CFConfig<T>;
-    @Prop() initFormValues?: {[key: string]: any};
-    @Prop() inlineForm?: boolean;
-    form?: WrappedFormUtils;
-    FieldDefine = FieldDefine;
-    visible: boolean = false;
-    filterOption = filterOption;
-    print = window.print;
-    readonly = false;
-    cascaderFilterOption = cascaderFilterOption;
-
-    get _inlineForm(): boolean {
-      if(typeof this.inlineForm === 'undefined' && this.cfConfig) {
-        return this.cfConfig.inlineForm
+  export default {
+    name: 'CFCommonForm',
+    props: {
+      id: null,
+      cfConfig: CFConfig,
+      initFormValues: null,
+      inlineForm: Boolean,
+    },
+    data() {
+      return {
+        form: this.$form.createForm(this),
+        filterOption: filterOption,
+        FieldDefine: FieldDefine,
+        cascaderFilterOption: cascaderFilterOption,
+        readonly: false,
+        visible: false,
       }
-      return !!this.inlineForm
-    }
-
-    get fieldList(): CFFConfig[] {
-      return (this.cfConfig && this.cfConfig.fieldList) ? this.cfConfig.fieldList.filter(field=>!!field.inForm) : []
-    }
-
-    onCFButtonClick(buttonClickFn: any) {
-      buttonClickFn(this.$router, this.cfConfig, undefined, this);
-    }
-
-    beforeCreate(): void {
-      this.form = this.$form.createForm(this);
-    }
-
-    save(e?: Event, otherData: any = {}){
-      e && e.preventDefault();
-      this.form!.validateFields((err: any, rawValues: any) => {
-        if (!err) {
-          let translatedValues: any = {};
-          for(let field of this.cfConfig!.fieldList) {
-            if(field.inForm) {
-              translatedValues[field.name] = field.inForm.translateResult(rawValues[field.name])
+    },
+    computed: {
+      _inlineForm() {
+        if(typeof this.inlineForm === 'undefined' && this.cfConfig) {
+          return this.cfConfig.inlineForm
+        }
+        return !!this.inlineForm
+      },
+      fieldList() {
+        return (this.cfConfig && this.cfConfig.fieldList) ? this.cfConfig.fieldList.filter(field=>!!field.inForm) : []
+      }
+    },
+    methods: {
+      onCFButtonClick(buttonClickFn) {
+        buttonClickFn(this.$router, this.cfConfig, undefined, this);
+      },
+      save(e, otherData) {
+        e && e.preventDefault();
+        this.form.validateFields((err, rawValues) => {
+          if (!err) {
+            let translatedValues = {};
+            for(let field of this.cfConfig.fieldList) {
+              if(field.inForm) {
+                translatedValues[field.name] = field.inForm.translateResult(rawValues[field.name])
+              }
             }
+            console.log('Received values of form: ', rawValues, translatedValues);
+            let hide = this.$message.loading('正在保存，请稍候...', 0);
+            let handle = this.id ? this.cfConfig.updateOne({id: this.id, ...translatedValues, ...otherData}) : this.cfConfig.createOne({...translatedValues, ...otherData});
+            handle.then(this.onSaved).catch(e=>{ this.$message.error(e.message || e) }).finally(hide)
           }
-          console.log('Received values of form: ', rawValues, translatedValues);
-          // @ts-ignore
-          let hide = this.$message.loading('正在保存，请稍候...', 0) as (()=>void);
-          let handle = this.id ? this.cfConfig!.updateOne({id: this.id, ...translatedValues, ...otherData}) : this.cfConfig!.createOne({...translatedValues, ...otherData});
-          handle.then(this.onSaved).catch(e=>{ this.$message.error(e.message || e) }).finally(hide)
-        }
-      });
-    }
-
-    @Emit() onSaved() {}
-    cancel() {
-      this.onSaved();
-    }
-    loadData() {
-      // 加载字段所需数据
-      let loadDictList = this.cfConfig ? this.cfConfig.fieldList
-          .filter(item=>item.inForm instanceof FieldDefine.FieldWithDict)
-          .map((item)=>(item.inForm as FieldDefine.FieldWithDict).loadData())
-        : [];
-      let loadFormData = this.id && this.cfConfig ? [this.cfConfig.getOne(this.id)] : [];
-      // @ts-ignore
-      let hide = this.$message.loading('数据加载中...', 0) as (()=>void);
-      // @ts-ignore
-      return Promise.all(loadFormData.concat(loadDictList)).then(resList=>{
-        if(this.id) {
-          let response: any = resList[0];
-          let values: any = {id: null};
-          for(let field of this.cfConfig!.fieldList) {
-            values[field.name] = response[field.name]
-          }
-          if(!this.cfConfig!.fieldList.find(field=>field.name === 'id' && field.inForm)) {
-            delete values.id;
-          }
-          for(let field of this.cfConfig!.fieldList) {
-            if(field.inForm) {
-              values[field.name] = field.inForm.translateInput(values[field.name]);
+        });
+      },
+      onSaved() {
+        this.$emit('onSaved')
+      },
+      cancel() {
+        this.onSaved();
+      },
+      loadData() {
+        // 加载字段所需数据
+        let loadDictList = this.cfConfig ? this.cfConfig.fieldList
+            .filter(item=>item.inForm instanceof FieldDefine.FieldWithDict)
+            .map((item)=>item.inForm.loadData())
+          : [];
+        let loadFormData = this.id && this.cfConfig ? [this.cfConfig.getOne(this.id)] : [];
+        let hide = this.$message.loading('数据加载中...', 0);
+        return Promise.all(loadFormData.concat(loadDictList)).then(resList=>{
+          if(this.id) {
+            let response = resList[0];
+            let values = {id: null};
+            for(let field of this.cfConfig.fieldList) {
+              values[field.name] = response[field.name]
             }
+            if(!this.cfConfig.fieldList.find(field=>field.name === 'id' && field.inForm)) {
+              delete values.id;
+            }
+            for(let field of this.cfConfig.fieldList) {
+              if(field.inForm) {
+                values[field.name] = field.inForm.translateInput(values[field.name]);
+              }
+            }
+            this.form.setFieldsValue(values);
+          } else {
+            this.form.resetFields()
           }
-          this.form!.setFieldsValue(values);
-        } else {
-          this.form!.resetFields()
-        }
-        if(this.initFormValues) {
-          this.form!.setFieldsValue(this.initFormValues);
-        }
-      }).catch(e=>{
-        this.$message.error(e.message || '发生未知错误')
-      }).finally(hide)
-    }
-    getPopupContainer() {
-      return (this.$refs.form as Vue).$el
-    }
+          if(this.initFormValues) {
+            this.form.setFieldsValue(this.initFormValues);
+          }
+        }).catch(e=>{
+          this.$message.error(e.message || '发生未知错误')
+        }).finally(hide)
+      },
+      getPopupContainer(triggerNode) {
+        // return triggerNode.pa
+        return this.$refs.form.$el
+      }
+    },
   }
 </script>
 

@@ -1,7 +1,7 @@
 import mockStorage from './MockStorage'
-import CFIRequest, {CFDataBase, CFListResponse} from "../define/CFIRequest";
+import ICFRequest, {CFDataBase, CFListResponse} from "../define/ICFRequest";
 
-abstract class ARequest implements CFIRequest {
+abstract class ARequest implements ICFRequest {
   abstract request (url: string, method: 'GET'|'POST'|'PUT'|'DELETE', data?: CFDataBase | any, header?: any, map?: {[key: string]: string}): Promise<any>;
   get<T extends CFDataBase> (url: string, data?: CFDataBase | any, header?: any, map?: {[key: string]: string}): Promise<T | CFListResponse<T> | any> {
     return this.request(url, 'GET', data, header, map)
