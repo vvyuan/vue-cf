@@ -2,7 +2,7 @@
   "name": "vue-cf",
   "version": "0.0.1",
   "description": "基于antd和vue的中后台前端快速开发组件",
-  "main": "dist/index.js",
+  "main": "index.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

@@ -135,6 +135,7 @@
 <script>
   import { objectToQueryString } from '../utils/util'
   import * as Field from '../define/FieldDefine'
+  import {FieldPosition} from '../define/FieldUtil'
   import moment from 'moment';
   import CFCommonForm from './CFCommonForm.vue';
 
@@ -175,7 +176,7 @@
       },
       filters: function() {
         if(!this.cfConfig) { return [] }
-        return this.cfConfig.fieldList.filter(field=>field.inForm && (field.inForm.position & Field.FieldPosition.filter))
+        return this.cfConfig.fieldList.filter(field=>field.inForm && (field.inForm.position & FieldPosition.filter))
       },
       columnsData: function () {
         let containerWidth = document.body.offsetWidth - 200 - 40;
@@ -290,7 +291,7 @@
       },
       loadDict() {
         if(this.cfConfig) {
-          this.fieldWithDictList = this.cfConfig.fieldList.filter(field=>field.inForm && field.inForm instanceof Field.FieldWithDict && ((field.inForm.position & Field.FieldPosition.filter) || (field.inTable && field.inTable.display)));
+          this.fieldWithDictList = this.cfConfig.fieldList.filter(field=>field.inForm && field.inForm instanceof Field.FieldWithDict && ((field.inForm.position & FieldPosition.filter) || (field.inTable && field.inTable.display)));
           let loadDict = this.fieldWithDictList.map(field=>field.inForm.loadData());
           return Promise.all(loadDict)
         }

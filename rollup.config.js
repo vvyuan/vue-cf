@@ -5,7 +5,7 @@ import vue from 'rollup-plugin-vue2';
 import less from 'rollup-plugin-less';
 import fs from 'fs';
 
-const cssTarget = 'dist/index.css';
+const cssTarget = 'index.css';
 // 删除已创建的css文件
 if(fs.existsSync(cssTarget)) {
   fs.unlinkSync(cssTarget);
@@ -14,8 +14,8 @@ export default {
   input: 'src/index.ts',
   // input: 'src/components/CFCommonForm.vue',
   output: {
-    file: 'dist/index.js',
-    sourcemap: true,
+    file: 'index.js',
+    sourcemap: false,
     // format: 'cjs'
   },
   plugins: [

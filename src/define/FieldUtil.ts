@@ -6,3 +6,9 @@ export const CFNumberFieldFormatter = {
 };
 
 export type CFDictData = {value: string | number, label: string, children?: CFDictData[], isLeaf?: boolean}
+
+export enum FieldPosition {
+  both = 3,
+  filter = 2,
+  form = 1,
+}

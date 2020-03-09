@@ -40,12 +40,12 @@ export class CFNumberFieldFormatter {
     formatter: (value: number) => string,
   }
 }
+// children 和 isLeaf属性为CascaderField专用
+export type CFDictData = {value: string | number, label: string, children?: CFDictData[], isLeaf?: boolean}
 
 /**
  * FieldDefine
  */
-// children 和 isLeaf属性为CascaderField专用
-export type CFDictData = {value: string | number, label: string, children?: CFDictData[], isLeaf?: boolean}
 /**
  * 获取字典数据方法
  * 参数仅针对级联选择生效
@@ -54,13 +54,12 @@ export type CFDictData = {value: string | number, label: string, children?: CFDi
  */
 type GetCFDictDataFn = (level: number, value?: any)=>Promise<CFDictData[]>;
 type WatchValueFn = ()=>{value: CFDictData[]};
-declare enum FieldPosition {
+export enum FieldPosition {
   both = 3,
   filter = 2,
   form = 1,
 }
-
-declare abstract class FieldConfig {
+export abstract class FieldConfig {
   // defaultValue?: any;
   readonly placeholder?: string;
   readonly position: FieldPosition;
@@ -100,104 +99,83 @@ declare abstract class FieldConfig {
    */
   onChange(dataSource: GetCFDictDataFn | string | string[] | Event): WatchValueFn;
 }
+export namespace CFField {
+
 
 // 文本类表单
-declare class ReadonlyField extends FieldConfig {}
-declare class TextField extends FieldConfig {}
-declare class NumberField extends FieldConfig {
-  readonly max?: number;
-  readonly min?: number;
-  readonly step?: number;
-  readonly formatter?: (value: number) => string;
-  readonly parser?: (value: string) => number;
-  constructor(placeholder?: string, position?: FieldPosition, rules?: ValidationRule[] | true, print?: string, options?: {max?: number, min?: number, step?: number, formatter?: (value: number) => string, parser?: (value: string) => number});
-}
-declare class PasswordField extends FieldConfig {}
-declare class TextareaField extends FieldConfig {
-  readonly rows: number;
-  constructor(rows: number, placeholder?: string, position?: FieldPosition, rules?: ValidationRule[] | true, print?: string);
-}
-declare class RichTextField extends FieldConfig {}
+  export class ReadonlyField extends FieldConfig {}
+  export class TextField extends FieldConfig {}
+  export class NumberField extends FieldConfig {
+    readonly max?: number;
+    readonly min?: number;
+    readonly step?: number;
+    readonly formatter?: (value: number) => string;
+    readonly parser?: (value: string) => number;
+    constructor(placeholder?: string, position?: FieldPosition, rules?: ValidationRule[] | true, print?: string, options?: {max?: number, min?: number, step?: number, formatter?: (value: number) => string, parser?: (value: string) => number});
+  }
+  export class PasswordField extends FieldConfig {}
+  export class TextareaField extends FieldConfig {
+    readonly rows: number;
+    constructor(rows: number, placeholder?: string, position?: FieldPosition, rules?: ValidationRule[] | true, print?: string);
+  }
+  export class RichTextField extends FieldConfig {}
 // 时间类表单
-declare abstract class DateFieldBase extends FieldConfig {
-  format: string;
-  /**
-   * 时间类表单构造方法
-   * @param format 格式参考 https://momentjs.com/docs/#/displaying/
-   * @param placeholder
-   * @param position
-   * @param rules
-   * @param print
-   */
-  constructor(format?: string, placeholder?: string, position?: FieldPosition, rules?: ValidationRule[] | true, print?: string);
-  translateInput(value: any): Moment | undefined;
-  translateResult(value?: Moment): any;
-}
-declare class TimeField extends DateFieldBase {}
-declare class DateField extends DateFieldBase {}
-declare class DateTimeField extends DateFieldBase {}
-declare class DateRangeField extends DateFieldBase {}
-declare class TimeRangeField extends DateFieldBase {}
+  export abstract class DateFieldBase extends FieldConfig {
+    format: string;
+    /**
+     * 时间类表单构造方法
+     * @param format 格式参考 https://momentjs.com/docs/#/displaying/
+     * @param placeholder
+     * @param position
+     * @param rules
+     * @param print
+     */
+    constructor(format?: string, placeholder?: string, position?: FieldPosition, rules?: ValidationRule[] | true, print?: string);
+    translateInput(value: any): Moment | undefined;
+    translateResult(value?: Moment): any;
+  }
+  export class TimeField extends DateFieldBase {}
+  export class DateField extends DateFieldBase {}
+  export class DateTimeField extends DateFieldBase {}
+  export class DateRangeField extends DateFieldBase {}
+  export class TimeRangeField extends DateFieldBase {}
 // 带有字典数据的表单
-declare class FieldWithDict extends FieldConfig {
-  // 构造方法传入的dataSource，有可能是一个onChange
-  private readonly _dataSource: GetCFDictDataFn | WatchValueFn;
-  private isLoadData: boolean;
-  options: CFDictData[];
-  constructor(dataSource: GetCFDictDataFn | WatchValueFn, placeholder?: string, position?: FieldPosition, rules?: ValidationRule[] | true, print?: string);
-  dataSource(): Promise<CFDictData[]>;
-  loadData(): Promise<CFDictData[]>;
-}
-declare class ReadonlyFieldWithDict extends FieldWithDict {}
+  export class FieldWithDict extends FieldConfig {
+    // 构造方法传入的dataSource，有可能是一个onChange
+    private readonly _dataSource: GetCFDictDataFn | WatchValueFn;
+    private isLoadData: boolean;
+    options: CFDictData[];
+    constructor(dataSource: GetCFDictDataFn | WatchValueFn, placeholder?: string, position?: FieldPosition, rules?: ValidationRule[] | true, print?: string);
+    dataSource(): Promise<CFDictData[]>;
+    loadData(): Promise<CFDictData[]>;
+  }
+  export class ReadonlyFieldWithDict extends FieldWithDict {}
 // 下拉选框类表单
-declare class SingleSelectField extends FieldWithDict {}
-declare class MultipleSelectField extends FieldWithDict {}
-declare class TagField extends FieldWithDict {}
+  export class SingleSelectField extends FieldWithDict {}
+  export class MultipleSelectField extends FieldWithDict {}
+  export class TagField extends FieldWithDict {}
 // 级联选择
-declare class CascaderField extends FieldWithDict {
-  private readonly mutilDataSource: ((level: number, parentValue?: string | number)=>Promise<CFDictData[]>)[];
+  export class CascaderField extends FieldWithDict {
+    private readonly mutilDataSource: ((level: number, parentValue?: string | number)=>Promise<CFDictData[]>)[];
 
-  /**
-   * 构造方法
-   * @param dataSource 数据源：对于可提供完整数据的单一数据源，传入()=>Promise<CFDictData[]>类型的参数，CFDictData中必须包含children，不允许包含isLeaf
-   *                           对于逐级获取数据的数据源，传入一个()=>Promise<CFDictData[]>数组，CFDictData中必须包含isLeaf，标记是否为叶子节点
-   *                           数据源的顺序对应级联选择的层级，数据初始化时，会调用第一个数据源提供第一级数据
-   *                           根据级联选择的层级自动调用对应层级的数据源，如果对应层级的数据源不存在，则调用最后一个数据源
-   * @param placeholder
-   * @param position
-   * @param rules
-   * @param print
-   */
-  constructor(dataSource: GetCFDictDataFn | WatchValueFn | GetCFDictDataFn[], placeholder?: string, position?: FieldPosition, rules?: ValidationRule[] | true, print?: string);
-  readonly needLoadData: boolean;
-  loadData(selectedOptions?: CascaderOptionType[]): Promise<CFDictData[]>;
-}
+    /**
+     * 构造方法
+     * @param dataSource 数据源：对于可提供完整数据的单一数据源，传入()=>Promise<CFDictData[]>类型的参数，CFDictData中必须包含children，不允许包含isLeaf
+     *                           对于逐级获取数据的数据源，传入一个()=>Promise<CFDictData[]>数组，CFDictData中必须包含isLeaf，标记是否为叶子节点
+     *                           数据源的顺序对应级联选择的层级，数据初始化时，会调用第一个数据源提供第一级数据
+     *                           根据级联选择的层级自动调用对应层级的数据源，如果对应层级的数据源不存在，则调用最后一个数据源
+     * @param placeholder
+     * @param position
+     * @param rules
+     * @param print
+     */
+    constructor(dataSource: GetCFDictDataFn | WatchValueFn | GetCFDictDataFn[], placeholder?: string, position?: FieldPosition, rules?: ValidationRule[] | true, print?: string);
+    readonly needLoadData: boolean;
+    loadData(selectedOptions?: CascaderOptionType[]): Promise<CFDictData[]>;
+  }
 // 按钮类表单
-declare class RadioField extends FieldWithDict {}
-declare class CheckboxField extends FieldWithDict {}
-declare class CFField {
-  static FieldPosition: FieldPosition;
-  static FieldConfig: FieldConfig;
-  static ReadonlyField: ReadonlyField;
-  static TextField: TextField;
-  static NumberField: NumberField;
-  static PasswordField: PasswordField;
-  static TextareaField: TextareaField;
-  static RichTextField: RichTextField;
-  static DateFieldBase: DateFieldBase;
-  static TimeField: TimeField;
-  static DateField: DateField;
-  static DateTimeField: DateTimeField;
-  static DateRangeField: DateRangeField;
-  static TimeRangeField: TimeRangeField;
-  static FieldWithDict: FieldWithDict;
-  static ReadonlyFieldWithDict: ReadonlyFieldWithDict;
-  static SingleSelectField: SingleSelectField;
-  static MultipleSelectField: MultipleSelectField;
-  static TagField: TagField;
-  static CascaderField: CascaderField;
-  static RadioField: RadioField;
-  static CheckboxField: CheckboxField;
+  export class RadioField extends FieldWithDict {}
+  export class CheckboxField extends FieldWithDict {}
 }
 /**
  * CFDefine
@@ -275,7 +253,7 @@ type CFButtons = {
 
 export abstract class CFConfig<T extends CFDataBase> {
   // 全局配置使用的请求类
-  static useRequest(request: CFIRequest);
+  static useRequest(request: CFIRequest): void;
   // 资源url
   abstract url: string;
   // 字段列表
@@ -360,7 +338,7 @@ export type CFMenuUnit<T extends CFDataBase> = {
   meta?: any,
 }
 
-export function menuCreator()
+export function menuCreator(): void
 
 export class CFCommonView extends Vue implements CFICFCommonView {
   createForInlineForm(): void;
@@ -379,4 +357,4 @@ export class CommonParentView extends Vue{}
 export class CFCommonFormWithDrawer extends Vue{}
 export class CFCommonViewWithDrawer extends Vue{}
 
-export default function install(Vue: Vue);
+export default function install(Vue: Vue): void;

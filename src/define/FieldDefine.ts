@@ -2,7 +2,8 @@ import {ValidationRule} from "ant-design-vue/types/form/form";
 import moment, {relativeTimeRounding} from "moment";
 import md5 from "md5";
 import {CascaderOptionType} from "ant-design-vue/types/cascader";
-import {CFDictData} from "./FieldUtil";
+import {CFDictData, FieldPosition} from "./FieldUtil";
+
 // children 和 isLeaf属性为CascaderField专用
 /**
  * 获取字典数据方法
@@ -12,12 +13,6 @@ import {CFDictData} from "./FieldUtil";
  */
 type GetCFDictDataFn = (level: number, value?: any)=>Promise<CFDictData[]>;
 type WatchValueFn = ()=>{value: CFDictData[]};
-export enum FieldPosition {
-  both = 3,
-  filter = 2,
-  form = 1,
-}
-
 export abstract class FieldConfig {
   // defaultValue?: any;
   readonly placeholder?: string;

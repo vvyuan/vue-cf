@@ -675,12 +675,19 @@ class CFConfig {
     }
 }
 
+const CFNumberFieldFormatter = {
+    moneyRMB: {
+        parser: (value) => parseFloat(value.replace("￥", '')),
+        formatter: (value) => "￥" + parseFloat(String(value || 0)).toFixed(2),
+    }
+};
 var FieldPosition;
 (function (FieldPosition) {
     FieldPosition[FieldPosition["both"] = 3] = "both";
     FieldPosition[FieldPosition["filter"] = 2] = "filter";
     FieldPosition[FieldPosition["form"] = 1] = "form";
 })(FieldPosition || (FieldPosition = {}));
+
 class FieldConfig {
     /**
      * 基本字段构造方法
@@ -945,7 +952,6 @@ class CheckboxField extends FieldWithDict {
 
 var Field = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    get FieldPosition () { return FieldPosition; },
     FieldConfig: FieldConfig,
     get RuleForText () { return RuleForText; },
     ReadonlyField: ReadonlyField,
@@ -969,13 +975,6 @@ var Field = /*#__PURE__*/Object.freeze({
     RadioField: RadioField,
     CheckboxField: CheckboxField
 });
-
-const CFNumberFieldFormatter = {
-    moneyRMB: {
-        parser: (value) => parseFloat(value.replace("￥", '')),
-        formatter: (value) => "￥" + parseFloat(String(value || 0)).toFixed(2),
-    }
-};
 
 function menuCreator() {
 }
@@ -1562,5 +1561,5 @@ if (typeof window !== 'undefined' && window.Vue) {
 }
 
 export default install;
-export { CFButtonPosition, CFCommonForm, CFCommonFormWithDrawer, CFCommonParentView, CFCommonView, CFCommonViewWithDrawer, CFConfig, Field as CFField, CFNumberFieldFormatter, menuCreator };
+export { CFButtonPosition, CFCommonForm, CFCommonFormWithDrawer, CFCommonParentView, CFCommonView, CFCommonViewWithDrawer, CFConfig, Field as CFField, CFNumberFieldFormatter, FieldPosition, menuCreator };
 //# sourceMappingURL=index.js.map
