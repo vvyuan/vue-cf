@@ -60,7 +60,6 @@ if(dbConfig) {
         type: 'input',
         message: '请输入数据库名称:',
         name: 'database',
-        default: "his2020",
       },
     ];
     return inquirer.prompt(promptList)
