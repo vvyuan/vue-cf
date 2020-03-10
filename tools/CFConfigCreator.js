@@ -1,51 +1,77 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql');
 const fs = require('fs');
+const colors = require('colors');
 
-// TODO：读取默认数据库配置
-
+const configPath = 'cf.config.json';
 let db = null;
 let dbConfig = null;
-(Promise.resolve()).then(()=>{
-  const promptList = [
-    {
-      type: 'input',
-      message: '请输入数据库host:',
-      name: 'host',
-      default: "localhost",
-    },
-    {
-      type: 'input',
-      message: '请输入数据库port:',
-      name: 'port',
-      default: "3306",
-    },
-    {
-      type: 'input',
-      message: '请输入数据库username:',
-      name: 'user',
-      default: "root",
-    },
-    {
-      type: 'input',
-      message: '请输入数据库password:',
-      name: 'password',
-      default: "root",
-    },
-    {
-      type: 'input',
-      message: '请输入数据库名称:',
-      name: 'CFDataBase',
-      default: "his2020",
-    },
-  ];
-  return inquirer.prompt(promptList)
-}).then(dbConfigA => new Promise((resolve, reject) => {
+// 读取配置
+if(fs.existsSync(configPath)) {
+  let content = fs.readFileSync(configPath, 'utf-8');
+  try {
+    let config = JSON.parse(content);
+    if(config.db && config.db.database) {
+      let dbC = config.db;
+      dbConfig = {
+        host: dbC.host || 'localhost',
+        port: dbC.port || '3306',
+        user: dbC.user || 'root',
+        password: dbC.password || 'root',
+        database: dbC.database || '',
+      };
+    }
+  } catch (e) {
+    console.log('配置文件解析错误'.red)
+  }
+}
+
+let startP = null;
+if(dbConfig) {
+  startP = Promise.resolve(dbConfig);
+} else {
+  startP = (Promise.resolve()).then(()=>{
+    const promptList = [
+      {
+        type: 'input',
+        message: '请输入数据库host:',
+        name: 'host',
+        default: "localhost",
+      },
+      {
+        type: 'input',
+        message: '请输入数据库port:',
+        name: 'port',
+        default: "3306",
+      },
+      {
+        type: 'input',
+        message: '请输入数据库username:',
+        name: 'user',
+        default: "root",
+      },
+      {
+        type: 'input',
+        message: '请输入数据库password:',
+        name: 'password',
+        default: "root",
+      },
+      {
+        type: 'input',
+        message: '请输入数据库名称:',
+        name: 'database',
+        default: "his2020",
+      },
+    ];
+    return inquirer.prompt(promptList)
+  })
+}
+startP.then(dbConfigA => new Promise((resolve, reject) => {
   console.log('正在连接数据库');
   dbConfig = dbConfigA;
   db = mysql.createConnection(dbConfig);
   db.connect();
-  db.query(`select table_name from information_schema.tables where table_schema="${dbConfig.CFDataBase}"`, function (error, results, fields) {
+  db.query(`select table_name from information_schema.tables where table_schema="${dbConfig.database}"`, function (error, results, fields) {
     if (error) {
       reject(error);
       return;
@@ -162,7 +188,10 @@ ${fieldListString}
 `;
     let fileName = `src/cfConfigs/CF${tableName}.ts`;
     fs.writeFileSync(fileName, content);
-    console.log(fileName + ' 创建成功');
+    console.log((fileName + ' 创建成功').green);
   });
   process.exit(0);
+}).catch(e => {
+  console.log(e.message.red);
+  process.exit(e.code);
 });
