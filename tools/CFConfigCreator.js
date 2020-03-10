@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const inquirer = require('inquirer');
 const mysql = require('mysql');
 const fs = require('fs');
@@ -109,7 +111,7 @@ startP.then(dbConfigA => new Promise((resolve, reject) => {
 FROM
     information_schema.COLUMNS
 WHERE
-    TABLE_SCHEMA = '${dbConfig.CFDataBase}'
+    TABLE_SCHEMA = '${dbConfig.database}'
     AND TABLE_NAME = '${name}'
 ORDER BY
     TABLE_NAME,
@@ -186,6 +188,12 @@ ${fieldListString}
 }
 `;
     let fileName = `src/cfConfigs/CF${tableName}.ts`;
+    if(!fs.existsSync('src')) {
+      fs.mkdirSync('src');
+    }
+    if(!fs.existsSync('src/cfConfigs')) {
+      fs.mkdirSync('src/cfConfigs');
+    }
     fs.writeFileSync(fileName, content);
     console.log((fileName + ' 创建成功').green);
   });

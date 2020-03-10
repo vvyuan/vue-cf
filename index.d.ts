@@ -1,7 +1,7 @@
 /// <reference types="node" />
 import {WrappedFormUtils} from "ant-design-vue/types/form/form";
 import Vue, {Component, PluginFunction} from "vue";
-import {VueRouter} from "vue-router/types/router";
+import VueRouter from "vue-router";
 import {ValidationRule} from "ant-design-vue/types/form/form";
 import {Moment}from "moment";
 import {CascaderOptionType} from "ant-design-vue/types/cascader";

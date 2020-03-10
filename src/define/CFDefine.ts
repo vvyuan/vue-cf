@@ -1,6 +1,6 @@
 import { FieldConfig } from './FieldDefine'
 import {Component} from "vue";
-import {VueRouter} from "vue-router/types/router";
+import VueRouter from "vue-router";
 // @ts-ignore
 import {Modal} from "ant-design-vue";
 import {ICFCommonForm, ICFCommonView} from "./ViewDefine";
