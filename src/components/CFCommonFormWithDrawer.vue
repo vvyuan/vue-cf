@@ -21,7 +21,7 @@
         </div>
       </template>
       <div>
-        <CFCommonForm ref="form" :id="id" @on-saved="onClose" :cfConfig="cfConfig" :inlineForm="false" :initFormValues="initFormValues"/>
+        <CFCommonForm ref="form" :id="id" @saved="onClose" :cfConfig="cfConfig" :inlineForm="false" :initFormValues="initFormValues"/>
       </div>
     </a-drawer>
   </div>
@@ -35,7 +35,7 @@
     components: {CFCommonForm},
     props: {
       id: null,
-      title: String,
+      title: Array,
       cfConfig: CFConfig,
       initFormValues: null,
     },
@@ -52,7 +52,6 @@
       })
     },
     destroyed() {
-      console.log('form-destroyed', this);
       removeEventListener('keyup', this.keyPressEventHandle)
     },
     methods: {

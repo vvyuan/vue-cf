@@ -6,7 +6,7 @@
         <a-row class="content common-form-content">
           <template v-for="(field, index) in fieldList">
             <a-col
-              v-if="field.inForm.position & FieldDefine.FieldPosition.form"
+              v-if="field.inForm.position & FieldPosition.form"
               :key="index"
               :xs="_inlineForm ? 24 : 24"
               :sm="_inlineForm ? 24 : 24"
@@ -218,6 +218,7 @@
 <script>
   import {CFConfig} from "../define/CFDefine";
   import * as FieldDefine from '../define/FieldDefine';
+  import {FieldPosition} from '../define/FieldUtil';
   import { filterOption, cascaderFilterOption } from '../utils/util';
 
   export default {
@@ -233,6 +234,7 @@
         form: this.$form.createForm(this),
         filterOption: filterOption,
         FieldDefine: FieldDefine,
+        FieldPosition: FieldPosition,
         cascaderFilterOption: cascaderFilterOption,
         readonly: false,
         visible: false,
@@ -271,7 +273,7 @@
         });
       },
       onSaved() {
-        this.$emit('onSaved')
+        this.$emit('saved')
       },
       cancel() {
         this.onSaved();
@@ -311,7 +313,6 @@
         }).finally(hide)
       },
       getPopupContainer(triggerNode) {
-        // return triggerNode.pa
         return this.$refs.form.$el
       }
     },
