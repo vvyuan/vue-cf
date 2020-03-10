@@ -1,6 +1,6 @@
 {
   "name": "vue-cf",
-  "version": "0.0.9",
+  "version": "0.0.12",
   "description": "基于antd和vue的中后台前端快速开发组件",
   "main": "index.js",
   "types": "index.d.ts",
@@ -29,15 +29,9 @@
   "private": false,
   "license": "Apache-2.0",
   "dependencies": {
-    "ant-design-vue": "^1.4.12",
     "colors": "^1.4.0",
     "inquirer": "^7.0.6",
-    "md5": "^2.2.1",
-    "moment": "^2.24.0",
-    "mysql": "^2.18.1",
-    "uuid": "^7.0.2",
-    "vue": "^2.6.11",
-    "vue-router": "^3.1.6"
+    "mysql": "^2.18.1"
   },
   "peerDependencies": {
     "ant-design-vue": "^1.4.12",

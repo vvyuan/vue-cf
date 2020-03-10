@@ -3,6 +3,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import vue from 'rollup-plugin-vue2';
 import less from 'rollup-plugin-less';
+import babel from 'rollup-plugin-babel';
 import fs from 'fs';
 
 const cssTarget = 'index.css';
@@ -15,8 +16,9 @@ export default {
   // input: 'src/components/CFCommonForm.vue',
   output: {
     file: 'index.js',
+    name: 'index.js',
     sourcemap: true,
-    format: 'cjs',
+    // format: 'umd',
   },
   plugins: [
     // typescript({exclude: ['.vue']}),
@@ -30,7 +32,10 @@ export default {
     }),
     typescript(),
     resolve({ extensions: ['.js', '.ts', '.vue']}), // so Rollup can find `ms`
-    commonjs({ extensions: ['.js', '.ts'], exclude: ['.vue', '.css']}), // so Rollup can convert `ms` to an ES module
+    // commonjs({ extensions: ['.js', '.ts'], exclude: ['.vue', '.css']}), // so Rollup can convert `ms` to an ES module
+    babel({
+      exclude: 'node_modules/**'
+    }),
   ],
   // 指出应将哪些模块视为外部模块
   external: [
