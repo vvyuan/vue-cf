@@ -16,3 +16,18 @@ const demo = {
   }
 };
 console.log(JSON.stringify(demo, '', 2));
+
+console.log('the file "vue.config.js" like this:'.yellow);
+console.log(JSON.stringify({configureWebpack: {
+      module: {
+        rules: [
+          {
+            test: /\.js$/,
+            loader: 'babel-loader',
+            include: [/vue-cf/]
+          }
+        ]
+      }
+    }
+  }, '', 2)
+);
