@@ -27,7 +27,6 @@ export {CFCommonFormWithDrawer};
 export {CFCommonParentView};
 
 const install = function (vue: typeof Vue) {
-  console.log('install', components);
   components.forEach(component => {
     vue.component(component.name, component)
   })
@@ -35,7 +34,6 @@ const install = function (vue: typeof Vue) {
 
 // 自动注册组件
 if (typeof window !== 'undefined' && window.Vue) {
-  console.log('auto install', components);
   install(window.Vue);
 }
 export default {install};

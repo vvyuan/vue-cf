@@ -227,7 +227,7 @@
       id: null,
       cfConfig: CFConfig,
       initFormValues: null,
-      inlineForm: Boolean,
+      inlineForm: undefined,
     },
     data() {
       return {
