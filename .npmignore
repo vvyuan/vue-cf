@@ -4,3 +4,4 @@ rollup.config.js
 tsconfig.json
 .idea/
 index.min.js.map
+index.js.map

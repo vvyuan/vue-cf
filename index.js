@@ -1,7 +1,13 @@
-import { Modal } from 'ant-design-vue';
-import { v4 } from 'uuid';
-import moment from 'moment';
-import md5 from 'md5';
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var antDesignVue = require('ant-design-vue');
+var uuid = require('uuid');
+var moment = _interopDefault(require('moment'));
+var md5 = _interopDefault(require('md5'));
 
 let dbMap = {};
 let queueId = 0;
@@ -144,7 +150,7 @@ class MockStorage {
                 reject(event.target.error);
             };
             if (!value.id) {
-                value.id = v4();
+                value.id = uuid.v4();
             }
             transaction.objectStore(osName).add(value);
         });
@@ -496,7 +502,6 @@ class MockRequestEx extends MockRequest {
 var MockRequest$1 = new MockRequestEx();
 
 // @ts-ignore
-var CFButtonPosition;
 (function (CFButtonPosition) {
     // table
     CFButtonPosition["tableHeaderLeft"] = "tableHeaderLeft";
@@ -511,7 +516,7 @@ var CFButtonPosition;
     CFButtonPosition["inlineFooterRight"] = "inlineFooterRight";
     CFButtonPosition["drawerFooterLeft"] = "drawerFooterLeft";
     CFButtonPosition["drawerFooterRight"] = "drawerFooterRight";
-})(CFButtonPosition || (CFButtonPosition = {}));
+})(exports.CFButtonPosition || (exports.CFButtonPosition = {}));
 class CFRequest {
 }
 class CFConfig {
@@ -522,7 +527,7 @@ class CFConfig {
         this.defaultButtons = {
             create: {
                 title: '新增',
-                position: [CFButtonPosition.tableHeaderLeft],
+                position: [exports.CFButtonPosition.tableHeaderLeft],
                 icon: 'plus',
                 type: 'primary',
                 onClick: (router, cfConfig, view, form, selectedRecords, record) => {
@@ -536,7 +541,7 @@ class CFConfig {
             },
             edit: {
                 title: '',
-                position: [CFButtonPosition.tableRowOperations],
+                position: [exports.CFButtonPosition.tableRowOperations],
                 icon: 'edit',
                 onClick: (router, cfConfig, view, form, selectedRecords, record) => {
                     if (cfConfig.inlineForm) {
@@ -549,11 +554,11 @@ class CFConfig {
             },
             delete: {
                 title: '',
-                position: [CFButtonPosition.tableRowOperations],
+                position: [exports.CFButtonPosition.tableRowOperations],
                 icon: 'delete',
                 type: 'danger',
                 onClick: (router, cfConfig, view, form, selectedRecords, record) => {
-                    Modal.confirm({
+                    antDesignVue.Modal.confirm({
                         title: '确定删除？',
                         onOk: () => {
                             view && view.deleteRecord(record);
@@ -563,7 +568,7 @@ class CFConfig {
             },
             printTable: {
                 title: '打印',
-                position: [CFButtonPosition.tableHeaderRight],
+                position: [exports.CFButtonPosition.tableHeaderRight],
                 icon: 'printer',
                 onClick: (router, cfConfig, view, form, selectedRecords, record) => {
                     window.print();
@@ -571,7 +576,7 @@ class CFConfig {
             },
             printForm: {
                 title: '打印',
-                position: [CFButtonPosition.drawerFooterRight, CFButtonPosition.inlineFooterCenter],
+                position: [exports.CFButtonPosition.drawerFooterRight, exports.CFButtonPosition.inlineFooterCenter],
                 icon: 'printer',
                 onClick: (router, cfConfig, view, form, selectedRecords, record) => {
                     window.print();
@@ -579,14 +584,14 @@ class CFConfig {
             },
             cancel: {
                 title: '取消',
-                position: [CFButtonPosition.drawerFooterRight],
+                position: [exports.CFButtonPosition.drawerFooterRight],
                 onClick: (router, cfConfig, view, form, selectedRecords, record) => {
                     form && form.cancel();
                 }
             },
             save: {
                 title: '保存',
-                position: [CFButtonPosition.drawerFooterRight, CFButtonPosition.inlineFooterCenter],
+                position: [exports.CFButtonPosition.drawerFooterRight, exports.CFButtonPosition.inlineFooterCenter],
                 type: 'primary',
                 onClick: (router, cfConfig, view, form, selectedRecords, record) => {
                     form && form.save();
@@ -681,12 +686,11 @@ const CFNumberFieldFormatter = {
         formatter: (value) => "￥" + parseFloat(String(value || 0)).toFixed(2),
     }
 };
-var FieldPosition;
 (function (FieldPosition) {
     FieldPosition[FieldPosition["both"] = 3] = "both";
     FieldPosition[FieldPosition["filter"] = 2] = "filter";
     FieldPosition[FieldPosition["form"] = 1] = "form";
-})(FieldPosition || (FieldPosition = {}));
+})(exports.FieldPosition || (exports.FieldPosition = {}));
 
 class FieldConfig {
     /**
@@ -703,7 +707,7 @@ class FieldConfig {
         if (placeholder) {
             this.placeholder = placeholder;
         }
-        this.position = position || FieldPosition.both;
+        this.position = position || exports.FieldPosition.both;
         if (rules === true) {
             this.rules = [{ required: true, message: this.placeholder }];
         }
@@ -1177,7 +1181,7 @@ staticRenderFns: [],
         form: this.$form.createForm(this),
         filterOption: filterOption,
         FieldDefine: Field,
-        FieldPosition: FieldPosition,
+        FieldPosition: exports.FieldPosition,
         cascaderFilterOption: cascaderFilterOption,
         readonly: false,
         visible: false,
@@ -1300,7 +1304,7 @@ staticRenderFns: [],
       },
       filters: function() {
         if(!this.cfConfig) { return [] }
-        return this.cfConfig.fieldList.filter(field=>field.inForm && (field.inForm.position & FieldPosition.filter))
+        return this.cfConfig.fieldList.filter(field=>field.inForm && (field.inForm.position & exports.FieldPosition.filter))
       },
       columnsData: function () {
         let containerWidth = document.body.offsetWidth - 200 - 40;
@@ -1415,7 +1419,7 @@ staticRenderFns: [],
       },
       loadDict() {
         if(this.cfConfig) {
-          this.fieldWithDictList = this.cfConfig.fieldList.filter(field=>field.inForm && field.inForm instanceof FieldWithDict && ((field.inForm.position & FieldPosition.filter) || (field.inTable && field.inTable.display)));
+          this.fieldWithDictList = this.cfConfig.fieldList.filter(field=>field.inForm && field.inForm instanceof FieldWithDict && ((field.inForm.position & exports.FieldPosition.filter) || (field.inTable && field.inTable.display)));
           let loadDict = this.fieldWithDictList.map(field=>field.inForm.loadData());
           return Promise.all(loadDict)
         }
@@ -1564,7 +1568,7 @@ staticRenderFns: [],
       },
       filters: function() {
         if(!this.cfConfig) { return [] }
-        return this.cfConfig.fieldList.filter(field=>field.inForm && (field.inForm.position & FieldPosition.filter))
+        return this.cfConfig.fieldList.filter(field=>field.inForm && (field.inForm.position & exports.FieldPosition.filter))
       },
       columnsData: function () {
         let containerWidth = document.body.offsetWidth - 200 - 40;
@@ -1681,7 +1685,7 @@ staticRenderFns: [],
       },
       loadDict() {
         if(this.cfConfig) {
-          this.fieldWithDictList = this.cfConfig.fieldList.filter(field=>field.inForm && field.inForm instanceof FieldWithDict && ((field.inForm.position & FieldPosition.filter) || (field.inTable && field.inTable.display)));
+          this.fieldWithDictList = this.cfConfig.fieldList.filter(field=>field.inForm && field.inForm instanceof FieldWithDict && ((field.inForm.position & exports.FieldPosition.filter) || (field.inTable && field.inTable.display)));
           let loadDict = this.fieldWithDictList.map(field=>field.inForm.loadData());
           return Promise.all(loadDict)
         }
@@ -1858,6 +1862,14 @@ if (typeof window !== 'undefined' && window.Vue) {
 }
 var index = { install };
 
-export default index;
-export { CFButtonPosition, CFCommonForm, CFCommonFormWithDrawer, CFCommonParentView, CFCommonView, CFCommonViewWithDrawer, CFConfig, Field as CFField, CFNumberFieldFormatter, FieldPosition, menuCreator };
-//# sourceMappingURL=index.min.js.map
+exports.CFCommonForm = CFCommonForm;
+exports.CFCommonFormWithDrawer = CFCommonFormWithDrawer;
+exports.CFCommonParentView = CFCommonParentView;
+exports.CFCommonView = CFCommonView;
+exports.CFCommonViewWithDrawer = CFCommonViewWithDrawer;
+exports.CFConfig = CFConfig;
+exports.CFField = Field;
+exports.CFNumberFieldFormatter = CFNumberFieldFormatter;
+exports.default = index;
+exports.menuCreator = menuCreator;
+//# sourceMappingURL=index.js.map

@@ -14,9 +14,9 @@ export default {
   input: 'src/index.ts',
   // input: 'src/components/CFCommonForm.vue',
   output: {
-    file: 'index.min.js',
+    file: 'index.js',
     sourcemap: true,
-    // format: 'cjs'
+    format: 'cjs',
   },
   plugins: [
     // typescript({exclude: ['.vue']}),
@@ -36,7 +36,6 @@ export default {
   external: [
     'vue',
     'vue-router',
-    'vue-property-decorator',
     'ant-design-vue',
     'moment',
     'uuid',

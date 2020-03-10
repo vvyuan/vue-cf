@@ -38,4 +38,4 @@ if (typeof window !== 'undefined' && window.Vue) {
   console.log('auto install', components);
   install(window.Vue);
 }
-export default {install}
+export default {install};
