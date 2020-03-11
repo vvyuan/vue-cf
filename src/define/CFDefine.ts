@@ -119,7 +119,9 @@ export abstract class CFConfig<T extends CFDataBase> {
       type: 'primary',
       onClick: (router, cfConfig, view, form, selectedRecords, record) => {
         if(cfConfig.inlineForm) {
-          view && view.createForInlineForm();
+          form && form.save().then(()=>{
+            view && view.resetForInlineForm();
+          });
         } else {
           router.push(router.currentRoute.path + "/create")
         }
@@ -130,11 +132,7 @@ export abstract class CFConfig<T extends CFDataBase> {
       position: [CFButtonPosition.tableRowOperations],
       icon: 'edit',
       onClick: (router, cfConfig, view, form, selectedRecords, record) => {
-        if(cfConfig.inlineForm) {
-          view && view.loadDataForForm(record.id);
-        } else {
-          router.push(router.currentRoute.path + "/edit?id=" + record.id)
-        }
+        router.push(router.currentRoute.path + "/edit?id=" + record.id)
       }
     },
     delete: {

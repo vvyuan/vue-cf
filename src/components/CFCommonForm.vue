@@ -257,20 +257,22 @@
       },
       save(e, otherData) {
         e && e.preventDefault();
-        this.form.validateFields((err, rawValues) => {
-          if (!err) {
-            let translatedValues = {};
-            for(let field of this.cfConfig.fieldList) {
-              if(field.inForm) {
-                translatedValues[field.name] = field.inForm.translateResult(rawValues[field.name])
+        return new Promise(resolve => {
+          this.form.validateFields((err, rawValues) => {
+            if (!err) {
+              let translatedValues = {};
+              for(let field of this.cfConfig.fieldList) {
+                if(field.inForm) {
+                  translatedValues[field.name] = field.inForm.translateResult(rawValues[field.name])
+                }
               }
+              console.log('Received values of form: ', rawValues, translatedValues);
+              let hide = this.$message.loading('正在保存，请稍候...', 0);
+              let handle = this.id ? this.cfConfig.updateOne({id: this.id, ...translatedValues, ...otherData}) : this.cfConfig.createOne({...translatedValues, ...otherData});
+              resolve(handle.then(this.onSaved).catch(e=>{ this.$message.error(e.message || e) }).finally(hide))
             }
-            console.log('Received values of form: ', rawValues, translatedValues);
-            let hide = this.$message.loading('正在保存，请稍候...', 0);
-            let handle = this.id ? this.cfConfig.updateOne({id: this.id, ...translatedValues, ...otherData}) : this.cfConfig.createOne({...translatedValues, ...otherData});
-            handle.then(this.onSaved).catch(e=>{ this.$message.error(e.message || e) }).finally(hide)
-          }
-        });
+          });
+        })
       },
       onSaved() {
         this.$emit('saved')

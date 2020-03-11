@@ -527,7 +527,9 @@ class CFConfig {
                 type: 'primary',
                 onClick: (router, cfConfig, view, form, selectedRecords, record) => {
                     if (cfConfig.inlineForm) {
-                        view && view.createForInlineForm();
+                        form && form.save().then(() => {
+                            view && view.resetForInlineForm();
+                        });
                     }
                     else {
                         router.push(router.currentRoute.path + "/create");
@@ -539,12 +541,7 @@ class CFConfig {
                 position: [CFButtonPosition.tableRowOperations],
                 icon: 'edit',
                 onClick: (router, cfConfig, view, form, selectedRecords, record) => {
-                    if (cfConfig.inlineForm) {
-                        view && view.loadDataForForm(record.id);
-                    }
-                    else {
-                        router.push(router.currentRoute.path + "/edit?id=" + record.id);
-                    }
+                    router.push(router.currentRoute.path + "/edit?id=" + record.id);
                 }
             },
             delete: {
@@ -1200,20 +1197,22 @@ staticRenderFns: [],
       },
       save(e, otherData) {
         e && e.preventDefault();
-        this.form.validateFields((err, rawValues) => {
-          if (!err) {
-            let translatedValues = {};
-            for(let field of this.cfConfig.fieldList) {
-              if(field.inForm) {
-                translatedValues[field.name] = field.inForm.translateResult(rawValues[field.name]);
+        return new Promise(resolve => {
+          this.form.validateFields((err, rawValues) => {
+            if (!err) {
+              let translatedValues = {};
+              for(let field of this.cfConfig.fieldList) {
+                if(field.inForm) {
+                  translatedValues[field.name] = field.inForm.translateResult(rawValues[field.name]);
+                }
               }
+              console.log('Received values of form: ', rawValues, translatedValues);
+              let hide = this.$message.loading('正在保存，请稍候...', 0);
+              let handle = this.id ? this.cfConfig.updateOne({id: this.id, ...translatedValues, ...otherData}) : this.cfConfig.createOne({...translatedValues, ...otherData});
+              resolve(handle.then(this.onSaved).catch(e=>{ this.$message.error(e.message || e); }).finally(hide));
             }
-            console.log('Received values of form: ', rawValues, translatedValues);
-            let hide = this.$message.loading('正在保存，请稍候...', 0);
-            let handle = this.id ? this.cfConfig.updateOne({id: this.id, ...translatedValues, ...otherData}) : this.cfConfig.createOne({...translatedValues, ...otherData});
-            handle.then(this.onSaved).catch(e=>{ this.$message.error(e.message || e); }).finally(hide);
-          }
-        });
+          });
+        })
       },
       onSaved() {
         this.$emit('saved');
@@ -1262,7 +1261,7 @@ staticRenderFns: [],
   };
 
 var CFCommonView = {
-render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"cf-common-view-container"},[_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.cfConfig),expression:"cfConfig"}]},[_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.cfConfig && _vm.cfConfig.inlineForm),expression:"cfConfig && cfConfig.inlineForm"}]},[_c('a-divider',{directives:[{name:"show",rawName:"v-show",value:(_vm.cfConfig && _vm.cfConfig.pageTitle),expression:"cfConfig && cfConfig.pageTitle"}]},[_vm._v(_vm._s(_vm.cfConfig && _vm.cfConfig.pageTitle))]),_vm._v(" "),_c('div',{staticStyle:{"display":"flex","margin-bottom":"16px","align-items":"center"}},[_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-start"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineHeaderLeft : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"center"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineHeaderCenter : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-end"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineHeaderRight : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2)]),_vm._v(" "),(_vm.cfConfig && _vm.cfConfig.pageTitle)?_c('a-divider',{staticStyle:{"margin":"8px 0 20px 0"}}):_vm._e(),_vm._v(" "),_c('CFCommonForm',{ref:"form",attrs:{"cfConfig":_vm.cfConfig,"id":_vm.formId},on:{"on-saved":_vm.onFormSaved}}),_vm._v(" "),_c('div',{staticStyle:{"display":"flex"}},[_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-start"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineFooterLeft : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"center"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineFooterCenter : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-end"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineFooterRight : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2)]),_vm._v(" "),_c('a-divider')],1),_vm._v(" "),(_vm.checkPathIsCurView() && _vm.cfConfig && _vm.cfConfig.tablePrintTemplate)?_c(_vm.cfConfig.tablePrintTemplate,{tag:"component",attrs:{"cfConfig":_vm.cfConfig}}):_vm._e(),_vm._v(" "),_c('div',{staticStyle:{"display":"flex","justify-content":"space-between","margin-bottom":"16px"}},[_c('div',{staticClass:"buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.tableHeaderLeft : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.tableHeaderRight : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]}),_vm._v(" "),_c('a-button',{attrs:{"hidden":_vm.filters.length === 0,"icon":"filter"},on:{"click":function($event){_vm.openFilter=!_vm.openFilter;}}},[_vm._v("筛选")])],2)]),_vm._v(" "),_c('form',{ref:"filterForm",class:("filter-container " + (_vm.openFilterEx ? 'active' : '')),attrs:{"form":"filterForm","action":"./"},on:{"submit":function($event){$event.stopPropagation();$event.preventDefault();return _vm.submitFilter($event)}}},[_c('div',{staticStyle:{"display":"flex","padding":"4px 10px","align-items":"center","justify-content":"space-between","border-bottom":"solid 1px #77d0ea","background":"#ecfdff"}},[_c('div',[_vm._v("筛选")]),_vm._v(" "),_c('div',[_c('a-button',{attrs:{"size":"small","html-type":"reset"},on:{"click":_vm.resetFilter}},[_vm._v("重置")]),_vm._v(" "),_c('a-button',{staticStyle:{"margin-left":"8px"},attrs:{"size":"small","html-type":"submit"}},[_vm._v("搜索")])],1)]),_vm._v(" "),_c('div',{staticClass:"content"},[_c('a-row',[_vm._l((_vm.filters),function(filter){return [_c('a-col',{key:filter.name,staticStyle:{"display":"flex","align-items":"center","padding":"16px 16px 0 16px"},attrs:{"xs":24,"sm":24,"md":12,"lg":8,"xl":8,"xxl":6}},[_c('div',{staticStyle:{"min-width":"6em","max-width":"40%"}},[_vm._v(_vm._s(filter.title)+"：")]),_vm._v(" "),_c('div',{staticStyle:{"flex":"1"}},[(filter.inForm instanceof _vm.Field.FieldWithDict)?[_c('a-select',{staticStyle:{"width":"100%"},attrs:{"name":filter.name,"placeholder":filter.inForm.placeholder,"defaultValue":_vm.$route.query[filter.name],"options":[{value: '', label: '无'}].concat(filter.inForm.options)},on:{"change":function (value){ return _vm.filterChange(filter.name, value); }}})]:(filter.inForm instanceof _vm.Field.DateFieldBase)?[_c('a-date-picker',{staticStyle:{"width":"100%"},attrs:{"name":filter.name,"placeholder":filter.inForm.placeholder,"defaultValue":_vm.$route.query[filter.name] ? _vm.moment(_vm.$route.query[filter.name], filter.inForm.format) : null},on:{"change":function (moment){ return _vm.filterChange(filter.name, moment ? moment.format(filter.inForm.format) : ''); }}})]:[_c('a-input',{staticStyle:{"width":"100%"},attrs:{"name":filter.name,"placeholder":filter.inForm.placeholder,"defaultValue":_vm.$route.query[filter.name]},on:{"change":function (e){ return _vm.filterChange(filter.name, e.target.value); }}})]],2)])]})],2)],1)]),_vm._v(" "),_c('div',[_c('a-table',{attrs:{"columns":_vm.columnsData.columns,"rowSelection":_vm.cfConfig && _vm.cfConfig.enableSelect ? {selectedRowKeys: _vm.selectedRowKeys, onChange: _vm.onSelectChange} : undefined,"rowKey":"id","dataSource":_vm.list,"pagination":_vm.pagination,"loading":_vm.loading,"scroll":_vm.columnsData.tableScrollWidth ? { x: _vm.columnsData.tableScrollWidth } : undefined},on:{"change":_vm.handleTableChange},scopedSlots:_vm._u([{key:"operation",fn:function(text, record){return [_c('div',{staticClass:"operation buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.tableRowOperations : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick, record)}}},[_vm._v(_vm._s(button.title))])]})],2)]}}])}),_vm._v(" "),_c('router-view')],1)],1),_vm._v(" "),_c('div',{directives:[{name:"show",rawName:"v-show",value:(!_vm.cfConfig),expression:"!cfConfig"}]},[_c('h5',[_vm._v(_vm._s(_vm.title))]),_vm._v(" "),_c('a-alert',{attrs:{"message":"[CFCommonView:props] cfConfig无效","type":"error"}})],1)])},
+render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"cf-common-view-container"},[_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.cfConfig),expression:"cfConfig"}]},[_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.cfConfig && _vm.cfConfig.inlineForm),expression:"cfConfig && cfConfig.inlineForm"}]},[_c('a-divider',{directives:[{name:"show",rawName:"v-show",value:(_vm.cfConfig && _vm.cfConfig.pageTitle),expression:"cfConfig && cfConfig.pageTitle"}]},[_vm._v(_vm._s(_vm.cfConfig && _vm.cfConfig.pageTitle))]),_vm._v(" "),_c('div',{staticStyle:{"display":"flex","margin-bottom":"16px","align-items":"center"}},[_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-start"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineHeaderLeft : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"center"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineHeaderCenter : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-end"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineHeaderRight : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2)]),_vm._v(" "),(_vm.cfConfig && _vm.cfConfig.pageTitle)?_c('a-divider',{staticStyle:{"margin":"8px 0 20px 0"}}):_vm._e(),_vm._v(" "),_c('CFCommonForm',{ref:"form",attrs:{"cfConfig":_vm.cfConfig,"id":_vm.formId},on:{"saved":_vm.onFormSaved}}),_vm._v(" "),_c('div',{staticStyle:{"display":"flex"}},[_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-start"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineFooterLeft : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"center"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineFooterCenter : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-end"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineFooterRight : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2)]),_vm._v(" "),_c('a-divider')],1),_vm._v(" "),(_vm.checkPathIsCurView() && _vm.cfConfig && _vm.cfConfig.tablePrintTemplate)?_c(_vm.cfConfig.tablePrintTemplate,{tag:"component",attrs:{"cfConfig":_vm.cfConfig}}):_vm._e(),_vm._v(" "),_c('div',{staticStyle:{"display":"flex","justify-content":"space-between","margin-bottom":"16px"}},[_c('div',{staticClass:"buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.tableHeaderLeft : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.tableHeaderRight : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]}),_vm._v(" "),_c('a-button',{attrs:{"hidden":_vm.filters.length === 0,"icon":"filter"},on:{"click":function($event){_vm.openFilter=!_vm.openFilter;}}},[_vm._v("筛选")])],2)]),_vm._v(" "),_c('form',{ref:"filterForm",class:("filter-container " + (_vm.openFilterEx ? 'active' : '')),attrs:{"form":"filterForm","action":"./"},on:{"submit":function($event){$event.stopPropagation();$event.preventDefault();return _vm.submitFilter($event)}}},[_c('div',{staticStyle:{"display":"flex","padding":"4px 10px","align-items":"center","justify-content":"space-between","border-bottom":"solid 1px #77d0ea","background":"#ecfdff"}},[_c('div',[_vm._v("筛选")]),_vm._v(" "),_c('div',[_c('a-button',{attrs:{"size":"small","html-type":"reset"},on:{"click":_vm.resetFilter}},[_vm._v("重置")]),_vm._v(" "),_c('a-button',{staticStyle:{"margin-left":"8px"},attrs:{"size":"small","html-type":"submit"}},[_vm._v("搜索")])],1)]),_vm._v(" "),_c('div',{staticClass:"content"},[_c('a-row',[_vm._l((_vm.filters),function(filter){return [_c('a-col',{key:filter.name,staticStyle:{"display":"flex","align-items":"center","padding":"16px 16px 0 16px"},attrs:{"xs":24,"sm":24,"md":12,"lg":8,"xl":8,"xxl":6}},[_c('div',{staticStyle:{"min-width":"6em","max-width":"40%"}},[_vm._v(_vm._s(filter.title)+"：")]),_vm._v(" "),_c('div',{staticStyle:{"flex":"1"}},[(filter.inForm instanceof _vm.Field.FieldWithDict)?[_c('a-select',{staticStyle:{"width":"100%"},attrs:{"name":filter.name,"placeholder":filter.inForm.placeholder,"defaultValue":_vm.$route.query[filter.name],"options":[{value: '', label: '无'}].concat(filter.inForm.options)},on:{"change":function (value){ return _vm.filterChange(filter.name, value); }}})]:(filter.inForm instanceof _vm.Field.DateFieldBase)?[_c('a-date-picker',{staticStyle:{"width":"100%"},attrs:{"name":filter.name,"placeholder":filter.inForm.placeholder,"defaultValue":_vm.$route.query[filter.name] ? _vm.moment(_vm.$route.query[filter.name], filter.inForm.format) : null},on:{"change":function (moment){ return _vm.filterChange(filter.name, moment ? moment.format(filter.inForm.format) : ''); }}})]:[_c('a-input',{staticStyle:{"width":"100%"},attrs:{"name":filter.name,"placeholder":filter.inForm.placeholder,"defaultValue":_vm.$route.query[filter.name]},on:{"change":function (e){ return _vm.filterChange(filter.name, e.target.value); }}})]],2)])]})],2)],1)]),_vm._v(" "),_c('div',[_c('a-table',{attrs:{"columns":_vm.columnsData.columns,"rowSelection":_vm.cfConfig && _vm.cfConfig.enableSelect ? {selectedRowKeys: _vm.selectedRowKeys, onChange: _vm.onSelectChange} : undefined,"rowKey":"id","dataSource":_vm.list,"pagination":_vm.pagination,"loading":_vm.loading,"scroll":_vm.columnsData.tableScrollWidth ? { x: _vm.columnsData.tableScrollWidth } : undefined},on:{"change":_vm.handleTableChange},scopedSlots:_vm._u([{key:"operation",fn:function(text, record){return [_c('div',{staticClass:"operation buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.tableRowOperations : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick, record)}}},[_vm._v(_vm._s(button.title))])]})],2)]}}])}),_vm._v(" "),_c('router-view')],1)],1),_vm._v(" "),_c('div',{directives:[{name:"show",rawName:"v-show",value:(!_vm.cfConfig),expression:"!cfConfig"}]},[_c('h5',[_vm._v(_vm._s(_vm.title))]),_vm._v(" "),_c('a-alert',{attrs:{"message":"[CFCommonView:props] cfConfig无效","type":"error"}})],1)])},
 staticRenderFns: [],
     name: 'CFCommonView',
     components: {CFCommonForm},
@@ -1410,7 +1409,7 @@ staticRenderFns: [],
       },
       reload() {
         this.$nextTick(()=>{
-          this.getList().then(this.createForInlineForm);
+          this.getList().then(this.resetForInlineForm);
         });
       },
       loadDict() {
@@ -1511,7 +1510,7 @@ staticRenderFns: [],
           });
         });
       },
-      createForInlineForm() {
+      resetForInlineForm() {
         this.formId = undefined;
 
         this.$nextTick(()=> {
@@ -1519,7 +1518,7 @@ staticRenderFns: [],
         });
       },
       onFormSaved() {
-        this.createForInlineForm();
+        this.resetForInlineForm();
         this.reload();
       },
     }
@@ -1676,7 +1675,7 @@ staticRenderFns: [],
       },
       reload() {
         this.$nextTick(()=>{
-          this.getList().then(this.createForInlineForm);
+          this.getList().then(this.resetForInlineForm);
         });
       },
       loadDict() {
@@ -1777,14 +1776,14 @@ staticRenderFns: [],
           });
         });
       },
-      createForInlineForm() {
+      resetForInlineForm() {
         this.formId = undefined;
         this.$nextTick(()=> {
           this.$refs.form && this.$refs.form.loadData();
         });
       },
       onFormSaved() {
-        this.createForInlineForm();
+        this.resetForInlineForm();
         this.reload();
       },
     }

@@ -21,7 +21,7 @@
           </div>
         </div>
         <a-divider v-if="cfConfig && cfConfig.pageTitle" style="margin: 8px 0 20px 0;"/>
-        <CFCommonForm ref="form" :cfConfig="cfConfig" :id="formId" @on-saved="onFormSaved"/>
+        <CFCommonForm ref="form" :cfConfig="cfConfig" :id="formId" @saved="onFormSaved"/>
         <div style="display: flex;">
           <div class="buttons" style="display: flex;flex: 1;align-items: center;justify-content: flex-start;">
             <template v-for="button in (cfConfig ? cfConfig.realButtons.inlineFooterLeft : [])">
@@ -286,7 +286,7 @@
       },
       reload() {
         this.$nextTick(()=>{
-          this.getList().then(this.createForInlineForm);
+          this.getList().then(this.resetForInlineForm);
         });
       },
       loadDict() {
@@ -387,7 +387,7 @@
           });
         })
       },
-      createForInlineForm() {
+      resetForInlineForm() {
         this.formId = undefined;
 
         this.$nextTick(()=> {
@@ -395,7 +395,7 @@
         })
       },
       onFormSaved() {
-        this.createForInlineForm();
+        this.resetForInlineForm();
         this.reload();
       },
     }

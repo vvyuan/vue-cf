@@ -288,7 +288,7 @@
       },
       reload() {
         this.$nextTick(()=>{
-          this.getList().then(this.createForInlineForm);
+          this.getList().then(this.resetForInlineForm);
         });
       },
       loadDict() {
@@ -389,14 +389,14 @@
           });
         })
       },
-      createForInlineForm() {
+      resetForInlineForm() {
         this.formId = undefined;
         this.$nextTick(()=> {
           this.$refs.form && this.$refs.form.loadData();
         })
       },
       onFormSaved() {
-        this.createForInlineForm();
+        this.resetForInlineForm();
         this.reload();
       },
     }

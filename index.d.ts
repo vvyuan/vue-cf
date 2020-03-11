@@ -306,7 +306,7 @@ export interface ICFCommonView {
   reload(): void;
   deleteRecord(record: any): void;
   // 清空当前inlineForm数据，清除内部id，可用于创建新数据
-  createForInlineForm(): void;
+  resetForInlineForm(): void;
   // 根据id加载数据到inlineForm
   loadDataForForm(id: number | string): void;
 }
@@ -339,7 +339,7 @@ export type CFMenuUnit<T extends CFDataBase> = {
 export function menuCreator(): void
 
 export class CFCommonView extends Vue implements ICFCommonView {
-  createForInlineForm(): void;
+  resetForInlineForm(): void;
   deleteRecord(record: any): void;
   loadDataForForm(id: number | string): void;
   reload(): void;

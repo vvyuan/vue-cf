@@ -1,3 +1,22 @@
+.cf-common-form-drawer .ant-drawer-wrapper-body {
+  display: flex;
+  flex-direction: column;
+}
+.cf-common-form-drawer .ant-drawer-body {
+  flex: 1;
+  overflow: auto;
+}
+.cf-common-form-drawer .footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 0 20px;
+  border-top: solid #ddd 1px;
+  justify-content: space-between;
+}
+.cf-common-form-drawer .footer-placeholder {
+  height: 10px;
+}
 .cf-common-form-container .form-item .input {
   width: 100% !important;
 }
@@ -45,23 +64,4 @@
 }
 .cf-common-view-container .filter-container.active {
   display: block;
-}
-.cf-common-form-drawer .ant-drawer-wrapper-body {
-  display: flex;
-  flex-direction: column;
-}
-.cf-common-form-drawer .ant-drawer-body {
-  flex: 1;
-  overflow: auto;
-}
-.cf-common-form-drawer .footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  padding: 0 20px;
-  border-top: solid #ddd 1px;
-  justify-content: space-between;
-}
-.cf-common-form-drawer .footer-placeholder {
-  height: 10px;
 }
