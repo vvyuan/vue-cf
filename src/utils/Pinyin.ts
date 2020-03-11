@@ -42,20 +42,20 @@ export default class Pinyin {
   getCamelChars(str?: string): string{
     if(!str) { return '' }
     if(!this.timer) {
-      console.time('getCamelChars time');
+      // console.time('getCamelChars time');
     } else {
       clearTimeout(this.timer);
     }
     this.timer = setTimeout(()=>{
       this.timer = 0;
-      console.timeEnd('getCamelChars time');
+      // console.timeEnd('getCamelChars time');
     }, 100);
     let cacheResult = this.cacheFirstDict[str];
     if(cacheResult) {
-      console.log('getCamelChars cache');
+      // console.log('getCamelChars cache');
       return cacheResult
     }
-    console.log('getCamelChars init');
+    // console.log('getCamelChars init');
     let chars = []; // 保存中间结果的数组
     for(let i = 0, len = str.length; i < len; i++){
       // 获得unicode码
