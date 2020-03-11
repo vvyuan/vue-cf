@@ -85,7 +85,7 @@
       left: 0;
       padding: 0 20px;
       border-top: solid #ddd 1px;
-      justify-content: space-between;
+      justify-content: space-between !important;
     }
     .footer-placeholder {
       height: 10px;
