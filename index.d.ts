@@ -229,7 +229,7 @@ export type CFButton = {
    * @param selectedRecords 已选中的记录，仅在CFButtonPosition.tableHeader中生效
    * @param record 当前记录，仅在CFButtonPosition.tableRowOperations中生效
    */
-  onClick(router: VueRouter, cfConfig: any, view?: ICFCommonView, form?: ICFCommonForm, selectedRecords?: any[], record?: any): void,
+  onClick(router: VueRouter, cfConfig: any, view?: ICFView, form?: ICFForm, selectedRecords?: any[], record?: any): void,
   /**
    * table中选中行事件的响应
    * @param selectedRecords
@@ -295,14 +295,14 @@ export abstract class CFConfig<T extends CFDataBase> {
 /**
  * ViewDefine
  */
-export interface ICFCommonForm {
+export interface ICFForm {
   cancel(): void;
   loadData(): void;
   save(e?: Event, otherData?: any): void;
   form: WrappedFormUtils;
 }
 
-export interface ICFCommonView {
+export interface ICFView {
   reload(): void;
   deleteRecord(record: any): void;
   // 清空当前inlineForm数据，清除内部id，可用于创建新数据
@@ -338,22 +338,22 @@ export type CFMenuUnit<T extends CFDataBase> = {
 
 export function menuCreator(): void
 
-export class CFCommonView extends Vue implements ICFCommonView {
+export class CFView extends Vue implements ICFView {
   resetForInlineForm(): void;
   deleteRecord(record: any): void;
   loadDataForForm(id: number | string): void;
   reload(): void;
 }
-export class CFCommonForm extends Vue implements ICFCommonForm {
+export class CFForm extends Vue implements ICFForm {
   form: WrappedFormUtils;
   cancel(): void;
   loadData(): void;
   save(e?: Event, otherData?: any): void;
 }
 
-export class CFCommonParentView extends Vue{}
-export class CFCommonFormWithDrawer extends Vue{}
-export class CFCommonViewWithDrawer extends Vue{}
+export class CFParentView extends Vue{}
+export class CFFormWithDrawer extends Vue{}
+export class CFViewWithDrawer extends Vue{}
 
 declare let defaultExport: PluginFunction<any>;
 export default defaultExport

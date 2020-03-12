@@ -13,7 +13,7 @@ if(fs.existsSync(cssTarget)) {
 }
 export default {
   input: 'src/index.ts',
-  // input: 'src/components/CFCommonForm.vue',
+  // input: 'src/components/CFForm.vue',
   output: {
     file: 'index.js',
     name: 'index.js',

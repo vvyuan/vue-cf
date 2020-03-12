@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="cf-common-view-container">
     <div v-show="cfConfig">
       <div v-show="cfConfig && cfConfig.inlineForm">
         <a-divider v-show="cfConfig && cfConfig.pageTitle">{{cfConfig && cfConfig.pageTitle}}</a-divider>
@@ -21,7 +21,7 @@
           </div>
         </div>
         <a-divider v-if="cfConfig && cfConfig.pageTitle" style="margin: 8px 0 20px 0;"/>
-        <CFCommonForm ref="form" :cfConfig="cfConfig" :id="formId" @on-saved="onFormSaved"/>
+        <CFForm ref="form" :cfConfig="cfConfig" :id="formId" @saved="onFormSaved"/>
         <div style="display: flex;">
           <div class="buttons" style="display: flex;flex: 1;align-items: center;justify-content: flex-start;">
             <template v-for="button in (cfConfig ? cfConfig.realButtons.inlineFooterLeft : [])">
@@ -127,21 +127,21 @@
     </div>
     <div v-show="!cfConfig">
       <h5>{{title}}</h5>
-      <a-alert message="[CFCommonView:props] cfConfig无效" type="error"/>
+      <a-alert message="[CFView:props] cfConfig无效" type="error"/>
     </div>
   </div>
 </template>
 
 <script>
+  import { objectToQueryString } from '../utils/util'
   import * as Field from '../define/FieldDefine'
-  import moment from 'moment';
-  import CFCommonForm from './CFCommonForm';
   import {FieldPosition} from '../define/FieldUtil'
-  import {objectToQueryString} from "../utils/util";
+  import moment from 'moment';
+  import CFForm from './CFForm.vue';
 
   export default {
-    name: 'CFCommonViewWithDrawer',
-    components: {CFCommonForm},
+    name: 'CFView',
+    components: {CFForm},
     props: {
       title: Array,
       cfConfig: null,
@@ -283,8 +283,6 @@
       checkPathIsCurView() {
         // props.path在创建菜单时自动生成
         return this.$route.matched.length === 0 || this.$route.matched[this.$route.matched.length - 1].path === this.path
-        // meta在创建菜单时自动生成
-        // return this.$route.meta && this.$route.meta.type === 'view'
       },
       reload() {
         this.$nextTick(()=>{
@@ -391,6 +389,7 @@
       },
       resetForInlineForm() {
         this.formId = undefined;
+
         this.$nextTick(()=> {
           this.$refs.form && this.$refs.form.loadData();
         })
@@ -402,3 +401,35 @@
     }
   }
 </script>
+
+<style lang="less">
+  .cf-common-view-container {
+    .operation {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .buttons {
+      > * {
+        margin-left: 8px;
+      }
+      > *:first-child {
+        margin-left: 0;
+      }
+    }
+    .filter-container {
+      display: none;
+      margin: 16px 0;
+      border: solid #77d0ea 1px;
+      border-radius: 5px;
+      overflow: hidden;
+      .content {
+        display: block;
+        padding-bottom: 16px;
+      }
+    }
+    .filter-container.active {
+      display: block;
+    }
+  }
+</style>

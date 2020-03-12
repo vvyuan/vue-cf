@@ -222,7 +222,7 @@
   import { filterOption, cascaderFilterOption } from '../utils/util';
 
   export default {
-    name: 'CFCommonForm',
+    name: 'CFForm',
     props: {
       id: null,
       cfConfig: CFConfig,

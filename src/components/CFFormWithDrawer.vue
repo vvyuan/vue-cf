@@ -21,7 +21,7 @@
         </div>
       </template>
       <div>
-        <CFCommonForm ref="form" :id="id" @saved="onClose" :cfConfig="cfConfig" :inlineForm="false" :initFormValues="initFormValues"/>
+        <CFForm ref="form" :id="id" @saved="onClose" :cfConfig="cfConfig" :inlineForm="false" :initFormValues="initFormValues"/>
       </div>
     </a-drawer>
   </div>
@@ -29,10 +29,10 @@
 
 <script>
   import {CFConfig} from "../define/CFDefine";
-  import CFCommonForm from "./CFCommonForm.vue";
+  import CFForm from "./CFForm.vue";
   export default {
-    name: 'CFCommonFormWithDrawer',
-    components: {CFCommonForm},
+    name: 'CFFormWithDrawer',
+    components: {CFForm},
     props: {
       id: null,
       title: Array,

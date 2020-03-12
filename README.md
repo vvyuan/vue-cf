@@ -7,7 +7,7 @@ npm i --save vue-cf
 ```
 
 ## 使用
-vue-cf提供了一套通用view和form组件，CFCommonView和CFCommonForm以及基于二者的组件。
+vue-cf提供了一套通用view和form组件，CFView和CFForm以及基于二者的组件。
 所有组件使用一套配置文件CFConfig来组织组件的表现内容和表现形式
 
 ## 命令

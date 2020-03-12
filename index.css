@@ -1,27 +1,21 @@
-.cf-common-view-container .operation {
+.cf-common-form-drawer .ant-drawer-wrapper-body {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
 }
-.cf-common-view-container .buttons > * {
-  margin-left: 8px;
+.cf-common-form-drawer .ant-drawer-body {
+  flex: 1;
+  overflow: auto;
 }
-.cf-common-view-container .buttons > *:first-child {
-  margin-left: 0;
+.cf-common-form-drawer .footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 0 20px;
+  border-top: solid #ddd 1px;
+  justify-content: space-between !important;
 }
-.cf-common-view-container .filter-container {
-  display: none;
-  margin: 16px 0;
-  border: solid #77d0ea 1px;
-  border-radius: 5px;
-  overflow: hidden;
-}
-.cf-common-view-container .filter-container .content {
-  display: block;
-  padding-bottom: 16px;
-}
-.cf-common-view-container .filter-container.active {
-  display: block;
+.cf-common-form-drawer .footer-placeholder {
+  height: 10px;
 }
 .cf-common-form-container .form-item .input {
   width: 100% !important;
@@ -46,22 +40,28 @@
 .cf-common-form-container .footer-placeholder {
   height: 0;
 }
-.cf-common-form-drawer .ant-drawer-wrapper-body {
+.cf-common-view-container .operation {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
-.cf-common-form-drawer .ant-drawer-body {
-  flex: 1;
-  overflow: auto;
+.cf-common-view-container .buttons > * {
+  margin-left: 8px;
 }
-.cf-common-form-drawer .footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  padding: 0 20px;
-  border-top: solid #ddd 1px;
-  justify-content: space-between !important;
+.cf-common-view-container .buttons > *:first-child {
+  margin-left: 0;
 }
-.cf-common-form-drawer .footer-placeholder {
-  height: 10px;
+.cf-common-view-container .filter-container {
+  display: none;
+  margin: 16px 0;
+  border: solid #77d0ea 1px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.cf-common-view-container .filter-container .content {
+  display: block;
+  padding-bottom: 16px;
+}
+.cf-common-view-container .filter-container.active {
+  display: block;
 }

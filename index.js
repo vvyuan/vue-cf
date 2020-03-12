@@ -1022,22 +1022,20 @@ class Pinyin {
         if (!str) {
             return '';
         }
-        if (!this.timer) {
-            console.time('getCamelChars time');
-        }
+        if (!this.timer) ;
         else {
             clearTimeout(this.timer);
         }
         this.timer = setTimeout(() => {
             this.timer = 0;
-            console.timeEnd('getCamelChars time');
+            // console.timeEnd('getCamelChars time');
         }, 100);
         let cacheResult = this.cacheFirstDict[str];
         if (cacheResult) {
-            console.log('getCamelChars cache');
+            // console.log('getCamelChars cache');
             return cacheResult;
         }
-        console.log('getCamelChars init');
+        // console.log('getCamelChars init');
         let chars = []; // 保存中间结果的数组
         for (let i = 0, len = str.length; i < len; i++) {
             // 获得unicode码
@@ -1159,10 +1157,10 @@ function objectToQueryString(obj) {
     }
 }
 
-var CFCommonForm = {
+var CFForm = {
 render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"cf-common-form-container"},[(_vm.cfConfig && _vm.cfConfig.formPrintTemplate)?_c(_vm.cfConfig.formPrintTemplate,{tag:"component"}):_vm._e(),_vm._v(" "),_c('div',[_c('a-form',{ref:"form",attrs:{"form":_vm.form},on:{"submit":_vm.save}},[_c('a-row',{staticClass:"content common-form-content"},[_vm._l((_vm.fieldList),function(field,index){return [(field.inForm.position & _vm.FieldPosition.form)?_c('a-col',{key:index,attrs:{"xs":_vm._inlineForm ? 24 : 24,"sm":_vm._inlineForm ? 24 : 24,"md":_vm._inlineForm ? 12 : 24,"lg":_vm._inlineForm ? 12 : 24,"xl":_vm._inlineForm ? 8 : 24,"xxl":_vm._inlineForm ? 6 : 24}},[_c('a-form-item',{staticClass:"form-item",attrs:{"disabled":_vm.readonly,"label-col":{span: 5},"wrapper-col":{span: 19},"label":field.title}},[(field.inForm instanceof _vm.FieldDefine.TextField)?[_c('a-input',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:_vm._e(),_vm._v(" "),(field.inForm instanceof _vm.FieldDefine.ReadonlyField || field.inForm instanceof _vm.FieldDefine.ReadonlyFieldWithDict)?[_c('a-input',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name]),expression:"[field.name]"}],staticClass:"input",attrs:{"disabled":true}})]:_vm._e(),_vm._v(" "),(field.inForm instanceof _vm.FieldDefine.PasswordField)?[_c('a-input-password',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder}})]:_vm._e(),_vm._v(" "),(field.inForm instanceof _vm.FieldDefine.TextareaField)?[_c('a-textarea',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"rows":field.inForm.rows,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.NumberField)?[_c('a-input-number',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"step":field.inForm.step,"max":field.inForm.max,"min":field.inForm.min,"formatter":field.inForm.formatter,"parser":field.inForm.parser,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.SingleSelectField)?[_c('a-select',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"showSearch":"","optionFilterProp":"children","filterOption":_vm.filterOption(),"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.MultipleSelectField)?[_c('a-select',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"mode":"multiple","showSearch":"","optionFilterProp":"children","filterOption":_vm.filterOption(),"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.TagField)?[_c('a-select',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"mode":"tags","showSearch":"","optionFilterProp":"children","filterOption":_vm.filterOption(),"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.CascaderField)?[_c('a-cascader',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"showSearch":field.inForm.needLoadData ? false : {filter: _vm.cascaderFilterOption()},"loadData":field.inForm.needLoadData ? field.inForm.loadData.bind(field.inForm) : undefined,"changeOnSelect":field.inForm.needLoadData,"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.RadioField)?[_c('a-radio-group',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.CheckboxField)?[_c('a-checkbox-group',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.DateTimeField)?[_c('a-date-picker',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"showTime":"","getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.DateField)?[_c('a-date-picker',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.TimeField)?[_c('a-time-picker',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:_vm._e()],2)],1):_vm._e()]})],2),_vm._v(" "),(!_vm._inlineForm)?[_c('div',{staticClass:"footer-placeholder"}),_vm._v(" "),_c('div',{staticClass:"footer"},[_c('div',{staticClass:"left-buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.drawerFooterLeft : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"right-buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.drawerFooterRight : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2)])]:_vm._e()],2)],1)],1)},
 staticRenderFns: [],
-    name: 'CFCommonForm',
+    name: 'CFForm',
     props: {
       id: null,
       cfConfig: CFConfig,
@@ -1260,11 +1258,11 @@ staticRenderFns: [],
     },
   };
 
-var CFCommonView = {
-render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"cf-common-view-container"},[_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.cfConfig),expression:"cfConfig"}]},[_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.cfConfig && _vm.cfConfig.inlineForm),expression:"cfConfig && cfConfig.inlineForm"}]},[_c('a-divider',{directives:[{name:"show",rawName:"v-show",value:(_vm.cfConfig && _vm.cfConfig.pageTitle),expression:"cfConfig && cfConfig.pageTitle"}]},[_vm._v(_vm._s(_vm.cfConfig && _vm.cfConfig.pageTitle))]),_vm._v(" "),_c('div',{staticStyle:{"display":"flex","margin-bottom":"16px","align-items":"center"}},[_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-start"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineHeaderLeft : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"center"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineHeaderCenter : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-end"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineHeaderRight : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2)]),_vm._v(" "),(_vm.cfConfig && _vm.cfConfig.pageTitle)?_c('a-divider',{staticStyle:{"margin":"8px 0 20px 0"}}):_vm._e(),_vm._v(" "),_c('CFCommonForm',{ref:"form",attrs:{"cfConfig":_vm.cfConfig,"id":_vm.formId},on:{"saved":_vm.onFormSaved}}),_vm._v(" "),_c('div',{staticStyle:{"display":"flex"}},[_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-start"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineFooterLeft : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"center"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineFooterCenter : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-end"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineFooterRight : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2)]),_vm._v(" "),_c('a-divider')],1),_vm._v(" "),(_vm.checkPathIsCurView() && _vm.cfConfig && _vm.cfConfig.tablePrintTemplate)?_c(_vm.cfConfig.tablePrintTemplate,{tag:"component",attrs:{"cfConfig":_vm.cfConfig}}):_vm._e(),_vm._v(" "),_c('div',{staticStyle:{"display":"flex","justify-content":"space-between","margin-bottom":"16px"}},[_c('div',{staticClass:"buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.tableHeaderLeft : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.tableHeaderRight : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]}),_vm._v(" "),_c('a-button',{attrs:{"hidden":_vm.filters.length === 0,"icon":"filter"},on:{"click":function($event){_vm.openFilter=!_vm.openFilter;}}},[_vm._v("筛选")])],2)]),_vm._v(" "),_c('form',{ref:"filterForm",class:("filter-container " + (_vm.openFilterEx ? 'active' : '')),attrs:{"form":"filterForm","action":"./"},on:{"submit":function($event){$event.stopPropagation();$event.preventDefault();return _vm.submitFilter($event)}}},[_c('div',{staticStyle:{"display":"flex","padding":"4px 10px","align-items":"center","justify-content":"space-between","border-bottom":"solid 1px #77d0ea","background":"#ecfdff"}},[_c('div',[_vm._v("筛选")]),_vm._v(" "),_c('div',[_c('a-button',{attrs:{"size":"small","html-type":"reset"},on:{"click":_vm.resetFilter}},[_vm._v("重置")]),_vm._v(" "),_c('a-button',{staticStyle:{"margin-left":"8px"},attrs:{"size":"small","html-type":"submit"}},[_vm._v("搜索")])],1)]),_vm._v(" "),_c('div',{staticClass:"content"},[_c('a-row',[_vm._l((_vm.filters),function(filter){return [_c('a-col',{key:filter.name,staticStyle:{"display":"flex","align-items":"center","padding":"16px 16px 0 16px"},attrs:{"xs":24,"sm":24,"md":12,"lg":8,"xl":8,"xxl":6}},[_c('div',{staticStyle:{"min-width":"6em","max-width":"40%"}},[_vm._v(_vm._s(filter.title)+"：")]),_vm._v(" "),_c('div',{staticStyle:{"flex":"1"}},[(filter.inForm instanceof _vm.Field.FieldWithDict)?[_c('a-select',{staticStyle:{"width":"100%"},attrs:{"name":filter.name,"placeholder":filter.inForm.placeholder,"defaultValue":_vm.$route.query[filter.name],"options":[{value: '', label: '无'}].concat(filter.inForm.options)},on:{"change":function (value){ return _vm.filterChange(filter.name, value); }}})]:(filter.inForm instanceof _vm.Field.DateFieldBase)?[_c('a-date-picker',{staticStyle:{"width":"100%"},attrs:{"name":filter.name,"placeholder":filter.inForm.placeholder,"defaultValue":_vm.$route.query[filter.name] ? _vm.moment(_vm.$route.query[filter.name], filter.inForm.format) : null},on:{"change":function (moment){ return _vm.filterChange(filter.name, moment ? moment.format(filter.inForm.format) : ''); }}})]:[_c('a-input',{staticStyle:{"width":"100%"},attrs:{"name":filter.name,"placeholder":filter.inForm.placeholder,"defaultValue":_vm.$route.query[filter.name]},on:{"change":function (e){ return _vm.filterChange(filter.name, e.target.value); }}})]],2)])]})],2)],1)]),_vm._v(" "),_c('div',[_c('a-table',{attrs:{"columns":_vm.columnsData.columns,"rowSelection":_vm.cfConfig && _vm.cfConfig.enableSelect ? {selectedRowKeys: _vm.selectedRowKeys, onChange: _vm.onSelectChange} : undefined,"rowKey":"id","dataSource":_vm.list,"pagination":_vm.pagination,"loading":_vm.loading,"scroll":_vm.columnsData.tableScrollWidth ? { x: _vm.columnsData.tableScrollWidth } : undefined},on:{"change":_vm.handleTableChange},scopedSlots:_vm._u([{key:"operation",fn:function(text, record){return [_c('div',{staticClass:"operation buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.tableRowOperations : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick, record)}}},[_vm._v(_vm._s(button.title))])]})],2)]}}])}),_vm._v(" "),_c('router-view')],1)],1),_vm._v(" "),_c('div',{directives:[{name:"show",rawName:"v-show",value:(!_vm.cfConfig),expression:"!cfConfig"}]},[_c('h5',[_vm._v(_vm._s(_vm.title))]),_vm._v(" "),_c('a-alert',{attrs:{"message":"[CFCommonView:props] cfConfig无效","type":"error"}})],1)])},
+var CFView = {
+render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"cf-common-view-container"},[_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.cfConfig),expression:"cfConfig"}]},[_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.cfConfig && _vm.cfConfig.inlineForm),expression:"cfConfig && cfConfig.inlineForm"}]},[_c('a-divider',{directives:[{name:"show",rawName:"v-show",value:(_vm.cfConfig && _vm.cfConfig.pageTitle),expression:"cfConfig && cfConfig.pageTitle"}]},[_vm._v(_vm._s(_vm.cfConfig && _vm.cfConfig.pageTitle))]),_vm._v(" "),_c('div',{staticStyle:{"display":"flex","margin-bottom":"16px","align-items":"center"}},[_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-start"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineHeaderLeft : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"center"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineHeaderCenter : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-end"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineHeaderRight : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2)]),_vm._v(" "),(_vm.cfConfig && _vm.cfConfig.pageTitle)?_c('a-divider',{staticStyle:{"margin":"8px 0 20px 0"}}):_vm._e(),_vm._v(" "),_c('CFForm',{ref:"form",attrs:{"cfConfig":_vm.cfConfig,"id":_vm.formId},on:{"saved":_vm.onFormSaved}}),_vm._v(" "),_c('div',{staticStyle:{"display":"flex"}},[_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-start"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineFooterLeft : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"center"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineFooterCenter : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-end"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineFooterRight : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2)]),_vm._v(" "),_c('a-divider')],1),_vm._v(" "),(_vm.checkPathIsCurView() && _vm.cfConfig && _vm.cfConfig.tablePrintTemplate)?_c(_vm.cfConfig.tablePrintTemplate,{tag:"component",attrs:{"cfConfig":_vm.cfConfig}}):_vm._e(),_vm._v(" "),_c('div',{staticStyle:{"display":"flex","justify-content":"space-between","margin-bottom":"16px"}},[_c('div',{staticClass:"buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.tableHeaderLeft : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.tableHeaderRight : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]}),_vm._v(" "),_c('a-button',{attrs:{"hidden":_vm.filters.length === 0,"icon":"filter"},on:{"click":function($event){_vm.openFilter=!_vm.openFilter;}}},[_vm._v("筛选")])],2)]),_vm._v(" "),_c('form',{ref:"filterForm",class:("filter-container " + (_vm.openFilterEx ? 'active' : '')),attrs:{"form":"filterForm","action":"./"},on:{"submit":function($event){$event.stopPropagation();$event.preventDefault();return _vm.submitFilter($event)}}},[_c('div',{staticStyle:{"display":"flex","padding":"4px 10px","align-items":"center","justify-content":"space-between","border-bottom":"solid 1px #77d0ea","background":"#ecfdff"}},[_c('div',[_vm._v("筛选")]),_vm._v(" "),_c('div',[_c('a-button',{attrs:{"size":"small","html-type":"reset"},on:{"click":_vm.resetFilter}},[_vm._v("重置")]),_vm._v(" "),_c('a-button',{staticStyle:{"margin-left":"8px"},attrs:{"size":"small","html-type":"submit"}},[_vm._v("搜索")])],1)]),_vm._v(" "),_c('div',{staticClass:"content"},[_c('a-row',[_vm._l((_vm.filters),function(filter){return [_c('a-col',{key:filter.name,staticStyle:{"display":"flex","align-items":"center","padding":"16px 16px 0 16px"},attrs:{"xs":24,"sm":24,"md":12,"lg":8,"xl":8,"xxl":6}},[_c('div',{staticStyle:{"min-width":"6em","max-width":"40%"}},[_vm._v(_vm._s(filter.title)+"：")]),_vm._v(" "),_c('div',{staticStyle:{"flex":"1"}},[(filter.inForm instanceof _vm.Field.FieldWithDict)?[_c('a-select',{staticStyle:{"width":"100%"},attrs:{"name":filter.name,"placeholder":filter.inForm.placeholder,"defaultValue":_vm.$route.query[filter.name],"options":[{value: '', label: '无'}].concat(filter.inForm.options)},on:{"change":function (value){ return _vm.filterChange(filter.name, value); }}})]:(filter.inForm instanceof _vm.Field.DateFieldBase)?[_c('a-date-picker',{staticStyle:{"width":"100%"},attrs:{"name":filter.name,"placeholder":filter.inForm.placeholder,"defaultValue":_vm.$route.query[filter.name] ? _vm.moment(_vm.$route.query[filter.name], filter.inForm.format) : null},on:{"change":function (moment){ return _vm.filterChange(filter.name, moment ? moment.format(filter.inForm.format) : ''); }}})]:[_c('a-input',{staticStyle:{"width":"100%"},attrs:{"name":filter.name,"placeholder":filter.inForm.placeholder,"defaultValue":_vm.$route.query[filter.name]},on:{"change":function (e){ return _vm.filterChange(filter.name, e.target.value); }}})]],2)])]})],2)],1)]),_vm._v(" "),_c('div',[_c('a-table',{attrs:{"columns":_vm.columnsData.columns,"rowSelection":_vm.cfConfig && _vm.cfConfig.enableSelect ? {selectedRowKeys: _vm.selectedRowKeys, onChange: _vm.onSelectChange} : undefined,"rowKey":"id","dataSource":_vm.list,"pagination":_vm.pagination,"loading":_vm.loading,"scroll":_vm.columnsData.tableScrollWidth ? { x: _vm.columnsData.tableScrollWidth } : undefined},on:{"change":_vm.handleTableChange},scopedSlots:_vm._u([{key:"operation",fn:function(text, record){return [_c('div',{staticClass:"operation buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.tableRowOperations : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick, record)}}},[_vm._v(_vm._s(button.title))])]})],2)]}}])}),_vm._v(" "),_c('router-view')],1)],1),_vm._v(" "),_c('div',{directives:[{name:"show",rawName:"v-show",value:(!_vm.cfConfig),expression:"!cfConfig"}]},[_c('h5',[_vm._v(_vm._s(_vm.title))]),_vm._v(" "),_c('a-alert',{attrs:{"message":"[CFView:props] cfConfig无效","type":"error"}})],1)])},
 staticRenderFns: [],
-    name: 'CFCommonView',
-    components: {CFCommonForm},
+    name: 'CFView',
+    components: {CFForm},
     props: {
       title: Array,
       cfConfig: null,
@@ -1524,276 +1522,52 @@ staticRenderFns: [],
     }
   };
 
-var CFCommonViewWithDrawer = {
-render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.cfConfig),expression:"cfConfig"}]},[_c('div',{directives:[{name:"show",rawName:"v-show",value:(_vm.cfConfig && _vm.cfConfig.inlineForm),expression:"cfConfig && cfConfig.inlineForm"}]},[_c('a-divider',{directives:[{name:"show",rawName:"v-show",value:(_vm.cfConfig && _vm.cfConfig.pageTitle),expression:"cfConfig && cfConfig.pageTitle"}]},[_vm._v(_vm._s(_vm.cfConfig && _vm.cfConfig.pageTitle))]),_vm._v(" "),_c('div',{staticStyle:{"display":"flex","margin-bottom":"16px","align-items":"center"}},[_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-start"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineHeaderLeft : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"center"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineHeaderCenter : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-end"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineHeaderRight : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2)]),_vm._v(" "),(_vm.cfConfig && _vm.cfConfig.pageTitle)?_c('a-divider',{staticStyle:{"margin":"8px 0 20px 0"}}):_vm._e(),_vm._v(" "),_c('CFCommonForm',{ref:"form",attrs:{"cfConfig":_vm.cfConfig,"id":_vm.formId},on:{"on-saved":_vm.onFormSaved}}),_vm._v(" "),_c('div',{staticStyle:{"display":"flex"}},[_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-start"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineFooterLeft : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"center"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineFooterCenter : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons",staticStyle:{"display":"flex","flex":"1","align-items":"center","justify-content":"flex-end"}},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.inlineFooterRight : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2)]),_vm._v(" "),_c('a-divider')],1),_vm._v(" "),(_vm.checkPathIsCurView() && _vm.cfConfig && _vm.cfConfig.tablePrintTemplate)?_c(_vm.cfConfig.tablePrintTemplate,{tag:"component",attrs:{"cfConfig":_vm.cfConfig}}):_vm._e(),_vm._v(" "),_c('div',{staticStyle:{"display":"flex","justify-content":"space-between","margin-bottom":"16px"}},[_c('div',{staticClass:"buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.tableHeaderLeft : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]})],2),_vm._v(" "),_c('div',{staticClass:"buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.tableHeaderRight : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))])]}),_vm._v(" "),_c('a-button',{attrs:{"hidden":_vm.filters.length === 0,"icon":"filter"},on:{"click":function($event){_vm.openFilter=!_vm.openFilter;}}},[_vm._v("筛选")])],2)]),_vm._v(" "),_c('form',{ref:"filterForm",class:("filter-container " + (_vm.openFilterEx ? 'active' : '')),attrs:{"form":"filterForm","action":"./"},on:{"submit":function($event){$event.stopPropagation();$event.preventDefault();return _vm.submitFilter($event)}}},[_c('div',{staticStyle:{"display":"flex","padding":"4px 10px","align-items":"center","justify-content":"space-between","border-bottom":"solid 1px #77d0ea","background":"#ecfdff"}},[_c('div',[_vm._v("筛选")]),_vm._v(" "),_c('div',[_c('a-button',{attrs:{"size":"small","html-type":"reset"},on:{"click":_vm.resetFilter}},[_vm._v("重置")]),_vm._v(" "),_c('a-button',{staticStyle:{"margin-left":"8px"},attrs:{"size":"small","html-type":"submit"}},[_vm._v("搜索")])],1)]),_vm._v(" "),_c('div',{staticClass:"content"},[_c('a-row',[_vm._l((_vm.filters),function(filter){return [_c('a-col',{key:filter.name,staticStyle:{"display":"flex","align-items":"center","padding":"16px 16px 0 16px"},attrs:{"xs":24,"sm":24,"md":12,"lg":8,"xl":8,"xxl":6}},[_c('div',{staticStyle:{"min-width":"6em","max-width":"40%"}},[_vm._v(_vm._s(filter.title)+"：")]),_vm._v(" "),_c('div',{staticStyle:{"flex":"1"}},[(filter.inForm instanceof _vm.Field.FieldWithDict)?[_c('a-select',{staticStyle:{"width":"100%"},attrs:{"name":filter.name,"placeholder":filter.inForm.placeholder,"defaultValue":_vm.$route.query[filter.name],"options":[{value: '', label: '无'}].concat(filter.inForm.options)},on:{"change":function (value){ return _vm.filterChange(filter.name, value); }}})]:(filter.inForm instanceof _vm.Field.DateFieldBase)?[_c('a-date-picker',{staticStyle:{"width":"100%"},attrs:{"name":filter.name,"placeholder":filter.inForm.placeholder,"defaultValue":_vm.$route.query[filter.name] ? _vm.moment(_vm.$route.query[filter.name], filter.inForm.format) : null},on:{"change":function (moment){ return _vm.filterChange(filter.name, moment ? moment.format(filter.inForm.format) : ''); }}})]:[_c('a-input',{staticStyle:{"width":"100%"},attrs:{"name":filter.name,"placeholder":filter.inForm.placeholder,"defaultValue":_vm.$route.query[filter.name]},on:{"change":function (e){ return _vm.filterChange(filter.name, e.target.value); }}})]],2)])]})],2)],1)]),_vm._v(" "),_c('div',[_c('a-table',{attrs:{"columns":_vm.columnsData.columns,"rowSelection":_vm.cfConfig && _vm.cfConfig.enableSelect ? {selectedRowKeys: _vm.selectedRowKeys, onChange: _vm.onSelectChange} : undefined,"rowKey":"id","dataSource":_vm.list,"pagination":_vm.pagination,"loading":_vm.loading,"scroll":_vm.columnsData.tableScrollWidth ? { x: _vm.columnsData.tableScrollWidth } : undefined},on:{"change":_vm.handleTableChange},scopedSlots:_vm._u([{key:"operation",fn:function(text, record){return [_c('div',{staticClass:"operation buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.tableRowOperations : [])),function(button){return [_c('a-button',{key:button.key,attrs:{"type":button.type,"icon":button.icon},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick, record)}}},[_vm._v(_vm._s(button.title))])]})],2)]}}])}),_vm._v(" "),_c('router-view')],1)],1),_vm._v(" "),_c('div',{directives:[{name:"show",rawName:"v-show",value:(!_vm.cfConfig),expression:"!cfConfig"}]},[_c('h5',[_vm._v(_vm._s(_vm.title))]),_vm._v(" "),_c('a-alert',{attrs:{"message":"[CFCommonView:props] cfConfig无效","type":"error"}})],1)])},
+var CFViewWithDrawer = {
+render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('a-drawer',{attrs:{"placement":"right","closable":true,"destroyOnClose":true,"maskClosable":true,"visible":_vm.visible,"width":"700","getContainer":"#drawer"},on:{"close":_vm.close}},[_c('template',{slot:"title"},[(Array.isArray(_vm.title) && _vm.title.length)?[_c('div',[_vm._v(_vm._s(_vm.title[_vm.title.length - 1]))])]:_vm._e()],2),_vm._v(" "),_c('CFView',{attrs:{"cfConfig":_vm.cfConfig,"path":_vm.path,"title":_vm.title}})],2)],1)},
 staticRenderFns: [],
-    name: 'CFCommonViewWithDrawer',
-    components: {CFCommonForm},
+    name: 'CFViewWithDrawer',
+    components: {},
     props: {
-      title: Array,
+      code: null,
       cfConfig: null,
+      title: null,
       path: null,
     },
-    data () {
+    data() {
       return {
-        formId: undefined,
-        loading: false,
-        selectedRowKeys: [],
-        selectedRecords: [],
-        list: [],
-        pagination: {},
-        openFilter: false,
-        Field: Field,
-        filterForm: this.$form.createForm(),
+        name: '',
+        visible: false,
       }
     },
-    computed: {
-      openFilterEx: function() {
-        let existFilterQuery = false;
-        for(let queryKey in this.$route.query) {
-          if(this.$route.query[queryKey]) {
-            existFilterQuery = true;
-            break;
-          }
-        }
-        if(!this.checkPathIsCurView()) {
-          return false
-        }
-        return this.openFilter || existFilterQuery
-      },
-      filters: function() {
-        if(!this.cfConfig) { return [] }
-        return this.cfConfig.fieldList.filter(field=>field.inForm && (field.inForm.position & FieldPosition.filter))
-      },
-      columnsData: function () {
-        let containerWidth = document.body.offsetWidth - 200 - 40;
-        let emToPxRatio = 14;
-        if(!this.cfConfig) { return [] }
-        let fieldListColumns = this.cfConfig.fieldList.filter(field => field.inTable && !!field.inTable.display).map(field => {
-          let formatter = {};
-          if(field.inForm && field.inForm.formatter) {
-            formatter.customRender = field.inForm.formatter;
-          }
-          if(field.inTable.formatter) {
-            formatter.customRender = field.inTable.formatter;
-          }
-          return {
-            title: field.title,
-            dataIndex: field.name,
-            ...field.inTable.column,
-            ...formatter
-          }
-        });
-        let fullWidthConfig = true; // 是否所有显示的列都配置了宽度
-        // 所有已配置宽度的列的总宽度
-        let columnsWidthTotal = [0].concat(fieldListColumns).reduce((a, b)=>{
-          fullWidthConfig = fullWidthConfig && !!b.width;
-          let bWidth = b.width || 0;
-          if(typeof bWidth === "string") {
-            let match = bWidth.match(/^(\d+)(\w+)$/);
-            if(match) {
-              switch (match[2]) {
-                case 'px':
-                  bWidth = match[1] * 1;
-                  break;
-                case 'em':
-                  bWidth = match[1] * emToPxRatio;
-                  break;
-                default:
-                  // 对于不支持的类型默认认为0宽度
-                  bWidth = 0;
-              }
-            }
-          }
-          // 谜之数据默认为宽度为0
-          return a + (parseInt(bWidth) || 0);
-        });
-        let setDefaultColumnWidth = false; // 是否为各个列配置默认宽度，此时必然开启水平滑动
-        if(columnsWidthTotal > containerWidth) {
-          // 当表格中已配置宽度的列总宽度超过容器宽度时，开启水平滚动，并为没有配置width属性的列配置默认值
-          setDefaultColumnWidth = true;
-        } else if(fullWidthConfig) {
-          // 当表格中已配置宽度的列总宽度小于容器宽度时，并且当所有列都配置了宽度时，本判定优先级高于显示的列数判定
-          setDefaultColumnWidth = false;
-        } else if(fieldListColumns.length > 9) {
-          // 当表格中显示的列数超过9个时，开启水平滚动，并为没有配置width属性的列配置默认值
-          setDefaultColumnWidth = true;
-        }
-        if(setDefaultColumnWidth) {
-          // 配置默认列宽度 200px
-          fieldListColumns.forEach(item=>{
-            if(!item.width) {
-              columnsWidthTotal += 200;
-              item.width = 200;
-            }
-          });
-        }
-        fieldListColumns = fieldListColumns.concat({
-          title: '操作',
-          dataIndex: 'operation',
-          align: 'center',
-          width: 60,
-          fixed: setDefaultColumnWidth ? 'right' : undefined,
-          scopedSlots: { customRender: 'operation' },
-        });
-        return {columns: fieldListColumns, tableScrollWidth: columnsWidthTotal}
-      }
-    },
-    watch: {
-      // 如果路由有变化，会再次执行该方法
-      '$route': 'routeChange'
-    },
-    created () {
-      // 组件创建完后获取数据，
-      // 此时 data 已经被 observed 了
-      this.reload();
+    created() {
     },
     mounted() {
-      this.filterData = {...this.$route.query};
-      // console.log('mounted', this.filterData)
-      // console.log("view:mounted")
-      // addEventListener('keyup', this.keyPressEventHandle);
+      this.visible = true;
+      addEventListener('keyup', this.keyPressEventHandle);
     },
     destroyed() {
-      // console.log("view:destroyed")
-      // removeEventListener('keyup', this.keyPressEventHandle)
+      removeEventListener('keyup', this.keyPressEventHandle);
     },
-    // 带有字典数据且显示在table中或可搜索的字段列表
-    fieldWithDictList: [],
-    // 筛选数据
-    filterData: {},
     methods: {
-      moment(a, b, c) { return moment(a, b, c) },
-      onCFButtonClick(buttonClickFn, record) {
-        buttonClickFn(this.$router, this.cfConfig, this, this.$refs.form, this.selectedRecords, record);
+      close() {
+        this.visible = false;
+        setTimeout(()=>{
+          this.$router.go(-1);
+        }, 600);
       },
-      checkPathIsCurView() {
-        // props.path在创建菜单时自动生成
-        return this.$route.matched.length === 0 || this.$route.matched[this.$route.matched.length - 1].path === this.path
-        // meta在创建菜单时自动生成
-        // return this.$route.meta && this.$route.meta.type === 'view'
-      },
-      reload() {
-        this.$nextTick(()=>{
-          this.getList().then(this.resetForInlineForm);
-        });
-      },
-      loadDict() {
-        if(this.cfConfig) {
-          this.fieldWithDictList = this.cfConfig.fieldList.filter(field=>field.inForm && field.inForm instanceof FieldWithDict && ((field.inForm.position & FieldPosition.filter) || (field.inTable && field.inTable.display)));
-          let loadDict = this.fieldWithDictList.map(field=>field.inForm.loadData());
-          return Promise.all(loadDict)
+      keyPressEventHandle(event) {
+        if(event.code === 'Escape') {
+          this.onClose();
         }
-        return Promise.resolve()
-      },
-      routeChange(a, b) {
-        // console.log("routeChange", this.$route);
-        if(this.checkPathIsCurView()) {
-          this.reload();
-        }
-      },
-      getList () {
-        if(this.cfConfig) {
-          this.loading = true;
-          return this.loadDict().then(()=>this.cfConfig.getList(this.$route.query)).then(response => {
-            let list = response.list;
-            if(this.fieldWithDictList.length) {
-              // 映射字典值
-              list.forEach(item=>{
-                for(let field of this.fieldWithDictList) {
-                  let value = item[field.name];
-                  let label = null;
-                  if(Array.isArray(value)) {
-                    label = value.map(v=>(field.inForm.options.find(option=>option.value === v) || {}).label || value).join(',');
-                  } else {
-                    label = (field.inForm.options.find(option=>option.value === value) || {}).label;
-                  }
-                  item[field.name] = label || value;
-                }
-              });
-            }
-            this.list = list;
-          }).catch(e=>{
-            this.list = [];
-            console.error(e.message);
-          }).finally(()=>{
-            this.loading = false;
-          })
-        } else {
-          return Promise.resolve();
-        }
-      },
-      deleteRecord(record) {
-        console.log(record);
-        this.loading = true;
-        this.cfConfig && this.cfConfig.deleteOne(record.id).then(response=>{
-          this.reload();
-        }).finally(()=>{
-          this.loading = false;
-        });
-      },
-      handleTableChange (pagination, filters, sorter) {
-        console.log(pagination);
-        // const pager = { ...this.pagination };
-        // pager.current = pagination.current;
-        // this.pagination = pager;
-      },
-      filterChange(name, value) {
-        if(!this.filterData) { this.filterData = {}; }
-        this.filterData[name] = value;
-      },
-      resetFilter() {
-        this.filterData = {};
-        if(Object.keys(this.$route.query).length) {
-          this.$router.replace(this.$route.path);
-        }
-      },
-      submitFilter(event) {
-        const willQueryString = objectToQueryString(this.filterData);
-        const curQueryString = objectToQueryString(this.$route.query);
-        if(willQueryString !== curQueryString) {
-          this.$router.replace('?' + willQueryString);
-        }
-      },
-      onSelectChange(selectedRowKeys) {
-        this.selectedRowKeys = selectedRowKeys;
-        this.selectedRecords = this.list.filter(item=>this.selectedRowKeys.indexOf(item.id) >= 0);
-        // 给所有按钮传递onSelectChange事件
-        for(let button of this.cfConfig.buttonList) {
-          button.onTableSelected && button.onTableSelected(this.selectedRecords);
-        }
-      },
-      print() {
-        print();
-      },
-      // 以下为form用方法
-      loadDataForForm(id) {
-        this.formId = id || undefined;
-        this.$nextTick(()=>{
-          this.$refs.form.loadData().then(()=>{
-            // 滚动到顶部
-            window.scrollTo(0, 0);
-          });
-        });
-      },
-      resetForInlineForm() {
-        this.formId = undefined;
-        this.$nextTick(()=> {
-          this.$refs.form && this.$refs.form.loadData();
-        });
-      },
-      onFormSaved() {
-        this.resetForInlineForm();
-        this.reload();
-      },
+      }
     }
   };
 
-var CFCommonFormWithDrawer = {
-render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('a-drawer',{attrs:{"wrapClassName":"cf-common-form-drawer","placement":"right","closable":false,"maskClosable":false,"visible":_vm.visible,"width":"600","getContainer":"#drawer"},on:{"close":_vm.onClose}},[_c('template',{slot:"title"},[_c('div',{staticStyle:{"display":"flex","align-items":"center","justify-content":"space-between"}},[(Array.isArray(_vm.title) && _vm.title.length)?[_c('div',[(!this.id)?_c('span',[_vm._v("新增 - ")]):_c('span',[_vm._v("编辑 - ")]),_vm._v(_vm._s(_vm.title[_vm.title.length - 1]))])]:[_c('div',[(!this.id)?_c('span',[_vm._v("新增")]):_c('span',[_vm._v("编辑")])])]],2)]),_vm._v(" "),_c('div',[_c('CFCommonForm',{ref:"form",attrs:{"id":_vm.id,"cfConfig":_vm.cfConfig,"inlineForm":false,"initFormValues":_vm.initFormValues},on:{"saved":_vm.onClose}})],1)],2)],1)},
+var CFFormWithDrawer = {
+render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('a-drawer',{attrs:{"wrapClassName":"cf-common-form-drawer","placement":"right","closable":false,"maskClosable":false,"visible":_vm.visible,"width":"600","getContainer":"#drawer"},on:{"close":_vm.onClose}},[_c('template',{slot:"title"},[_c('div',{staticStyle:{"display":"flex","align-items":"center","justify-content":"space-between"}},[(Array.isArray(_vm.title) && _vm.title.length)?[_c('div',[(!this.id)?_c('span',[_vm._v("新增 - ")]):_c('span',[_vm._v("编辑 - ")]),_vm._v(_vm._s(_vm.title[_vm.title.length - 1]))])]:[_c('div',[(!this.id)?_c('span',[_vm._v("新增")]):_c('span',[_vm._v("编辑")])])]],2)]),_vm._v(" "),_c('div',[_c('CFForm',{ref:"form",attrs:{"id":_vm.id,"cfConfig":_vm.cfConfig,"inlineForm":false,"initFormValues":_vm.initFormValues},on:{"saved":_vm.onClose}})],1)],2)],1)},
 staticRenderFns: [],
-    name: 'CFCommonFormWithDrawer',
-    components: {CFCommonForm},
+    name: 'CFFormWithDrawer',
+    components: {CFForm},
     props: {
       id: null,
       title: Array,
@@ -1830,19 +1604,19 @@ staticRenderFns: [],
     }
   };
 
-var CFCommonParentView = {
+var CFParentView = {
 render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('router-view')},
 staticRenderFns: [],
-    name: 'CFCommonParentView',
+    name: 'CFParentView',
     components: {},
   };
 
 const components = [
-    CFCommonView,
-    CFCommonForm,
-    CFCommonViewWithDrawer,
-    CFCommonFormWithDrawer,
-    CFCommonParentView,
+    CFView,
+    CFForm,
+    CFViewWithDrawer,
+    CFFormWithDrawer,
+    CFParentView,
 ];
 const install = function (vue) {
     components.forEach(component => {
@@ -1856,5 +1630,5 @@ if (typeof window !== 'undefined' && window.Vue) {
 var index = { install };
 
 export default index;
-export { CFButtonPosition, CFCommonForm, CFCommonFormWithDrawer, CFCommonParentView, CFCommonView, CFCommonViewWithDrawer, CFConfig, Field as CFField, CFNumberFieldFormatter, FieldPosition, menuCreator };
+export { CFButtonPosition, CFConfig, Field as CFField, CFForm, CFFormWithDrawer, CFNumberFieldFormatter, CFParentView, CFView, CFViewWithDrawer, FieldPosition, menuCreator };
 //# sourceMappingURL=index.js.map

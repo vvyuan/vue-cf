@@ -7,24 +7,24 @@ export * from './define/FieldUtil';
 export * from './define/ICFRequest';
 export * from './define/MenuDefine';
 export * from './define/ViewDefine';
-import CFCommonView from './components/CFCommonView.vue';
-import CFCommonForm from './components/CFCommonForm.vue';
-import CFCommonViewWithDrawer from './components/CFCommonViewWithDrawer.vue';
-import CFCommonFormWithDrawer from './components/CFCommonFormWithDrawer.vue';
-import CFCommonParentView from './components/CFCommonParentView.vue';
+import CFView from './components/CFView.vue';
+import CFForm from './components/CFForm.vue';
+import CFViewWithDrawer from './components/CFViewWithDrawer.vue';
+import CFFormWithDrawer from './components/CFFormWithDrawer.vue';
+import CFParentView from './components/CFParentView.vue';
 import Vue from "vue";
 const components: any[] = [
-  CFCommonView,
-  CFCommonForm,
-  CFCommonViewWithDrawer,
-  CFCommonFormWithDrawer,
-  CFCommonParentView,
+  CFView,
+  CFForm,
+  CFViewWithDrawer,
+  CFFormWithDrawer,
+  CFParentView,
 ];
-export {CFCommonView};
-export {CFCommonForm};
-export {CFCommonViewWithDrawer};
-export {CFCommonFormWithDrawer};
-export {CFCommonParentView};
+export {CFView};
+export {CFForm};
+export {CFViewWithDrawer};
+export {CFFormWithDrawer};
+export {CFParentView};
 
 const install = function (vue: typeof Vue) {
   components.forEach(component => {
