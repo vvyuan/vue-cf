@@ -6,17 +6,41 @@
         <div style="display: flex;margin-bottom: 16px; align-items: center;">
           <div class="buttons" style="display: flex;flex: 1;align-items: center;justify-content: flex-start;">
             <template v-for="button in (cfConfig ? cfConfig.realButtons.inlineHeaderLeft : [])">
-              <a-button :key="button.key" :type="button.type" @click="onCFButtonClick(button.onClick)" :icon="button.icon">{{button.title}}</a-button>
+              <a-button
+                :key="button.key"
+                v-if="button.conditionOfDisplay ? button.conditionOfDisplay($router, cfConfig, undefined, form, undefined, undefined) : true"
+                :disabled="button.conditionOfDisable ? button.conditionOfDisable($router, cfConfig, undefined, form, undefined, undefined) : false"
+                :type="button.type"
+                @click="onCFButtonClick(button.onClick)"
+                :icon="button.icon"
+                :title="button.tips"
+              >{{button.title}}</a-button>
             </template>
           </div>
           <div class="buttons" style="display: flex;flex: 1;align-items: center;justify-content: center;">
             <template v-for="button in (cfConfig ? cfConfig.realButtons.inlineHeaderCenter : [])">
-              <a-button :key="button.key" :type="button.type" @click="onCFButtonClick(button.onClick)" :icon="button.icon">{{button.title}}</a-button>
+              <a-button
+                :key="button.key"
+                v-if="button.conditionOfDisplay ? button.conditionOfDisplay($router, cfConfig, undefined, form, undefined, undefined) : true"
+                :disabled="button.conditionOfDisable ? button.conditionOfDisable($router, cfConfig, undefined, form, undefined, undefined) : false"
+                :type="button.type"
+                @click="onCFButtonClick(button.onClick)"
+                :icon="button.icon"
+                :title="button.tips"
+              >{{button.title}}</a-button>
             </template>
           </div>
           <div class="buttons" style="display: flex;flex: 1;align-items: center;justify-content: flex-end;">
             <template v-for="button in (cfConfig ? cfConfig.realButtons.inlineHeaderRight : [])">
-              <a-button :key="button.key" :type="button.type" @click="onCFButtonClick(button.onClick)" :icon="button.icon">{{button.title}}</a-button>
+              <a-button
+                :key="button.key"
+                v-if="button.conditionOfDisplay ? button.conditionOfDisplay($router, cfConfig, undefined, form, undefined, undefined) : true"
+                :disabled="button.conditionOfDisable ? button.conditionOfDisable($router, cfConfig, undefined, form, undefined, undefined) : false"
+                :type="button.type"
+                @click="onCFButtonClick(button.onClick)"
+                :icon="button.icon"
+                :title="button.tips"
+              >{{button.title}}</a-button>
             </template>
           </div>
         </div>
@@ -25,17 +49,41 @@
         <div style="display: flex;">
           <div class="buttons" style="display: flex;flex: 1;align-items: center;justify-content: flex-start;">
             <template v-for="button in (cfConfig ? cfConfig.realButtons.inlineFooterLeft : [])">
-              <a-button :key="button.key" :type="button.type" @click="onCFButtonClick(button.onClick)" :icon="button.icon">{{button.title}}</a-button>
+              <a-button
+                :key="button.key"
+                v-if="button.conditionOfDisplay ? button.conditionOfDisplay($router, cfConfig, undefined, form, undefined, undefined) : true"
+                :disabled="button.conditionOfDisable ? button.conditionOfDisable($router, cfConfig, undefined, form, undefined, undefined) : false"
+                :type="button.type"
+                @click="onCFButtonClick(button.onClick)"
+                :icon="button.icon"
+                :title="button.tips"
+              >{{button.title}}</a-button>
             </template>
           </div>
           <div class="buttons" style="display: flex;flex: 1;align-items: center;justify-content: center;">
             <template v-for="button in (cfConfig ? cfConfig.realButtons.inlineFooterCenter : [])">
-              <a-button :key="button.key" :type="button.type" @click="onCFButtonClick(button.onClick)" :icon="button.icon">{{button.title}}</a-button>
+              <a-button
+                :key="button.key"
+                v-if="button.conditionOfDisplay ? button.conditionOfDisplay($router, cfConfig, undefined, form, undefined, undefined) : true"
+                :disabled="button.conditionOfDisable ? button.conditionOfDisable($router, cfConfig, undefined, form, undefined, undefined) : false"
+                :type="button.type"
+                @click="onCFButtonClick(button.onClick)"
+                :icon="button.icon"
+                :title="button.tips"
+              >{{button.title}}</a-button>
             </template>
           </div>
           <div class="buttons" style="display: flex;flex: 1;align-items: center;justify-content: flex-end;">
             <template v-for="button in (cfConfig ? cfConfig.realButtons.inlineFooterRight : [])">
-              <a-button :key="button.key" :type="button.type" @click="onCFButtonClick(button.onClick)" :icon="button.icon">{{button.title}}</a-button>
+              <a-button
+                :key="button.key"
+                v-if="button.conditionOfDisplay ? button.conditionOfDisplay($router, cfConfig, undefined, form, undefined, undefined) : true"
+                :disabled="button.conditionOfDisable ? button.conditionOfDisable($router, cfConfig, undefined, form, undefined, undefined) : false"
+                :type="button.type"
+                @click="onCFButtonClick(button.onClick)"
+                :icon="button.icon"
+                :title="button.tips"
+              >{{button.title}}</a-button>
             </template>
           </div>
         </div>
@@ -45,12 +93,28 @@
       <div style="display: flex;justify-content: space-between; margin-bottom: 16px;">
         <div class="buttons">
           <template v-for="button in (cfConfig ? cfConfig.realButtons.tableHeaderLeft : [])">
-            <a-button :key="button.key" :type="button.type" @click="onCFButtonClick(button.onClick)" :icon="button.icon">{{button.title}}</a-button>
+            <a-button
+              :key="button.key"
+              v-if="button.conditionOfDisplay ? button.conditionOfDisplay($router, cfConfig, undefined, form, undefined, undefined) : true"
+              :disabled="button.conditionOfDisable ? button.conditionOfDisable($router, cfConfig, undefined, form, undefined, undefined) : false"
+              :type="button.type"
+              @click="onCFButtonClick(button.onClick)"
+              :icon="button.icon"
+              :title="button.tips"
+            >{{button.title}}</a-button>
           </template>
         </div>
         <div class="buttons">
           <template v-for="button in (cfConfig ? cfConfig.realButtons.tableHeaderRight : [])">
-            <a-button :key="button.key" :type="button.type" @click="onCFButtonClick(button.onClick)" :icon="button.icon">{{button.title}}</a-button>
+            <a-button
+              :key="button.key"
+              v-if="button.conditionOfDisplay ? button.conditionOfDisplay($router, cfConfig, undefined, form, undefined, undefined) : true"
+              :disabled="button.conditionOfDisable ? button.conditionOfDisable($router, cfConfig, undefined, form, undefined, undefined) : false"
+              :type="button.type"
+              @click="onCFButtonClick(button.onClick)"
+              :icon="button.icon"
+              :title="button.tips"
+            >{{button.title}}</a-button>
           </template>
           <a-button :hidden="filters.length === 0" icon="filter" @click="openFilter=!openFilter">筛选</a-button>
         </div>
@@ -117,7 +181,15 @@
           <template slot="operation" slot-scope="text, record">
             <div class="operation buttons">
               <template v-for="button in (cfConfig ? cfConfig.realButtons.tableRowOperations : [])">
-                <a-button :key="button.key" :type="button.type" @click="onCFButtonClick(button.onClick, record)" :icon="button.icon">{{button.title}}</a-button>
+                <a-button
+                  :key="button.key"
+                  v-if="button.conditionOfDisplay ? button.conditionOfDisplay($router, cfConfig, undefined, form, undefined, undefined) : true"
+                  :disabled="button.conditionOfDisable ? button.conditionOfDisable($router, cfConfig, undefined, form, undefined, undefined) : false"
+                  :type="button.type"
+                  @click="onCFButtonClick(button.onClick)"
+                  :icon="button.icon"
+                  :title="button.tips"
+                >{{button.title}}</a-button>
               </template>
             </div>
           </template>

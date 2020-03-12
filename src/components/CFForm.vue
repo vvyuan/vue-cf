@@ -200,12 +200,28 @@
           <div class="footer">
             <div class="left-buttons">
               <template v-for="button in (cfConfig ? cfConfig.realButtons.drawerFooterLeft : [])">
-                <a-button :key="button.key" :type="button.type" @click="onCFButtonClick(button.onClick)" :icon="button.icon">{{button.title}}</a-button>
+                <a-button
+                  :key="button.key"
+                  v-if="button.conditionOfDisplay ? button.conditionOfDisplay($router, cfConfig, undefined, form, undefined, undefined) : true"
+                  :disabled="button.conditionOfDisable ? button.conditionOfDisable($router, cfConfig, undefined, form, undefined, undefined) : false"
+                  :type="button.type"
+                  @click="onCFButtonClick(button.onClick)"
+                  :icon="button.icon"
+                  :title="button.tips"
+                >{{button.title}}</a-button>
               </template>
             </div>
             <div class="right-buttons">
               <template v-for="button in (cfConfig ? cfConfig.realButtons.drawerFooterRight : [])">
-                <a-button :key="button.key" :type="button.type" @click="onCFButtonClick(button.onClick)" :icon="button.icon">{{button.title}}</a-button>
+                <a-button
+                  :key="button.key"
+                  v-if="button.conditionOfDisplay ? button.conditionOfDisplay($router, cfConfig, undefined, form, undefined, undefined) : true"
+                  :disabled="button.conditionOfDisable ? button.conditionOfDisable($router, cfConfig, undefined, form, undefined, undefined) : false"
+                  :type="button.type"
+                  @click="onCFButtonClick(button.onClick)"
+                  :icon="button.icon"
+                  :title="button.tips"
+                >{{button.title}}</a-button>
               </template>
             </div>
           </div>

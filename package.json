@@ -1,6 +1,6 @@
 {
   "name": "vue-cf",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "基于antd和vue的中后台前端快速开发组件",
   "main": "index.js",
   "types": "index.d.ts",

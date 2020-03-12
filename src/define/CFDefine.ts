@@ -1,11 +1,11 @@
 import { FieldConfig } from './FieldDefine'
 import {Component} from "vue";
-import VueRouter from "vue-router";
 // @ts-ignore
 import {Modal} from "ant-design-vue";
 import {ICFForm, ICFView} from "./ViewDefine";
 import ICFRequest, {CFDataBase, CFListResponse} from "./ICFRequest";
 import MockRequest from "../utils/MockRequest";
+import {defaultButtons, CFButton, CFButtons} from './CFButtonDefine';
 
 export type CFTableConfig = {
   display: boolean // 是否在table中显示
@@ -20,62 +20,6 @@ export type CFFConfig = {
   title: string, // 字段标题
   inTable?: CFTableConfig, // 字段对于table的配置
   inForm?: FieldConfig, // 字段对于form的配置
-}
-
-export enum CFButtonPosition {
-  // table
-  tableHeaderLeft = 'tableHeaderLeft',
-  tableHeaderRight = 'tableHeaderRight',
-  tableRowOperations = 'tableRowOperations',
-  // form
-  inlineHeaderLeft = 'inlineHeaderLeft',
-  inlineHeaderCenter = 'inlineHeaderCenter',
-  inlineHeaderRight = 'inlineHeaderRight',
-  inlineFooterLeft = 'inlineFooterLeft',
-  inlineFooterCenter = 'inlineFooterCenter',
-  inlineFooterRight = 'inlineFooterRight',
-  drawerFooterLeft = 'drawerFooterLeft',
-  drawerFooterRight = 'drawerFooterRight',
-}
-
-export type CFButton = {
-  key?: string, // 自动设置
-  title: string,
-  icon?: string,
-  type?: 'primary' | 'danger' | 'default' | 'dashed' | 'link',
-  auth?: string,
-  position: CFButtonPosition[],
-  // 从小到大，从左到右，默认0
-  sort?: number,
-  /**
-   * 该按钮的点击事件
-   * @param router 全局路由
-   * @param cfConfig 所在的配置
-   * @param view commonView
-   * @param form commonForm
-   * @param selectedRecords 已选中的记录，仅在CFButtonPosition.tableHeader中生效
-   * @param record 当前记录，仅在CFButtonPosition.tableRowOperations中生效
-   */
-  onClick(router: VueRouter, cfConfig: any, view?: ICFView, form?: ICFForm, selectedRecords?: any[], record?: any): void,
-  /**
-   * table中选中行事件的响应
-   * @param selectedRecords
-   */
-  onTableSelected?(selectedRecords: any[]): void,
-}
-
-type CFButtons = {
-  tableHeaderLeft: CFButton[],
-  tableHeaderRight: CFButton[],
-  tableRowOperations: CFButton[],
-  inlineHeaderLeft: CFButton[],
-  inlineHeaderCenter: CFButton[],
-  inlineHeaderRight: CFButton[],
-  inlineFooterLeft: CFButton[],
-  inlineFooterCenter: CFButton[],
-  inlineFooterRight: CFButton[],
-  drawerFooterLeft: CFButton[],
-  drawerFooterRight: CFButton[],
 }
 
 class CFRequest {
@@ -111,76 +55,7 @@ export abstract class CFConfig<T extends CFDataBase> {
     return this._map;
   }
   // 默认的按钮组，可以通过覆盖本属性来取消默认按钮，一般情况下只重写buttons属性即可
-  protected readonly defaultButtons: {[key: string]: CFButton} = {
-    create: {
-      title: '新增',
-      position: [CFButtonPosition.tableHeaderLeft],
-      icon: 'plus',
-      type: 'primary',
-      onClick: (router, cfConfig, view, form, selectedRecords, record) => {
-        if(cfConfig.inlineForm) {
-          form && form.save().then(()=>{
-            view && view.resetForInlineForm();
-          });
-        } else {
-          router.push(router.currentRoute.path + "/create")
-        }
-      }
-    },
-    edit: {
-      title: '',
-      position: [CFButtonPosition.tableRowOperations],
-      icon: 'edit',
-      onClick: (router, cfConfig, view, form, selectedRecords, record) => {
-        router.push(router.currentRoute.path + "/edit?id=" + record.id)
-      }
-    },
-    delete: {
-      title: '',
-      position: [CFButtonPosition.tableRowOperations],
-      icon: 'delete',
-      type: 'danger',
-      onClick: (router, cfConfig, view, form, selectedRecords, record) => {
-        Modal.confirm({
-          title: '确定删除？',
-          onOk: ()=>{
-            view && view.deleteRecord(record);
-          }
-        })
-      }
-    },
-    printTable: {
-      title: '打印',
-      position: [CFButtonPosition.tableHeaderRight],
-      icon: 'printer',
-      onClick: (router, cfConfig, view, form, selectedRecords, record) => {
-        window.print();
-      }
-    },
-    printForm: {
-      title: '打印',
-      position: [CFButtonPosition.drawerFooterRight, CFButtonPosition.inlineFooterCenter],
-      icon: 'printer',
-      onClick: (router, cfConfig, view, form, selectedRecords, record) => {
-        window.print();
-      }
-    },
-    cancel: {
-      title: '取消',
-      position: [CFButtonPosition.drawerFooterRight],
-      onClick: (router, cfConfig, view, form, selectedRecords, record) => {
-        form && form.cancel();
-      }
-    },
-    save: {
-      title: '保存',
-      position: [CFButtonPosition.drawerFooterRight, CFButtonPosition.inlineFooterCenter],
-      type: 'primary',
-      onClick: (router, cfConfig, view, form, selectedRecords, record) => {
-        form && form.save();
-      }
-    },
-  };
+  protected readonly defaultButtons: {[key: string]: CFButton} = defaultButtons;
   // 自定义按钮组，可增量覆盖默认按钮组
   protected readonly buttons: {[key: string]: CFButton | null | undefined} = {};
 

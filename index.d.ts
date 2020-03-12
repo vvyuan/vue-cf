@@ -215,6 +215,7 @@ export type CFButton = {
   key?: string, // 自动设置
   title: string,
   icon?: string,
+  tips?: string, // 鼠标悬浮提示信息
   type?: 'primary' | 'danger' | 'default' | 'dashed' | 'link',
   auth?: string,
   position: CFButtonPosition[],
@@ -235,6 +236,10 @@ export type CFButton = {
    * @param selectedRecords
    */
   onTableSelected?(selectedRecords: any[]): void,
+  // 按钮的disable条件
+  conditionOfDisable?(router: VueRouter, cfConfig: any, view?: ICFView, form?: ICFForm, selectedRecords?: any[], record?: any): boolean;
+  // 按钮的显示条件
+  conditionOfDisplay?(router: VueRouter, cfConfig: any, view?: ICFView, form?: ICFForm, selectedRecords?: any[], record?: any): boolean;
 }
 
 type CFButtons = {
