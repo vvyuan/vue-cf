@@ -7,7 +7,7 @@
       :maskClosable="false"
       :visible="visible"
       width="600"
-      getContainer="#drawer"
+      getContainer="#cf-drawer"
       @close="onClose"
     >
       <template slot="title">
@@ -42,6 +42,14 @@
     data() {
       return {
         visible: false,
+      }
+    },
+    beforeCreate() {
+      if(!document.getElementById('cf-drawer')) {
+        // 创建drawer容器，避免莫名bug
+        let drawer = document.createElement('div');
+        drawer.id = 'cf-drawer';
+        document.body.appendChild(drawer)
       }
     },
     mounted() {

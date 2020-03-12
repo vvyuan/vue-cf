@@ -3,6 +3,7 @@ import { CFConfig } from './CFDefine';
 import {Route} from "vue-router";
 import {CFDataBase} from "./ICFRequest";
 export type CFViewProps<T extends CFDataBase> = {
+  display?: boolean, // 是否在menu中显示
   title?: string[],
   type?: string,
   path?: string,

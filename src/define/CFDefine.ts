@@ -184,11 +184,13 @@ export abstract class CFConfig<T extends CFDataBase> {
   // 自定义按钮组，可增量覆盖默认按钮组
   protected readonly buttons: {[key: string]: CFButton | null | undefined} = {};
 
-  private _buttonList?: CFButton[];
+  protected _buttonList?: CFButton[];
   /**
+   * todo: 对于异步过滤的处理
    * 获取所有按钮清单，此处可继承后根据权限处理按钮是否允许显示
    */
   buttonFilter(buttons: CFButton[]): CFButton[] {
+    this._buttonList = buttons;
     return buttons;
   }
   get buttonList(): CFButton[] {
