@@ -617,9 +617,11 @@ class CFConfig {
         return this._map;
     }
     /**
+     * todo: 对于异步过滤的处理
      * 获取所有按钮清单，此处可继承后根据权限处理按钮是否允许显示
      */
     buttonFilter(buttons) {
+        this._buttonList = buttons;
         return buttons;
     }
     get buttonList() {
@@ -1523,7 +1525,7 @@ staticRenderFns: [],
   };
 
 var CFViewWithDrawer = {
-render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('a-drawer',{attrs:{"placement":"right","closable":true,"destroyOnClose":true,"maskClosable":true,"visible":_vm.visible,"width":"700","getContainer":"#cf-drawer"},on:{"close":_vm.close}},[_c('template',{slot:"title"},[(Array.isArray(_vm.title) && _vm.title.length)?[_c('div',[_vm._v(_vm._s(_vm.title[_vm.title.length - 1]))])]:_vm._e()],2),_vm._v(" "),_c('CFView',{attrs:{"cfConfig":_vm.cfConfig,"path":_vm.path,"title":_vm.title}})],2)],1)},
+render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('a-drawer',{attrs:{"placement":"right","closable":true,"destroyOnClose":true,"maskClosable":true,"visible":_vm.visible,"width":_vm.cfConfig.drawerWidth || 600,"getContainer":"#cf-drawer"},on:{"close":_vm.close}},[_c('template',{slot:"title"},[(Array.isArray(_vm.title) && _vm.title.length)?[_c('div',[_vm._v(_vm._s(_vm.title[_vm.title.length - 1]))])]:_vm._e()],2),_vm._v(" "),_c('CFView',{attrs:{"cfConfig":_vm.cfConfig,"path":_vm.path,"title":_vm.title}})],2)],1)},
 staticRenderFns: [],
     name: 'CFViewWithDrawer',
     components: {},
@@ -1570,7 +1572,7 @@ staticRenderFns: [],
   };
 
 var CFFormWithDrawer = {
-render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('a-drawer',{attrs:{"wrapClassName":"cf-common-form-drawer","placement":"right","closable":false,"maskClosable":false,"visible":_vm.visible,"width":"600","getContainer":"#cf-drawer"},on:{"close":_vm.onClose}},[_c('template',{slot:"title"},[_c('div',{staticStyle:{"display":"flex","align-items":"center","justify-content":"space-between"}},[(Array.isArray(_vm.title) && _vm.title.length)?[_c('div',[(!this.id)?_c('span',[_vm._v("新增 - ")]):_c('span',[_vm._v("编辑 - ")]),_vm._v(_vm._s(_vm.title[_vm.title.length - 1]))])]:[_c('div',[(!this.id)?_c('span',[_vm._v("新增")]):_c('span',[_vm._v("编辑")])])]],2)]),_vm._v(" "),_c('div',[_c('CFForm',{ref:"form",attrs:{"id":_vm.id,"cfConfig":_vm.cfConfig,"inlineForm":false,"initFormValues":_vm.initFormValues},on:{"saved":_vm.onClose}})],1)],2)],1)},
+render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('a-drawer',{attrs:{"wrapClassName":"cf-common-form-drawer","placement":"right","closable":false,"maskClosable":false,"visible":_vm.visible,"width":_vm.cfConfig.drawerWidth || 600,"getContainer":"#cf-drawer"},on:{"close":_vm.onClose}},[_c('template',{slot:"title"},[_c('div',{staticStyle:{"display":"flex","align-items":"center","justify-content":"space-between"}},[(Array.isArray(_vm.title) && _vm.title.length)?[_c('div',[(!this.id)?_c('span',[_vm._v("新增 - ")]):_c('span',[_vm._v("编辑 - ")]),_vm._v(_vm._s(_vm.title[_vm.title.length - 1]))])]:[_c('div',[(!this.id)?_c('span',[_vm._v("新增")]):_c('span',[_vm._v("编辑")])])]],2)]),_vm._v(" "),_c('div',[_c('CFForm',{ref:"form",attrs:{"id":_vm.id,"cfConfig":_vm.cfConfig,"inlineForm":false,"initFormValues":_vm.initFormValues},on:{"saved":_vm.onClose}})],1)],2)],1)},
 staticRenderFns: [],
     name: 'CFFormWithDrawer',
     components: {CFForm},

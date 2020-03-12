@@ -223,7 +223,6 @@ export abstract class CFConfig<T extends CFDataBase> {
     }
     return this._realButtons;
   }
-
   // 页面标题
   pageTitle: string = '';
   // 表单是否内嵌到view中
@@ -234,6 +233,8 @@ export abstract class CFConfig<T extends CFDataBase> {
   tablePrintTemplate?: Component;
   // 表单打印模板
   formPrintTemplate?: Component;
+  // 在CF**WithDrawer中生效，指定Drawer的宽度
+  drawerWidth?: number | string;
 
   // 数据请求及数据整理
   get request() {

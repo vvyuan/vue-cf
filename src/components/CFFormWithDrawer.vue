@@ -6,7 +6,7 @@
       :closable="false"
       :maskClosable="false"
       :visible="visible"
-      width="600"
+      :width="cfConfig.drawerWidth || 600"
       getContainer="#cf-drawer"
       @close="onClose"
     >
