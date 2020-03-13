@@ -1,28 +1,3 @@
-.cf-common-view-container .operation {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.cf-common-view-container .buttons > * {
-  margin-left: 8px;
-}
-.cf-common-view-container .buttons > *:first-child {
-  margin-left: 0;
-}
-.cf-common-view-container .filter-container {
-  display: none;
-  margin: 16px 0;
-  border: solid #77d0ea 1px;
-  border-radius: 5px;
-  overflow: hidden;
-}
-.cf-common-view-container .filter-container .content {
-  display: block;
-  padding-bottom: 16px;
-}
-.cf-common-view-container .filter-container.active {
-  display: block;
-}
 .cf-common-form-container .form-item .input {
   width: 100% !important;
 }
@@ -64,4 +39,29 @@
 }
 .cf-common-form-drawer .footer-placeholder {
   height: 10px;
+}
+.cf-common-view-container .operation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cf-common-view-container .buttons > * {
+  margin-left: 8px;
+}
+.cf-common-view-container .buttons > *:first-child {
+  margin-left: 0;
+}
+.cf-common-view-container .filter-container {
+  display: none;
+  margin: 16px 0;
+  border: solid #77d0ea 1px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.cf-common-view-container .filter-container .content {
+  display: block;
+  padding-bottom: 16px;
+}
+.cf-common-view-container .filter-container.active {
+  display: block;
 }

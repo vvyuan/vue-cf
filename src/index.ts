@@ -7,6 +7,7 @@ export * from './define/FieldUtil';
 export * from './define/ICFRequest';
 export * from './define/MenuDefine';
 export * from './define/ViewDefine';
+export * from './define/CFButtonDefine';
 import CFView from './components/CFView.vue';
 import CFForm from './components/CFForm.vue';
 import CFViewWithDrawer from './components/CFViewWithDrawer.vue';

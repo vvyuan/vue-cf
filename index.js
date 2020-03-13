@@ -1647,5 +1647,5 @@ if (typeof window !== 'undefined' && window.Vue) {
 var index = { install };
 
 export default index;
-export { CFConfig, Field as CFField, CFForm, CFFormWithDrawer, CFNumberFieldFormatter, CFParentView, CFView, CFViewWithDrawer, FieldPosition, menuCreator };
+export { CFButtonPosition, CFConfig, Field as CFField, CFForm, CFFormWithDrawer, CFNumberFieldFormatter, CFParentView, CFView, CFViewWithDrawer, FieldPosition, defaultButtons, menuCreator };
 //# sourceMappingURL=index.js.map
