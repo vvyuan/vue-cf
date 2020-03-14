@@ -1,7 +1,7 @@
 /// <reference types="node" />
 import {WrappedFormUtils} from "ant-design-vue/types/form/form";
 import Vue, {Component, PluginFunction} from "vue";
-import VueRouter from "vue-router";
+import VueRouter, { RouteConfig } from "vue-router";
 import {ValidationRule} from "ant-design-vue/types/form/form";
 import {Moment}from "moment";
 import {CascaderOptionType} from "ant-design-vue/types/cascader";
@@ -195,6 +195,51 @@ export type CFFConfig = {
   inForm?: FieldConfig, // 字段对于form的配置
 }
 
+export abstract class CFConfig<T extends CFDataBase> {
+  // 全局配置使用的请求类
+  static useRequest(request: ICFRequest): void;
+  // 资源url
+  abstract url: string;
+  // 字段列表
+  readonly fieldList: CFFConfig[];
+  /**
+   * 字段映射
+   * key: 视图字段
+   * value: 报文字段
+   */
+  readonly map: {[key: string]: string};
+  // 默认的按钮组，可以通过覆盖本属性来取消默认按钮，一般情况下只重写buttons属性即可
+  protected readonly defaultButtons: {[key: string]: CFButton};
+  // 自定义按钮组，可增量覆盖默认按钮组
+  protected readonly buttons: {[key: string]: CFButton | null | undefined};
+
+  /**
+   * 获取所有按钮清单，此处可继承后根据权限处理按钮是否允许显示
+   */
+  buttonFilter(buttons: CFButton[]): CFButton[];
+  // 按钮列表
+  readonly buttonList: CFButton[];
+  // 实际使用的按钮数据
+  readonly realButtons: CFButtons;
+
+  // 页面标题
+  pageTitle: string;
+  // 表单是否内嵌到view中
+  inlineForm: boolean;
+  // 是否启用行选择模式
+  enableSelect: boolean;
+
+  getList(filter?: any): Promise<CFListResponse<T>>;
+  getOne(id: number | string): Promise<T>;
+  createOne(data: T): Promise<any>;
+  updateOne(data: T): Promise<any>;
+  deleteOne(id: number | string): Promise<any>;
+}
+
+/**
+ * CFButtonDefine
+ */
+
 export enum CFButtonPosition {
   // table
   tableHeaderLeft = 'tableHeaderLeft',
@@ -256,47 +301,6 @@ type CFButtons = {
   drawerFooterRight: CFButton[],
 }
 
-export abstract class CFConfig<T extends CFDataBase> {
-  // 全局配置使用的请求类
-  static useRequest(request: ICFRequest): void;
-  // 资源url
-  abstract url: string;
-  // 字段列表
-  readonly fieldList: CFFConfig[];
-  /**
-   * 字段映射
-   * key: 视图字段
-   * value: 报文字段
-   */
-  readonly map: {[key: string]: string};
-  // 默认的按钮组，可以通过覆盖本属性来取消默认按钮，一般情况下只重写buttons属性即可
-  protected readonly defaultButtons: {[key: string]: CFButton};
-  // 自定义按钮组，可增量覆盖默认按钮组
-  protected readonly buttons: {[key: string]: CFButton | null | undefined};
-
-  /**
-   * 获取所有按钮清单，此处可继承后根据权限处理按钮是否允许显示
-   */
-  buttonFilter(buttons: CFButton[]): CFButton[];
-  // 按钮列表
-  readonly buttonList: CFButton[];
-  // 实际使用的按钮数据
-  readonly realButtons: CFButtons;
-
-  // 页面标题
-  pageTitle: string;
-  // 表单是否内嵌到view中
-  inlineForm: boolean;
-  // 是否启用行选择模式
-  enableSelect: boolean;
-
-  getList(filter?: any): Promise<CFListResponse<T>>;
-  getOne(id: number | string): Promise<T>;
-  createOne(data: T): Promise<any>;
-  updateOne(data: T): Promise<any>;
-  deleteOne(id: number | string): Promise<any>;
-}
-
 /**
  * ViewDefine
  */
@@ -341,7 +345,7 @@ export type CFMenuUnit<T extends CFDataBase> = {
   meta?: any,
 }
 
-export function menuCreator(): void
+export function routerCreator(menus: CFMenuUnit<any>[]): RouteConfig[] | CFMenuUnit<any>[]
 
 export class CFView extends Vue implements ICFView {
   resetForInlineForm(): void;

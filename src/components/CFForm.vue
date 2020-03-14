@@ -2,7 +2,7 @@
   <div class="cf-common-form-container">
     <component v-if="cfConfig && cfConfig.formPrintTemplate" v-bind:is="cfConfig.formPrintTemplate"/>
     <div>
-      <a-form ref="form" :form="form" @submit="save">
+      <a-form ref="form" :form="form" @submit.prevent.stop="save">
         <a-row class="content common-form-content">
           <template v-for="(field, index) in fieldList">
             <a-col
@@ -218,6 +218,7 @@
                   v-if="button.conditionOfDisplay ? button.conditionOfDisplay($router, cfConfig, undefined, form, undefined, undefined) : true"
                   :disabled="button.conditionOfDisable ? button.conditionOfDisable($router, cfConfig, undefined, form, undefined, undefined) : false"
                   :type="button.type"
+                  :htmlType="button.htmlType || 'button'"
                   @click="onCFButtonClick(button.onClick)"
                   :icon="button.icon"
                   :title="button.tips"
@@ -254,6 +255,7 @@
         cascaderFilterOption: cascaderFilterOption,
         readonly: false,
         visible: false,
+        isSaving: false,
       }
     },
     computed: {
@@ -272,7 +274,8 @@
         buttonClickFn(this.$router, this.cfConfig, undefined, this);
       },
       save(e, otherData) {
-        e && e.preventDefault();
+        if(this.isSaving) {return}
+        this.isSaving = true;
         return new Promise(resolve => {
           this.form.validateFields((err, rawValues) => {
             if (!err) {
@@ -288,6 +291,8 @@
               resolve(handle.then(this.onSaved).catch(e=>{ this.$message.error(e.message || e) }).finally(hide))
             }
           });
+        }).finally(()=>{
+          this.isSaving = false;
         })
       },
       onSaved() {

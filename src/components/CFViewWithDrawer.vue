@@ -56,7 +56,7 @@
       close() {
         this.visible = false;
         setTimeout(()=>{
-          this.$router.go(-1)
+          this.$router.back()
         }, 600)
       },
       keyPressEventHandle(event) {

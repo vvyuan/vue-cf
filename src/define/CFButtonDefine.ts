@@ -24,6 +24,7 @@ export type CFButton = {
   tips?: string, // 鼠标悬浮提示信息
   icon?: string,
   type?: 'primary' | 'danger' | 'default' | 'dashed' | 'link',
+  htmlType?: 'submit' | 'button' | 'reset',
   auth?: string,
   position: CFButtonPosition[],
   // 从小到大，从左到右，默认0
@@ -68,13 +69,7 @@ export const defaultButtons: {[key: string]: CFButton} = {
     icon: 'plus',
     type: 'primary',
     onClick: (router, cfConfig, view, form, selectedRecords, record) => {
-      if(cfConfig.inlineForm) {
-        form && form.save().then(()=>{
-          view && view.resetForInlineForm();
-        });
-      } else {
-        router.push(router.currentRoute.path + "/create")
-      }
+      router.push(router.currentRoute.path + "/create")
     }
   },
   edit: {
@@ -127,6 +122,7 @@ export const defaultButtons: {[key: string]: CFButton} = {
     title: '保存',
     position: [CFButtonPosition.drawerFooterRight, CFButtonPosition.inlineFooterCenter],
     type: 'primary',
+    htmlType: 'submit',
     onClick: (router, cfConfig, view, form, selectedRecords, record) => {
       form && form.save();
     }

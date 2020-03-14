@@ -518,14 +518,7 @@ const defaultButtons = {
         icon: 'plus',
         type: 'primary',
         onClick: (router, cfConfig, view, form, selectedRecords, record) => {
-            if (cfConfig.inlineForm) {
-                form && form.save().then(() => {
-                    view && view.resetForInlineForm();
-                });
-            }
-            else {
-                router.push(router.currentRoute.path + "/create");
-            }
+            router.push(router.currentRoute.path + "/create");
         }
     },
     edit: {
@@ -578,6 +571,7 @@ const defaultButtons = {
         title: '保存',
         position: [CFButtonPosition.drawerFooterRight, CFButtonPosition.inlineFooterCenter],
         type: 'primary',
+        htmlType: 'submit',
         onClick: (router, cfConfig, view, form, selectedRecords, record) => {
             form && form.save();
         }
@@ -977,8 +971,12 @@ var Field = /*#__PURE__*/Object.freeze({
     CheckboxField: CheckboxField
 });
 
-function menuCreator() {
-}
+var CFParentView = {
+render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('router-view')},
+staticRenderFns: [],
+    name: 'CFParentView',
+    components: {},
+  };
 
 /**
  * 中文转拼音
@@ -1162,7 +1160,7 @@ function objectToQueryString(obj) {
 }
 
 var CFForm = {
-render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"cf-common-form-container"},[(_vm.cfConfig && _vm.cfConfig.formPrintTemplate)?_c(_vm.cfConfig.formPrintTemplate,{tag:"component"}):_vm._e(),_vm._v(" "),_c('div',[_c('a-form',{ref:"form",attrs:{"form":_vm.form},on:{"submit":_vm.save}},[_c('a-row',{staticClass:"content common-form-content"},[_vm._l((_vm.fieldList),function(field,index){return [(field.inForm.position & _vm.FieldPosition.form)?_c('a-col',{key:index,attrs:{"xs":_vm._inlineForm ? 24 : 24,"sm":_vm._inlineForm ? 24 : 24,"md":_vm._inlineForm ? 12 : 24,"lg":_vm._inlineForm ? 12 : 24,"xl":_vm._inlineForm ? 8 : 24,"xxl":_vm._inlineForm ? 6 : 24}},[_c('a-form-item',{staticClass:"form-item",attrs:{"disabled":_vm.readonly,"label-col":{span: 5},"wrapper-col":{span: 19},"label":field.title}},[(field.inForm instanceof _vm.FieldDefine.TextField)?[_c('a-input',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:_vm._e(),_vm._v(" "),(field.inForm instanceof _vm.FieldDefine.ReadonlyField || field.inForm instanceof _vm.FieldDefine.ReadonlyFieldWithDict)?[_c('a-input',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name]),expression:"[field.name]"}],staticClass:"input",attrs:{"disabled":true}})]:_vm._e(),_vm._v(" "),(field.inForm instanceof _vm.FieldDefine.PasswordField)?[_c('a-input-password',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder}})]:_vm._e(),_vm._v(" "),(field.inForm instanceof _vm.FieldDefine.TextareaField)?[_c('a-textarea',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"rows":field.inForm.rows,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.NumberField)?[_c('a-input-number',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"step":field.inForm.step,"max":field.inForm.max,"min":field.inForm.min,"formatter":field.inForm.formatter,"parser":field.inForm.parser,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.SingleSelectField)?[_c('a-select',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"showSearch":"","optionFilterProp":"children","filterOption":_vm.filterOption(),"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.MultipleSelectField)?[_c('a-select',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"mode":"multiple","showSearch":"","optionFilterProp":"children","filterOption":_vm.filterOption(),"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.TagField)?[_c('a-select',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"mode":"tags","showSearch":"","optionFilterProp":"children","filterOption":_vm.filterOption(),"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.CascaderField)?[_c('a-cascader',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"showSearch":field.inForm.needLoadData ? false : {filter: _vm.cascaderFilterOption()},"loadData":field.inForm.needLoadData ? field.inForm.loadData.bind(field.inForm) : undefined,"changeOnSelect":field.inForm.needLoadData,"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.RadioField)?[_c('a-radio-group',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.CheckboxField)?[_c('a-checkbox-group',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.DateTimeField)?[_c('a-date-picker',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"showTime":"","getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.DateField)?[_c('a-date-picker',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.TimeField)?[_c('a-time-picker',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:_vm._e()],2)],1):_vm._e()]})],2),_vm._v(" "),(!_vm._inlineForm)?[_c('div',{staticClass:"footer-placeholder"}),_vm._v(" "),_c('div',{staticClass:"footer"},[_c('div',{staticClass:"left-buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.drawerFooterLeft : [])),function(button){return [(button.conditionOfDisplay ? button.conditionOfDisplay(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : true)?_c('a-button',{key:button.key,attrs:{"disabled":button.conditionOfDisable ? button.conditionOfDisable(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : false,"type":button.type,"icon":button.icon,"title":button.tips},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))]):_vm._e()]})],2),_vm._v(" "),_c('div',{staticClass:"right-buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.drawerFooterRight : [])),function(button){return [(button.conditionOfDisplay ? button.conditionOfDisplay(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : true)?_c('a-button',{key:button.key,attrs:{"disabled":button.conditionOfDisable ? button.conditionOfDisable(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : false,"type":button.type,"icon":button.icon,"title":button.tips},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))]):_vm._e()]})],2)])]:_vm._e()],2)],1)],1)},
+render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"cf-common-form-container"},[(_vm.cfConfig && _vm.cfConfig.formPrintTemplate)?_c(_vm.cfConfig.formPrintTemplate,{tag:"component"}):_vm._e(),_vm._v(" "),_c('div',[_c('a-form',{ref:"form",attrs:{"form":_vm.form},on:{"submit":function($event){$event.preventDefault();$event.stopPropagation();return _vm.save($event)}}},[_c('a-row',{staticClass:"content common-form-content"},[_vm._l((_vm.fieldList),function(field,index){return [(field.inForm.position & _vm.FieldPosition.form)?_c('a-col',{key:index,attrs:{"xs":_vm._inlineForm ? 24 : 24,"sm":_vm._inlineForm ? 24 : 24,"md":_vm._inlineForm ? 12 : 24,"lg":_vm._inlineForm ? 12 : 24,"xl":_vm._inlineForm ? 8 : 24,"xxl":_vm._inlineForm ? 6 : 24}},[_c('a-form-item',{staticClass:"form-item",attrs:{"disabled":_vm.readonly,"label-col":{span: 5},"wrapper-col":{span: 19},"label":field.title}},[(field.inForm instanceof _vm.FieldDefine.TextField)?[_c('a-input',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:_vm._e(),_vm._v(" "),(field.inForm instanceof _vm.FieldDefine.ReadonlyField || field.inForm instanceof _vm.FieldDefine.ReadonlyFieldWithDict)?[_c('a-input',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name]),expression:"[field.name]"}],staticClass:"input",attrs:{"disabled":true}})]:_vm._e(),_vm._v(" "),(field.inForm instanceof _vm.FieldDefine.PasswordField)?[_c('a-input-password',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder}})]:_vm._e(),_vm._v(" "),(field.inForm instanceof _vm.FieldDefine.TextareaField)?[_c('a-textarea',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"rows":field.inForm.rows,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.NumberField)?[_c('a-input-number',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"step":field.inForm.step,"max":field.inForm.max,"min":field.inForm.min,"formatter":field.inForm.formatter,"parser":field.inForm.parser,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.SingleSelectField)?[_c('a-select',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"showSearch":"","optionFilterProp":"children","filterOption":_vm.filterOption(),"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.MultipleSelectField)?[_c('a-select',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"mode":"multiple","showSearch":"","optionFilterProp":"children","filterOption":_vm.filterOption(),"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.TagField)?[_c('a-select',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"mode":"tags","showSearch":"","optionFilterProp":"children","filterOption":_vm.filterOption(),"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.CascaderField)?[_c('a-cascader',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"showSearch":field.inForm.needLoadData ? false : {filter: _vm.cascaderFilterOption()},"loadData":field.inForm.needLoadData ? field.inForm.loadData.bind(field.inForm) : undefined,"changeOnSelect":field.inForm.needLoadData,"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.RadioField)?[_c('a-radio-group',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.CheckboxField)?[_c('a-checkbox-group',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.DateTimeField)?[_c('a-date-picker',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"showTime":"","getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.DateField)?[_c('a-date-picker',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.TimeField)?[_c('a-time-picker',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:_vm._e()],2)],1):_vm._e()]})],2),_vm._v(" "),(!_vm._inlineForm)?[_c('div',{staticClass:"footer-placeholder"}),_vm._v(" "),_c('div',{staticClass:"footer"},[_c('div',{staticClass:"left-buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.drawerFooterLeft : [])),function(button){return [(button.conditionOfDisplay ? button.conditionOfDisplay(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : true)?_c('a-button',{key:button.key,attrs:{"disabled":button.conditionOfDisable ? button.conditionOfDisable(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : false,"type":button.type,"icon":button.icon,"title":button.tips},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))]):_vm._e()]})],2),_vm._v(" "),_c('div',{staticClass:"right-buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.drawerFooterRight : [])),function(button){return [(button.conditionOfDisplay ? button.conditionOfDisplay(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : true)?_c('a-button',{key:button.key,attrs:{"disabled":button.conditionOfDisable ? button.conditionOfDisable(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : false,"type":button.type,"htmlType":button.htmlType || 'button',"icon":button.icon,"title":button.tips},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))]):_vm._e()]})],2)])]:_vm._e()],2)],1)],1)},
 staticRenderFns: [],
     name: 'CFForm',
     props: {
@@ -1180,6 +1178,7 @@ staticRenderFns: [],
         cascaderFilterOption: cascaderFilterOption,
         readonly: false,
         visible: false,
+        isSaving: false,
       }
     },
     computed: {
@@ -1198,7 +1197,8 @@ staticRenderFns: [],
         buttonClickFn(this.$router, this.cfConfig, undefined, this);
       },
       save(e, otherData) {
-        e && e.preventDefault();
+        if(this.isSaving) {return}
+        this.isSaving = true;
         return new Promise(resolve => {
           this.form.validateFields((err, rawValues) => {
             if (!err) {
@@ -1214,6 +1214,8 @@ staticRenderFns: [],
               resolve(handle.then(this.onSaved).catch(e=>{ this.$message.error(e.message || e); }).finally(hide));
             }
           });
+        }).finally(()=>{
+          this.isSaving = false;
         })
       },
       onSaved() {
@@ -1526,53 +1528,6 @@ staticRenderFns: [],
     }
   };
 
-var CFViewWithDrawer = {
-render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('a-drawer',{attrs:{"placement":"right","closable":true,"destroyOnClose":true,"maskClosable":true,"visible":_vm.visible,"width":_vm.cfConfig.drawerWidth || 600,"getContainer":"#cf-drawer"},on:{"close":_vm.close}},[_c('template',{slot:"title"},[(Array.isArray(_vm.title) && _vm.title.length)?[_c('div',[_vm._v(_vm._s(_vm.title[_vm.title.length - 1]))])]:_vm._e()],2),_vm._v(" "),_c('CFView',{attrs:{"cfConfig":_vm.cfConfig,"path":_vm.path,"title":_vm.title}})],2)],1)},
-staticRenderFns: [],
-    name: 'CFViewWithDrawer',
-    components: {},
-    props: {
-      code: null,
-      cfConfig: null,
-      title: null,
-      path: null,
-    },
-    data() {
-      return {
-        name: '',
-        visible: false,
-      }
-    },
-    beforeCreate() {
-      if(!document.getElementById('cf-drawer')) {
-        // 创建drawer容器，避免莫名bug
-        let drawer = document.createElement('div');
-        drawer.id = 'cf-drawer';
-        document.body.appendChild(drawer);
-      }
-    },
-    mounted() {
-      this.visible = true;
-      addEventListener('keyup', this.keyPressEventHandle);
-    },
-    destroyed() {
-      removeEventListener('keyup', this.keyPressEventHandle);
-    },
-    methods: {
-      close() {
-        this.visible = false;
-        setTimeout(()=>{
-          this.$router.go(-1);
-        }, 600);
-      },
-      keyPressEventHandle(event) {
-        if(event.code === 'Escape') {
-          this.onClose();
-        }
-      }
-    }
-  };
-
 var CFFormWithDrawer = {
 render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('a-drawer',{attrs:{"wrapClassName":"cf-common-form-drawer","placement":"right","closable":false,"maskClosable":false,"visible":_vm.visible,"width":_vm.cfConfig.drawerWidth || 600,"getContainer":"#cf-drawer"},on:{"close":_vm.onClose}},[_c('template',{slot:"title"},[_c('div',{staticStyle:{"display":"flex","align-items":"center","justify-content":"space-between"}},[(Array.isArray(_vm.title) && _vm.title.length)?[_c('div',[(!this.id)?_c('span',[_vm._v("新增 - ")]):_c('span',[_vm._v("编辑 - ")]),_vm._v(_vm._s(_vm.title[_vm.title.length - 1]))])]:[_c('div',[(!this.id)?_c('span',[_vm._v("新增")]):_c('span',[_vm._v("编辑")])])]],2)]),_vm._v(" "),_c('div',[_c('CFForm',{ref:"form",attrs:{"id":_vm.id,"cfConfig":_vm.cfConfig,"inlineForm":false,"initFormValues":_vm.initFormValues},on:{"saved":_vm.onClose}})],1)],2)],1)},
 staticRenderFns: [],
@@ -1611,7 +1566,7 @@ staticRenderFns: [],
       onClose() {
         this.visible = false;
         setTimeout(()=>{
-          this.$router.go(-1);
+          this.$router.back();
         }, 600);
       },
       keyPressEventHandle(event) {
@@ -1622,11 +1577,170 @@ staticRenderFns: [],
     }
   };
 
-var CFParentView = {
-render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('router-view')},
+function routerCreatorForMenuUnit(menu, parentPath = '', titleList = []) {
+    let curMenuPath = parentPath + '/' + menu.path;
+    titleList.push(menu.title);
+    // @ts-ignore
+    let route = {
+        ...menu,
+        path: menu.path,
+        // redirect: menu.redirect,
+        // children: menu.children,
+        // props: menu.props,
+        // component: menu.component,
+        meta: {
+            title: titleList,
+            display: menu.display,
+            auth: menu.auth,
+            icon: menu.icon,
+            description: menu.description,
+            path: curMenuPath,
+            ...(menu.meta || {})
+        },
+        props: menu.props,
+    };
+    if (typeof menu.props === 'function') {
+        let propsFn = menu.props;
+        route.props = function (route) {
+            let props = propsFn(route);
+            return {
+                title: titleList,
+                path: curMenuPath,
+                ...props,
+            };
+        };
+    }
+    else {
+        route.props = {
+            title: titleList,
+            path: curMenuPath,
+            ...menu.props
+        };
+    }
+    if (menu.children) {
+        route.children = menu.children.map(item => routerCreatorForMenuUnit(item, curMenuPath, titleList));
+    }
+    // 是否叶子节点
+    let isLeaf = !(menu.children && menu.children.some(item => item.display !== false));
+    if (isLeaf) {
+        // 非叶子节点
+        if (!menu.component) {
+            route.redirect = curMenuPath + '/' + menu.children[0].path;
+            route.component = CFParentView;
+        }
+    }
+    else {
+        // 叶子节点
+        if (!menu.component) {
+            route.component = CFView;
+        }
+        // 为所有叶子节点添加默认form路由
+        // @ts-ignore
+        route.children = (route.children || []).concat([
+            {
+                display: false,
+                title: '新增',
+                path: 'create',
+                auth: menu.auth ? menu.auth + '/create' : undefined,
+                component: CFFormWithDrawer,
+                props: { ...menu.props, type: 'create', path: curMenuPath + '/create', title: titleList.concat(['新增']) },
+                meta: {
+                    display: false,
+                    auth: menu.auth ? menu.auth + '/create' : undefined,
+                    title: '新增',
+                    path: curMenuPath + '/create',
+                }
+            },
+            {
+                display: false,
+                title: '编辑',
+                path: 'edit/:id',
+                auth: menu.auth ? menu.auth + '/edit' : undefined,
+                component: CFFormWithDrawer,
+                // props: (route:any) => ({  ...menu.props, type: 'edit', id: route.query.id, }),
+                props: (route) => ({
+                    ...menu.props,
+                    ...route.params,
+                    type: 'edit',
+                    path: curMenuPath + '/edit',
+                    title: titleList.concat(['编辑'])
+                }),
+                meta: {
+                    display: false,
+                    title: '编辑',
+                    auth: menu.auth ? menu.auth + '/edit' : undefined,
+                    path: curMenuPath + '/edit',
+                }
+            }
+        ]);
+    }
+    return route;
+}
+/**
+ * 根据菜单数据生成路由，主要用于补充默认的路由
+ * 1：对于所有的叶子节点，增加create和edit路由，默认指向CFFormWithDrawer，新增加的路由默认配置props.cfConfig为该叶子节点的cfConfig
+ * 2: 对于所有节点，配置的非路由必要数据，复制到meta中，便于在路由过程中获取数据
+ * 3: 对于所有节点，增加props.path属性，填充为fullPath，不含参数
+ * 4: 对于所有节点，增加props.title属性，填充为配置的titleArray
+ * 5: 对于所有非叶子节点，并且节点未配置component属性的，默认配置为CFParentView
+ * 6: 对于所有非叶子节点，并且节点未配置component属性的，默认重定向到第一个子节点
+ * 7: 对于所有叶子节点，并且节点未配置component属性的，默认配置为CFView
+ * @param menus
+ */
+function routerCreator(menus) {
+    if (menus.length) {
+        return menus.map(item => routerCreatorForMenuUnit(item));
+    }
+    else {
+        return [];
+    }
+}
+
+var CFViewWithDrawer = {
+render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('a-drawer',{attrs:{"placement":"right","closable":true,"destroyOnClose":true,"maskClosable":true,"visible":_vm.visible,"width":_vm.cfConfig.drawerWidth || 600,"getContainer":"#cf-drawer"},on:{"close":_vm.close}},[_c('template',{slot:"title"},[(Array.isArray(_vm.title) && _vm.title.length)?[_c('div',[_vm._v(_vm._s(_vm.title[_vm.title.length - 1]))])]:_vm._e()],2),_vm._v(" "),_c('CFView',{attrs:{"cfConfig":_vm.cfConfig,"path":_vm.path,"title":_vm.title}})],2)],1)},
 staticRenderFns: [],
-    name: 'CFParentView',
+    name: 'CFViewWithDrawer',
     components: {},
+    props: {
+      code: null,
+      cfConfig: null,
+      title: null,
+      path: null,
+    },
+    data() {
+      return {
+        name: '',
+        visible: false,
+      }
+    },
+    beforeCreate() {
+      if(!document.getElementById('cf-drawer')) {
+        // 创建drawer容器，避免莫名bug
+        let drawer = document.createElement('div');
+        drawer.id = 'cf-drawer';
+        document.body.appendChild(drawer);
+      }
+    },
+    mounted() {
+      this.visible = true;
+      addEventListener('keyup', this.keyPressEventHandle);
+    },
+    destroyed() {
+      removeEventListener('keyup', this.keyPressEventHandle);
+    },
+    methods: {
+      close() {
+        this.visible = false;
+        setTimeout(()=>{
+          this.$router.back();
+        }, 600);
+      },
+      keyPressEventHandle(event) {
+        if(event.code === 'Escape') {
+          this.onClose();
+        }
+      }
+    }
   };
 
 const components = [
@@ -1648,5 +1762,5 @@ if (typeof window !== 'undefined' && window.Vue) {
 var index = { install };
 
 export default index;
-export { CFButtonPosition, CFConfig, Field as CFField, CFForm, CFFormWithDrawer, CFNumberFieldFormatter, CFParentView, CFView, CFViewWithDrawer, FieldPosition, defaultButtons, menuCreator };
+export { CFButtonPosition, CFConfig, Field as CFField, CFForm, CFFormWithDrawer, CFNumberFieldFormatter, CFParentView, CFView, CFViewWithDrawer, FieldPosition, defaultButtons, routerCreator };
 //# sourceMappingURL=index.js.map
