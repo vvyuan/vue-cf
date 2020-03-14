@@ -90,6 +90,7 @@ export const defaultButtons: {[key: string]: CFButton} = {
     position: [CFButtonPosition.tableRowOperations],
     icon: 'delete',
     type: 'danger',
+    sort: 99,
     onClick: (router, cfConfig, view, form, selectedRecords, record) => {
       Modal.confirm({
         title: '确定删除？',
