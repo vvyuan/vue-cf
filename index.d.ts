@@ -345,7 +345,7 @@ export type CFMenuUnit<T extends CFDataBase> = {
   meta?: any,
 }
 
-export function routerCreator(menus: CFMenuUnit<any>[]): RouteConfig[] | CFMenuUnit<any>[]
+export function routesCreator(menus: CFMenuUnit<any>[]): RouteConfig[] | CFMenuUnit<any>[]
 
 export class CFView extends Vue implements ICFView {
   resetForInlineForm(): void;

@@ -27,9 +27,9 @@ export type CFMenuUnit<T extends CFDataBase> = {
   meta?: {[key: string]: any},
 }
 
-function routerCreatorForMenuUnit(menu: CFMenuUnit<any>, parentPath: string = '', titleList: string[] = []): RouteConfig {
+function routesCreatorForMenuUnit(menu: CFMenuUnit<any>, parentPath: string = '', titleList: string[] = []): RouteConfig {
   let curMenuPath = parentPath + '/' + menu.path;
-  titleList.push(menu.title);
+  let title = titleList.concat([menu.title]);
   // @ts-ignore
   let route: RouteConfig = {
     ...menu,
@@ -39,7 +39,7 @@ function routerCreatorForMenuUnit(menu: CFMenuUnit<any>, parentPath: string = ''
     // props: menu.props,
     // component: menu.component,
     meta: {
-      title: titleList,
+      title: title,
       display: menu.display,
       auth: menu.auth,
       icon: menu.icon,
@@ -54,80 +54,80 @@ function routerCreatorForMenuUnit(menu: CFMenuUnit<any>, parentPath: string = ''
     route.props = function(route: Route){
       let props = propsFn(route);
       return {
-        title: titleList,
+        title: title,
         path: curMenuPath,
         ...props,
       }
     }
   } else {
     route.props = {
-      title: titleList,
+      title: title,
       path: curMenuPath,
       ...menu.props
     }
   }
-  if(menu.children) {
-    route.children = menu.children!.map(item=>routerCreatorForMenuUnit(item, curMenuPath, titleList));
+  if(menu.children && menu.children.length) {
+    route.children = menu.children.map(item=>routesCreatorForMenuUnit(item, curMenuPath, title));
   }
   // 是否叶子节点
-  let isLeaf = !(menu.children && menu.children.some(item=>item.display !== false));
-  if(isLeaf) {
+  let notLeaf = menu.children && menu.children.length && menu.children.some(item=>item.display !== false);
+  if(notLeaf) {
     // 非叶子节点
     if(!menu.component) {
-      route.redirect = curMenuPath + '/' + menu.children![0].path;
+      // route.redirect = curMenuPath + '/' + menu.children![0].path;
       route.component = CFParentView;
     }
   } else {
     // 叶子节点
     if(!menu.component) {
       route.component = CFView;
-    }
-    // 为所有叶子节点添加默认form路由
-    // @ts-ignore
-    route.children = (route.children || []).concat([
-      {
-        display: false,
-        title: '新增',
-        path: 'create',
-        auth: menu.auth ? menu.auth + '/create' : undefined,
-        component: CFFormWithDrawer,
-        props: { ...menu.props, type: 'create', path: curMenuPath + '/create', title: titleList.concat(['新增'])},
-        meta: {
+      // 为所有未指定component的叶子节点添加默认form路由
+      // @ts-ignore
+      route.children = (route.children || []).concat([
+        {
           display: false,
-          auth: menu.auth ? menu.auth + '/create' : undefined,
           title: '新增',
-          path: curMenuPath + '/create',
-        }
-      },
-      {
-        display: false,
-        title: '编辑',
-        path: 'edit/:id',
-        auth: menu.auth ? menu.auth + '/edit' : undefined,
-        component: CFFormWithDrawer,
-        // props: (route:any) => ({  ...menu.props, type: 'edit', id: route.query.id, }),
-        props: (route:any) =>({
-          ...menu.props,
-          ...route.params,
-          type: 'edit',
-          path: curMenuPath + '/edit',
-          title: titleList.concat(['编辑'])
-        }),
-        meta: {
+          path: 'create',
+          auth: menu.auth ? menu.auth + '/create' : undefined,
+          component: CFFormWithDrawer,
+          props: { ...menu.props, type: 'create', path: curMenuPath + '/create', title: title.concat(['新增'])},
+          meta: {
+            display: false,
+            auth: menu.auth ? menu.auth + '/create' : undefined,
+            title: '新增',
+            path: curMenuPath + '/create',
+          }
+        },
+        {
           display: false,
           title: '编辑',
+          path: 'edit/:id',
           auth: menu.auth ? menu.auth + '/edit' : undefined,
-          path: curMenuPath + '/edit',
+          component: CFFormWithDrawer,
+          // props: (route:any) => ({  ...menu.props, type: 'edit', id: route.query.id, }),
+          props: (route:any) =>({
+            ...menu.props,
+            ...route.params,
+            type: 'edit',
+            path: curMenuPath + '/edit',
+            title: title.concat(['编辑'])
+          }),
+          meta: {
+            display: false,
+            title: '编辑',
+            auth: menu.auth ? menu.auth + '/edit' : undefined,
+            path: curMenuPath + '/edit',
+          }
         }
-      }
-    ])
+      ])
+    }
   }
   return route
 }
 
 /**
  * 根据菜单数据生成路由，主要用于补充默认的路由
- * 1：对于所有的叶子节点，增加create和edit路由，默认指向CFFormWithDrawer，新增加的路由默认配置props.cfConfig为该叶子节点的cfConfig
+ * 1：对于所有未指定component的叶子节点，增加create和edit路由，默认指向CFFormWithDrawer，新增加的路由默认配置props.cfConfig为该叶子节点的cfConfig
  * 2: 对于所有节点，配置的非路由必要数据，复制到meta中，便于在路由过程中获取数据
  * 3: 对于所有节点，增加props.path属性，填充为fullPath，不含参数
  * 4: 对于所有节点，增加props.title属性，填充为配置的titleArray
@@ -136,9 +136,9 @@ function routerCreatorForMenuUnit(menu: CFMenuUnit<any>, parentPath: string = ''
  * 7: 对于所有叶子节点，并且节点未配置component属性的，默认配置为CFView
  * @param menus
  */
-export function routerCreator(menus: CFMenuUnit<any>[]): RouteConfig[] | CFMenuUnit<any>[] {
+export function routesCreator(menus: CFMenuUnit<any>[]): RouteConfig[] | CFMenuUnit<any>[] {
   if(menus.length) {
-    return menus.map(item=>routerCreatorForMenuUnit(item));
+    return menus.map(item=>routesCreatorForMenuUnit(item));
   } else {
     return [];
   }

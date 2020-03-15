@@ -361,6 +361,7 @@ class MockStorage {
     }
 }
 const mockStorage = new MockStorage();
+//# sourceMappingURL=MockStorage.js.map
 
 class ARequest {
     get(url, data, header, map) {
@@ -494,6 +495,7 @@ class MockRequestEx extends MockRequest {
     }
 }
 var MockRequest$1 = new MockRequestEx();
+//# sourceMappingURL=MockRequest.js.map
 
 var CFButtonPosition;
 (function (CFButtonPosition) {
@@ -526,7 +528,7 @@ const defaultButtons = {
         position: [CFButtonPosition.tableRowOperations],
         icon: 'edit',
         onClick: (router, cfConfig, view, form, selectedRecords, record) => {
-            router.push(router.currentRoute.path + "/edit?id=" + record.id);
+            router.push(router.currentRoute.path + "/edit/" + record.id);
         }
     },
     delete: {
@@ -577,6 +579,7 @@ const defaultButtons = {
         }
     },
 };
+//# sourceMappingURL=CFButtonDefine.js.map
 
 class CFRequest {
 }
@@ -669,6 +672,7 @@ class CFConfig {
         return this.request.delete(this.url, { id: id }, {}, this.map);
     }
 }
+//# sourceMappingURL=CFDefine.js.map
 
 const CFNumberFieldFormatter = {
     moneyRMB: {
@@ -682,6 +686,7 @@ var FieldPosition;
     FieldPosition[FieldPosition["filter"] = 2] = "filter";
     FieldPosition[FieldPosition["form"] = 1] = "form";
 })(FieldPosition || (FieldPosition = {}));
+//# sourceMappingURL=FieldUtil.js.map
 
 class FieldConfig {
     /**
@@ -944,6 +949,7 @@ class RadioField extends FieldWithDict {
 }
 class CheckboxField extends FieldWithDict {
 }
+//# sourceMappingURL=FieldDefine.js.map
 
 var Field = /*#__PURE__*/Object.freeze({
     __proto__: null,
@@ -1110,6 +1116,7 @@ class Pinyin {
         return String(result);
     }
 }
+//# sourceMappingURL=Pinyin.js.map
 
 /**
  * select组件filterOption处理方法，同时支持value、text和text拼音首字母查询
@@ -1158,6 +1165,7 @@ function objectToQueryString(obj) {
         return queryArray.join('&');
     }
 }
+//# sourceMappingURL=util.js.map
 
 var CFForm = {
 render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"cf-common-form-container"},[(_vm.cfConfig && _vm.cfConfig.formPrintTemplate)?_c(_vm.cfConfig.formPrintTemplate,{tag:"component"}):_vm._e(),_vm._v(" "),_c('div',[_c('a-form',{ref:"form",attrs:{"form":_vm.form},on:{"submit":function($event){$event.preventDefault();$event.stopPropagation();return _vm.save($event)}}},[_c('a-row',{staticClass:"content common-form-content"},[_vm._l((_vm.fieldList),function(field,index){return [(field.inForm.position & _vm.FieldPosition.form)?_c('a-col',{key:index,attrs:{"xs":_vm._inlineForm ? 24 : 24,"sm":_vm._inlineForm ? 24 : 24,"md":_vm._inlineForm ? 12 : 24,"lg":_vm._inlineForm ? 12 : 24,"xl":_vm._inlineForm ? 8 : 24,"xxl":_vm._inlineForm ? 6 : 24}},[_c('a-form-item',{staticClass:"form-item",attrs:{"disabled":_vm.readonly,"label-col":{span: 5},"wrapper-col":{span: 19},"label":field.title}},[(field.inForm instanceof _vm.FieldDefine.TextField)?[_c('a-input',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:_vm._e(),_vm._v(" "),(field.inForm instanceof _vm.FieldDefine.ReadonlyField || field.inForm instanceof _vm.FieldDefine.ReadonlyFieldWithDict)?[_c('a-input',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name]),expression:"[field.name]"}],staticClass:"input",attrs:{"disabled":true}})]:_vm._e(),_vm._v(" "),(field.inForm instanceof _vm.FieldDefine.PasswordField)?[_c('a-input-password',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder}})]:_vm._e(),_vm._v(" "),(field.inForm instanceof _vm.FieldDefine.TextareaField)?[_c('a-textarea',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"rows":field.inForm.rows,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.NumberField)?[_c('a-input-number',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"step":field.inForm.step,"max":field.inForm.max,"min":field.inForm.min,"formatter":field.inForm.formatter,"parser":field.inForm.parser,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.SingleSelectField)?[_c('a-select',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"showSearch":"","optionFilterProp":"children","filterOption":_vm.filterOption(),"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.MultipleSelectField)?[_c('a-select',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"mode":"multiple","showSearch":"","optionFilterProp":"children","filterOption":_vm.filterOption(),"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.TagField)?[_c('a-select',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"mode":"tags","showSearch":"","optionFilterProp":"children","filterOption":_vm.filterOption(),"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.CascaderField)?[_c('a-cascader',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"showSearch":field.inForm.needLoadData ? false : {filter: _vm.cascaderFilterOption()},"loadData":field.inForm.needLoadData ? field.inForm.loadData.bind(field.inForm) : undefined,"changeOnSelect":field.inForm.needLoadData,"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.RadioField)?[_c('a-radio-group',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.CheckboxField)?[_c('a-checkbox-group',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.DateTimeField)?[_c('a-date-picker',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"showTime":"","getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.DateField)?[_c('a-date-picker',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.TimeField)?[_c('a-time-picker',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:_vm._e()],2)],1):_vm._e()]})],2),_vm._v(" "),(!_vm._inlineForm)?[_c('div',{staticClass:"footer-placeholder"}),_vm._v(" "),_c('div',{staticClass:"footer"},[_c('div',{staticClass:"left-buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.drawerFooterLeft : [])),function(button){return [(button.conditionOfDisplay ? button.conditionOfDisplay(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : true)?_c('a-button',{key:button.key,attrs:{"disabled":button.conditionOfDisable ? button.conditionOfDisable(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : false,"type":button.type,"icon":button.icon,"title":button.tips},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))]):_vm._e()]})],2),_vm._v(" "),_c('div',{staticClass:"right-buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.drawerFooterRight : [])),function(button){return [(button.conditionOfDisplay ? button.conditionOfDisplay(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : true)?_c('a-button',{key:button.key,attrs:{"disabled":button.conditionOfDisable ? button.conditionOfDisable(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : false,"type":button.type,"htmlType":button.htmlType || 'button',"icon":button.icon,"title":button.tips},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))]):_vm._e()]})],2)])]:_vm._e()],2)],1)],1)},
@@ -1577,9 +1585,9 @@ staticRenderFns: [],
     }
   };
 
-function routerCreatorForMenuUnit(menu, parentPath = '', titleList = []) {
+function routesCreatorForMenuUnit(menu, parentPath = '', titleList = []) {
     let curMenuPath = parentPath + '/' + menu.path;
-    titleList.push(menu.title);
+    let title = titleList.concat([menu.title]);
     // @ts-ignore
     let route = {
         ...menu,
@@ -1589,7 +1597,7 @@ function routerCreatorForMenuUnit(menu, parentPath = '', titleList = []) {
         // props: menu.props,
         // component: menu.component,
         meta: {
-            title: titleList,
+            title: title,
             display: menu.display,
             auth: menu.auth,
             icon: menu.icon,
@@ -1604,7 +1612,7 @@ function routerCreatorForMenuUnit(menu, parentPath = '', titleList = []) {
         route.props = function (route) {
             let props = propsFn(route);
             return {
-                title: titleList,
+                title: title,
                 path: curMenuPath,
                 ...props,
             };
@@ -1612,20 +1620,20 @@ function routerCreatorForMenuUnit(menu, parentPath = '', titleList = []) {
     }
     else {
         route.props = {
-            title: titleList,
+            title: title,
             path: curMenuPath,
             ...menu.props
         };
     }
-    if (menu.children) {
-        route.children = menu.children.map(item => routerCreatorForMenuUnit(item, curMenuPath, titleList));
+    if (menu.children && menu.children.length) {
+        route.children = menu.children.map(item => routesCreatorForMenuUnit(item, curMenuPath, title));
     }
     // 是否叶子节点
-    let isLeaf = !(menu.children && menu.children.some(item => item.display !== false));
-    if (isLeaf) {
+    let notLeaf = menu.children && menu.children.length && menu.children.some(item => item.display !== false);
+    if (notLeaf) {
         // 非叶子节点
         if (!menu.component) {
-            route.redirect = curMenuPath + '/' + menu.children[0].path;
+            // route.redirect = curMenuPath + '/' + menu.children![0].path;
             route.component = CFParentView;
         }
     }
@@ -1633,52 +1641,52 @@ function routerCreatorForMenuUnit(menu, parentPath = '', titleList = []) {
         // 叶子节点
         if (!menu.component) {
             route.component = CFView;
-        }
-        // 为所有叶子节点添加默认form路由
-        // @ts-ignore
-        route.children = (route.children || []).concat([
-            {
-                display: false,
-                title: '新增',
-                path: 'create',
-                auth: menu.auth ? menu.auth + '/create' : undefined,
-                component: CFFormWithDrawer,
-                props: { ...menu.props, type: 'create', path: curMenuPath + '/create', title: titleList.concat(['新增']) },
-                meta: {
+            // 为所有未指定component的叶子节点添加默认form路由
+            // @ts-ignore
+            route.children = (route.children || []).concat([
+                {
                     display: false,
-                    auth: menu.auth ? menu.auth + '/create' : undefined,
                     title: '新增',
-                    path: curMenuPath + '/create',
-                }
-            },
-            {
-                display: false,
-                title: '编辑',
-                path: 'edit/:id',
-                auth: menu.auth ? menu.auth + '/edit' : undefined,
-                component: CFFormWithDrawer,
-                // props: (route:any) => ({  ...menu.props, type: 'edit', id: route.query.id, }),
-                props: (route) => ({
-                    ...menu.props,
-                    ...route.params,
-                    type: 'edit',
-                    path: curMenuPath + '/edit',
-                    title: titleList.concat(['编辑'])
-                }),
-                meta: {
+                    path: 'create',
+                    auth: menu.auth ? menu.auth + '/create' : undefined,
+                    component: CFFormWithDrawer,
+                    props: { ...menu.props, type: 'create', path: curMenuPath + '/create', title: title.concat(['新增']) },
+                    meta: {
+                        display: false,
+                        auth: menu.auth ? menu.auth + '/create' : undefined,
+                        title: '新增',
+                        path: curMenuPath + '/create',
+                    }
+                },
+                {
                     display: false,
                     title: '编辑',
+                    path: 'edit/:id',
                     auth: menu.auth ? menu.auth + '/edit' : undefined,
-                    path: curMenuPath + '/edit',
+                    component: CFFormWithDrawer,
+                    // props: (route:any) => ({  ...menu.props, type: 'edit', id: route.query.id, }),
+                    props: (route) => ({
+                        ...menu.props,
+                        ...route.params,
+                        type: 'edit',
+                        path: curMenuPath + '/edit',
+                        title: title.concat(['编辑'])
+                    }),
+                    meta: {
+                        display: false,
+                        title: '编辑',
+                        auth: menu.auth ? menu.auth + '/edit' : undefined,
+                        path: curMenuPath + '/edit',
+                    }
                 }
-            }
-        ]);
+            ]);
+        }
     }
     return route;
 }
 /**
  * 根据菜单数据生成路由，主要用于补充默认的路由
- * 1：对于所有的叶子节点，增加create和edit路由，默认指向CFFormWithDrawer，新增加的路由默认配置props.cfConfig为该叶子节点的cfConfig
+ * 1：对于所有未指定component的叶子节点，增加create和edit路由，默认指向CFFormWithDrawer，新增加的路由默认配置props.cfConfig为该叶子节点的cfConfig
  * 2: 对于所有节点，配置的非路由必要数据，复制到meta中，便于在路由过程中获取数据
  * 3: 对于所有节点，增加props.path属性，填充为fullPath，不含参数
  * 4: 对于所有节点，增加props.title属性，填充为配置的titleArray
@@ -1687,9 +1695,9 @@ function routerCreatorForMenuUnit(menu, parentPath = '', titleList = []) {
  * 7: 对于所有叶子节点，并且节点未配置component属性的，默认配置为CFView
  * @param menus
  */
-function routerCreator(menus) {
+function routesCreator(menus) {
     if (menus.length) {
-        return menus.map(item => routerCreatorForMenuUnit(item));
+        return menus.map(item => routesCreatorForMenuUnit(item));
     }
     else {
         return [];
@@ -1760,7 +1768,8 @@ if (typeof window !== 'undefined' && window.Vue) {
     install(window.Vue);
 }
 var index = { install };
+//# sourceMappingURL=index.js.map
 
 export default index;
-export { CFButtonPosition, CFConfig, Field as CFField, CFForm, CFFormWithDrawer, CFNumberFieldFormatter, CFParentView, CFView, CFViewWithDrawer, FieldPosition, defaultButtons, routerCreator };
+export { CFButtonPosition, CFConfig, Field as CFField, CFForm, CFFormWithDrawer, CFNumberFieldFormatter, CFParentView, CFView, CFViewWithDrawer, FieldPosition, defaultButtons, routesCreator };
 //# sourceMappingURL=index.js.map

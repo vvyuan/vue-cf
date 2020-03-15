@@ -77,7 +77,7 @@ export const defaultButtons: {[key: string]: CFButton} = {
     position: [CFButtonPosition.tableRowOperations],
     icon: 'edit',
     onClick: (router, cfConfig, view, form, selectedRecords, record) => {
-      router.push(router.currentRoute.path + "/edit?id=" + record.id)
+      router.push(router.currentRoute.path + "/edit/" + record.id)
     }
   },
   delete: {
