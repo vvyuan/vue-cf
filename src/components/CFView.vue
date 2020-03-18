@@ -87,9 +87,9 @@
             </template>
           </div>
         </div>
-        <a-divider v-if="columnsData.columns.length > 1"/>
+        <a-divider v-if="columnsData.columns && columnsData.columns.length > 1"/>
       </div>
-      <div v-if="columnsData.columns.length > 1" style="display: flex;justify-content: space-between; margin-bottom: 16px;">
+      <div v-if="columnsData.columns && columnsData.columns.length > 1" style="display: flex;justify-content: space-between; margin-bottom: 16px;">
         <div class="buttons">
           <template v-for="button in (cfConfig ? cfConfig.realButtons.tableHeaderLeft : [])">
             <a-button
@@ -118,7 +118,7 @@
           <a-button :hidden="filters.length === 0" icon="filter" @click="openFilter=!openFilter">筛选</a-button>
         </div>
       </div>
-      <form v-if="columnsData.columns.length > 1" form="filterForm" ref="filterForm" :class="`filter-container ${openFilterEx ? 'active' : ''}`" action="./" @submit.stop.prevent="submitFilter">
+      <form v-if="columnsData.columns && columnsData.columns.length > 1" form="filterForm" ref="filterForm" :class="`filter-container ${openFilterEx ? 'active' : ''}`" action="./" @submit.stop.prevent="submitFilter">
         <div style="display: flex; padding: 4px 10px; align-items: center; justify-content: space-between; border-bottom: solid 1px #77d0ea;background: #ecfdff;">
           <div>筛选</div>
           <div>
@@ -166,7 +166,7 @@
           </a-row>
         </div>
       </form>
-      <div v-if="columnsData.columns.length > 1">
+      <div v-if="columnsData.columns && columnsData.columns.length > 1">
         <a-table
           :columns="columnsData.columns"
           :rowSelection="cfConfig && cfConfig.enableSelect ? {selectedRowKeys: selectedRowKeys, onChange: onSelectChange} : undefined"
