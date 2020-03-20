@@ -101,28 +101,31 @@ export class CFConfig<T extends CFDataBase> {
   formPrintTemplate?: Component;
   // 在CF**WithDrawer中生效，指定Drawer的宽度
   drawerWidth?: number | string;
-
+  request?: ICFRequest;
   // 数据请求及数据整理
-  get request(): ICFRequest {
+  get _request(): ICFRequest {
+    if(this.request) {
+      return this.request;
+    }
     if(!CFConfig.defaultRequest) {
       throw new Error('[vue-cf] CFConfig必须配置默认的请求类，CFConfig.useRequest(ICFRequest)，或者在子类中重写request属性')
     }
     return CFConfig.defaultRequest;
   }
 
-  getList(pageInfo: PageInfo, filter?: any): Promise<CFListResponse<T>>{
-    return this.request.getList(this.url, pageInfo, filter);
+  getList(pageInfo?: PageInfo, filter?: any): Promise<CFListResponse<T>>{
+    return this._request.getList(this.url, pageInfo, filter);
   }
   getOne(id: number | string): Promise<T> {
-    return this.request.get(this.url, {id: id}, {});
+    return this._request.get(this.url, {id: id}, {});
   }
   createOne(data: T): Promise<any> {
-    return this.request.post(this.url, data, {});
+    return this._request.post(this.url, data, {});
   }
   updateOne(data: T): Promise<any> {
-    return this.request.put(this.url, data, {});
+    return this._request.put(this.url, data, {});
   }
   deleteOne(id: number | string): Promise<any> {
-    return this.request.delete(this.url, {id: id}, {});
+    return this._request.delete(this.url, {id: id}, {});
   }
 }

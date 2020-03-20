@@ -25,12 +25,12 @@ export type CFListResponse<T extends CFDataBase> = {
 
 export type PageInfo = {
   page: number,
-  pageSize: number,
+  pageSize?: number,
 }
 
 export interface ICFRequest {
   request (url: string, method: 'GET'|'POST'|'PUT'|'DELETE', data?: CFDataBase | any, header?: any): Promise<any>;
-  getList<T extends CFDataBase> (url: string, pageInfo: PageInfo, data?: CFDataBase | any, header?: any): Promise<CFListResponse<T>>;
+  getList<T extends CFDataBase> (url: string, pageInfo?: PageInfo, data?: CFDataBase | any, header?: any): Promise<CFListResponse<T>>;
   get<T extends CFDataBase> (url: string, data?: CFDataBase | any, header?: any): Promise<T>;
   post<T> (url: string, data?: T, header?: any): Promise<any>;
   put<T extends CFDataBase> (url: string, data?: T, header?: any): Promise<any>;

@@ -154,26 +154,29 @@ class CFConfig {
         return this._realButtons;
     }
     // 数据请求及数据整理
-    get request() {
+    get _request() {
+        if (this.request) {
+            return this.request;
+        }
         if (!CFConfig.defaultRequest) {
             throw new Error('[vue-cf] CFConfig必须配置默认的请求类，CFConfig.useRequest(ICFRequest)，或者在子类中重写request属性');
         }
         return CFConfig.defaultRequest;
     }
     getList(pageInfo, filter) {
-        return this.request.getList(this.url, pageInfo, filter);
+        return this._request.getList(this.url, pageInfo, filter);
     }
     getOne(id) {
-        return this.request.get(this.url, { id: id }, {});
+        return this._request.get(this.url, { id: id }, {});
     }
     createOne(data) {
-        return this.request.post(this.url, data, {});
+        return this._request.post(this.url, data, {});
     }
     updateOne(data) {
-        return this.request.put(this.url, data, {});
+        return this._request.put(this.url, data, {});
     }
     deleteOne(id) {
-        return this.request.delete(this.url, { id: id }, {});
+        return this._request.delete(this.url, { id: id }, {});
     }
 }
 
