@@ -1,10 +1,6 @@
 import { FieldConfig } from './FieldDefine'
 import {Component} from "vue";
-// @ts-ignore
-import {Modal} from "ant-design-vue";
-import {ICFForm, ICFView} from "./ViewDefine";
-import ICFRequest, {CFDataBase, CFListResponse} from "./ICFRequest";
-import MockRequest from "../utils/MockRequest";
+import ICFRequest, {CFDataBase, CFListResponse, PageInfo} from "./ICFRequest";
 import {defaultButtons, CFButton, CFButtons} from './CFButtonDefine';
 
 export type CFTableConfig = {
@@ -22,19 +18,14 @@ export type CFFConfig = {
   inForm?: FieldConfig, // 字段对于form的配置
 }
 
-class CFRequest {
-  static request?: ICFRequest;
-}
-
-export abstract class CFConfig<T extends CFDataBase> {
+export class CFConfig<T extends CFDataBase> {
+  // 默认的请求类
+  protected static defaultRequest?: ICFRequest;
   static useRequest(request: ICFRequest) {
-    if(CFRequest.request) {
-      return
-    }
-    CFRequest.request = request;
+    this.defaultRequest = request;
   }
   // 资源url
-  abstract url: string;
+  url: string = '';
   // 字段列表
   readonly fieldList: CFFConfig[] = [];
   /**
@@ -112,22 +103,26 @@ export abstract class CFConfig<T extends CFDataBase> {
   drawerWidth?: number | string;
 
   // 数据请求及数据整理
-  get request() {
-    return CFRequest.request || MockRequest;
+  get request(): ICFRequest {
+    if(!CFConfig.defaultRequest) {
+      throw new Error('[vue-cf] CFConfig必须配置默认的请求类，CFConfig.useRequest(ICFRequest)，或者在子类中重写request属性')
+    }
+    return CFConfig.defaultRequest;
   }
-  getList(filter?: any): Promise<CFListResponse<T>>{
-    return this.request.get(this.url, filter, {}, this.map);
+
+  getList(pageInfo: PageInfo, filter?: any): Promise<CFListResponse<T>>{
+    return this.request.getList(this.url, pageInfo, filter);
   }
   getOne(id: number | string): Promise<T> {
-    return this.request.get(this.url, {id: id}, {}, this.map);
+    return this.request.get(this.url, {id: id}, {});
   }
   createOne(data: T): Promise<any> {
-    return this.request.post(this.url, data, {}, this.map);
+    return this.request.post(this.url, data, {});
   }
   updateOne(data: T): Promise<any> {
-    return this.request.put(this.url, data, {}, this.map);
+    return this.request.put(this.url, data, {});
   }
   deleteOne(id: number | string): Promise<any> {
-    return this.request.delete(this.url, {id: id}, {}, this.map);
+    return this.request.delete(this.url, {id: id}, {});
   }
 }

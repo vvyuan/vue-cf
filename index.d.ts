@@ -23,12 +23,18 @@ export type CFListResponse<T extends CFDataBase> = {
   [propName: string]: any,
 }
 
+export type PageInfo = {
+  page: number,
+  pageSize: number,
+}
+
 export interface ICFRequest {
-  request (url: string, method: 'GET'|'POST'|'PUT'|'DELETE', data?: CFDataBase | any, header?: any, map?: {[key: string]: string}): Promise<any>;
-  get<T extends CFDataBase> (url: string, data?: CFDataBase | any, header?: any, map?: {[key: string]: string}): Promise<T | CFListResponse<T> | any>;
-  post<T> (url: string, data?: T, header?: any, map?: {[key: string]: string}): Promise<any>;
-  put<T extends CFDataBase> (url: string, data?: T, header?: any, map?: {[key: string]: string}): Promise<any>;
-  delete (url: string, data?: any, header?: any, map?: {[key: string]: string}): Promise<any>;
+  request (url: string, method: 'GET'|'POST'|'PUT'|'DELETE', data?: CFDataBase | any, header?: any): Promise<any>;
+  getList<T extends CFDataBase> (url: string, pageInfo: PageInfo, data?: CFDataBase | any, header?: any): Promise<CFListResponse<T>>;
+  get<T extends CFDataBase> (url: string, data?: CFDataBase | any, header?: any): Promise<T>;
+  post<T> (url: string, data?: T, header?: any): Promise<any>;
+  put<T extends CFDataBase> (url: string, data?: T, header?: any): Promise<any>;
+  delete (url: string, data?: any, header?: any): Promise<any>;
 }
 
 /**
@@ -195,11 +201,11 @@ export type CFFConfig = {
   inForm?: FieldConfig, // 字段对于form的配置
 }
 
-export abstract class CFConfig<T extends CFDataBase> {
-  // 全局配置使用的请求类
+export class CFConfig<T extends CFDataBase> {
+  // 设置CFConfig默认使用的请求类
   static useRequest(request: ICFRequest): void;
   // 资源url
-  abstract url: string;
+  url: string;
   // 字段列表
   readonly fieldList: CFFConfig[];
   /**
@@ -222,6 +228,8 @@ export abstract class CFConfig<T extends CFDataBase> {
   // 实际使用的按钮数据
   readonly realButtons: CFButtons;
 
+  // 请求类，默认使用CFConfig.useRequest配置的请求类，可重写
+  request: ICFRequest;
   // 页面标题
   pageTitle: string;
   // 表单是否内嵌到view中
@@ -229,7 +237,7 @@ export abstract class CFConfig<T extends CFDataBase> {
   // 是否启用行选择模式
   enableSelect: boolean;
 
-  getList(filter?: any): Promise<CFListResponse<T>>;
+  getList(pageInfo: PageInfo, filter?: any): Promise<CFListResponse<T>>;
   getOne(id: number | string): Promise<T>;
   createOne(data: T): Promise<any>;
   updateOne(data: T): Promise<any>;

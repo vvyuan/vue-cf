@@ -95,22 +95,22 @@ export const defaultButtons: {[key: string]: CFButton} = {
       })
     }
   },
-  printTable: {
-    title: '打印',
-    position: [CFButtonPosition.tableHeaderRight],
-    icon: 'printer',
-    onClick: (router, cfConfig, view, form, selectedRecords, record) => {
-      window.print();
-    }
-  },
-  printForm: {
-    title: '打印',
-    position: [CFButtonPosition.drawerFooterRight, CFButtonPosition.inlineFooterCenter],
-    icon: 'printer',
-    onClick: (router, cfConfig, view, form, selectedRecords, record) => {
-      window.print();
-    }
-  },
+  // printTable: {
+  //   title: '打印',
+  //   position: [CFButtonPosition.tableHeaderRight],
+  //   icon: 'printer',
+  //   onClick: (router, cfConfig, view, form, selectedRecords, record) => {
+  //     window.print();
+  //   }
+  // },
+  // printForm: {
+  //   title: '打印',
+  //   position: [CFButtonPosition.drawerFooterRight, CFButtonPosition.inlineFooterCenter],
+  //   icon: 'printer',
+  //   onClick: (router, cfConfig, view, form, selectedRecords, record) => {
+  //     window.print();
+  //   }
+  // },
   cancel: {
     title: '取消',
     position: [CFButtonPosition.drawerFooterRight],

@@ -1,499 +1,6 @@
-import { v4 } from 'uuid';
 import { Modal } from 'ant-design-vue';
 import moment from 'moment';
 import md5 from 'md5';
-
-let dbMap = {};
-let queueId = 0;
-class MockStorage {
-    constructor(name = 'mockDB') {
-        this.queue = [];
-        this.dbName = name;
-    }
-    deleteDB() {
-        return window.indexedDB.deleteDatabase(this.dbName);
-    }
-    exportDB(filter) {
-        let names = this.getStoreNames();
-        if (filter) {
-            names = names.filter(name => filter.indexOf(name) >= 0);
-        }
-        return Promise.all(names.map(name => this.getAll(name))).then(allResult => {
-            return allResult
-                .map((recordList, index) => recordList.map((record) => [names[index], record]))
-                .reduce((a, b) => a.concat(b));
-        });
-    }
-    exeQueue() {
-        if (this.queue.length) {
-            let queueUnit = this.queue[0];
-            // console.log('%c任务开始执行', 'color: red;', queueUnit.id, queueUnit.handleName, JSON.stringify(queueUnit.params))
-            if (queueUnit.before && queueUnit.before()) {
-                // console.log('任务中断')
-                this.exeQueue();
-                return;
-            }
-            // @ts-ignore
-            this[queueUnit.handleName](...queueUnit.params)
-                .then(queueUnit.resolve)
-                .catch(queueUnit.reject)
-                .finally(() => {
-                this.queue.shift();
-                // console.log('%c任务完成', 'color: red;', queueUnit.id, queueUnit.handleName)
-                this.exeQueue();
-            });
-        }
-    }
-    addToQueue(unit) {
-        unit.id = queueId++;
-        this.queue.push(unit);
-        // console.log('插入任务', unit.id, this.queue.length)
-        // console.table(this.queue.map(q=>({ id: q.id, name: q.handleName, params: JSON.stringify(q.params) })))
-        if (this.queue.length === 1) {
-            this.exeQueue();
-        }
-    }
-    open(version, onUpgradeNeeded) {
-        return new Promise((resolve, reject) => {
-            // console.log('open start')
-            if (dbMap[this.dbName]) {
-                if (onUpgradeNeeded) {
-                    // console.log('准备更新数据库结构')
-                    if (this.db) {
-                        // console.log('关闭数据库连接')
-                        this.db.close();
-                        this.db = undefined;
-                        delete dbMap[this.dbName];
-                    }
-                }
-                else {
-                    // console.log('数据库连接已存在，直接返回')
-                    this.db = dbMap[this.dbName];
-                    resolve();
-                    return;
-                }
-            }
-            // console.log('准备打开数据库')
-            this.requestForIndexDB = window.indexedDB.open(this.dbName, version);
-            this.requestForIndexDB.onblocked = function (event) {
-                // 如果其他的一些页签加载了该数据库，在我们继续之前需要关闭它们
-                // console.error('请关闭其他由该站点打开的页签！')
-            };
-            this.requestForIndexDB.onsuccess = (event) => {
-                // @ts-ignore
-                this.db = event.target.result;
-                // console.log('%c打开数据库成功', 'color: blue;', !!this.db, !!onUpgradeNeeded)
-                if (this.db) {
-                    dbMap[this.dbName] = this.db;
-                    this.db.onabort = (event) => {
-                        // @ts-ignore
-                        // console.error('db abort', event.target.error)
-                    };
-                    this.db.onerror = (event) => {
-                        // @ts-ignore
-                        // console.error('db onerror', event.target.error)
-                    };
-                    // 当由其他页签请求了版本变更时，确认添加了一个会被通知的事件处理程序。
-                    // 这里允许其他页签来更新数据库，如果不这样做，版本升级将不会发生知道用户关闭了这些页签。
-                    this.db.onversionchange = (event) => {
-                        // console.log('db onversionchange', event.oldVersion, event.newVersion)
-                        this.db.close();
-                    };
-                    // console.log('打开数据库结束')
-                    resolve();
-                }
-                else {
-                    reject(new Event('mockDB获取失败'));
-                }
-            };
-            this.requestForIndexDB.onerror = ev => {
-                // reject(ev)
-            };
-            this.requestForIndexDB.onupgradeneeded = (ev) => {
-                if (onUpgradeNeeded) {
-                    // console.log('开始更新数据库')
-                    // console.dir(onUpgradeNeeded)
-                    onUpgradeNeeded(ev).then(() => {
-                        // console.log('更新数据库完成，打开数据库结束')
-                        // resolve()
-                    }).catch((e) => {
-                        reject(e);
-                    });
-                }
-            };
-        });
-    }
-    _add(osName, value) {
-        return new Promise((resolve, reject) => {
-            if (!this.db) {
-                reject(new Error('连接数据库失败'));
-                return;
-            }
-            if (!this.db.objectStoreNames.contains(osName)) {
-                reject(new Error('目标表不存在'));
-                return;
-            }
-            let transaction = this.db.transaction(osName, 'readwrite');
-            // 在所有数据添加完毕后的处理
-            transaction.oncomplete = function (event) {
-                resolve();
-            };
-            transaction.onerror = function (event) {
-                // console.error('transaction.onerror', event)
-                // @ts-ignore
-                reject(event.target.error);
-            };
-            if (!value.id) {
-                value.id = v4();
-            }
-            transaction.objectStore(osName).add(value);
-        });
-    }
-    _update(osName, key, value) {
-        return new Promise((resolve, reject) => {
-            if (!this.db) {
-                reject(new Error('连接数据库失败'));
-                return;
-            }
-            if (!this.db.objectStoreNames.contains(osName)) {
-                reject(new Error('目标表不存在'));
-                return;
-            }
-            let transaction = this.db.transaction(osName, 'readwrite');
-            transaction.oncomplete = function (event) { resolve(); };
-            transaction.onerror = function (event) { reject(event); };
-            transaction.objectStore(osName).put(value);
-        });
-    }
-    _getAll(osName, filter) {
-        return new Promise((resolve, reject) => {
-            if (!this.db) {
-                reject(new Error('连接数据库失败'));
-                return;
-            }
-            if (!this.db.objectStoreNames.contains(osName)) {
-                reject(new Error('目标表不存在'));
-                return;
-            }
-            let objectStore = this.db.transaction(osName).objectStore(osName);
-            let records = [];
-            objectStore.openCursor().onsuccess = function (event) {
-                // @ts-ignore
-                let cursor = event.target.result;
-                if (cursor) {
-                    if (filter) {
-                        let validData = true;
-                        for (let key in filter) {
-                            if (filter[key]) {
-                                let type = typeof cursor.value[key];
-                                if (type === "string") {
-                                    if (!cursor.value[key].match(filter[key])) {
-                                        validData = false;
-                                        break;
-                                    }
-                                }
-                                else if (type === "number") {
-                                    if (cursor.value[key] !== parseFloat(filter[key])) {
-                                        validData = false;
-                                        break;
-                                    }
-                                }
-                                else if (Array.isArray(cursor.value[key])) {
-                                    if (cursor.value[key].indexOf(filter[key]) < 0) {
-                                        validData = false;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        if (validData) {
-                            records.push(Object.assign(cursor.value, { key: cursor.key }));
-                        }
-                    }
-                    else {
-                        records.push(Object.assign(cursor.value, { key: cursor.key }));
-                    }
-                    cursor.continue();
-                }
-                else {
-                    resolve(records);
-                }
-            };
-        });
-    }
-    _get(osName, key) {
-        return new Promise((resolve, reject) => {
-            if (!this.db) {
-                reject(new Error('连接数据库失败'));
-                return;
-            }
-            if (!this.db.objectStoreNames.contains(osName)) {
-                reject(new Error('目标表不存在'));
-                return;
-            }
-            this.db.transaction(osName).objectStore(osName).get(key).onsuccess = function (event) {
-                // @ts-ignore
-                if (event.target.result === undefined) {
-                    reject(new Error('查找不到指定记录,' + 'key=' + key));
-                }
-                else {
-                    // @ts-ignore
-                    resolve(event.target.result);
-                }
-            };
-        });
-    }
-    _delete(osName, key) {
-        return new Promise((resolve, reject) => {
-            if (!this.db) {
-                reject(new Error('连接数据库失败'));
-                return;
-            }
-            if (!this.db.objectStoreNames.contains(osName)) {
-                reject(new Error('目标表不存在'));
-                return;
-            }
-            let transaction = this.db.transaction(osName, 'readwrite');
-            transaction.oncomplete = function (event) { resolve(); };
-            transaction.onerror = function (event) { reject(event); };
-            transaction.objectStore(osName).delete(key);
-        });
-    }
-    ready() {
-        return new Promise((resolve, reject) => {
-            this.addToQueue({
-                handleName: 'open',
-                params: [],
-                resolve,
-                reject,
-            });
-        });
-    }
-    getStoreNames() {
-        if (!this.db) {
-            throw (new Error('连接数据库失败'));
-        }
-        return Array.from(this.db.objectStoreNames);
-    }
-    add(osName, value) {
-        const self = this;
-        return new Promise((resolve, reject) => {
-            this.addToQueue({
-                handleName: '_add',
-                params: [osName, value],
-                resolve,
-                reject,
-                before: () => {
-                    // console.log('添加数据前判定表是否存在', osName)
-                    if (!self.db) {
-                        throw new Error('连接数据库失败');
-                    }
-                    if (!self.db.objectStoreNames.contains(osName)) {
-                        // console.log('不存在，准备创建', osName)
-                        const version = self.db.version + 1;
-                        // @ts-ignore
-                        self.queue.unshift({
-                            handleName: 'open',
-                            params: [version, (event) => {
-                                    // console.log('创建表开始', osName)
-                                    return new Promise(resolve => {
-                                        // @ts-ignore
-                                        let db = event.target.result;
-                                        // 为该数据库创建一个对象仓库
-                                        let objectStore = db.createObjectStore(osName, { keyPath: 'id' });
-                                        // 使用事务的 oncomplete 事件确保在插入数据前对象仓库已经创建完毕
-                                        objectStore.transaction.oncomplete = function () {
-                                            // console.log('创建表结束', osName)
-                                            resolve();
-                                        };
-                                    });
-                                }],
-                            resolve: () => { },
-                            reject: (e) => { throw e; },
-                        });
-                        return true;
-                    }
-                    // console.log('存在，跳过', osName)
-                    return false;
-                }
-            });
-        });
-    }
-    update(osName, key, value) {
-        return new Promise((resolve, reject) => {
-            this.addToQueue({
-                handleName: '_update',
-                params: [osName, key, value],
-                resolve,
-                reject,
-            });
-        });
-    }
-    getAll(osName, filter) {
-        return new Promise((resolve, reject) => {
-            this.addToQueue({
-                handleName: '_getAll',
-                params: [osName, filter],
-                resolve,
-                reject,
-            });
-        });
-    }
-    get(osName, key) {
-        return new Promise((resolve, reject) => {
-            this.addToQueue({
-                handleName: '_get',
-                params: [osName, key],
-                resolve,
-                reject,
-            });
-        });
-    }
-    delete(osName, key) {
-        return new Promise((resolve, reject) => {
-            this.addToQueue({
-                handleName: '_delete',
-                params: [osName, key],
-                resolve,
-                reject,
-            });
-        });
-    }
-}
-const mockStorage = new MockStorage();
-
-class ARequest {
-    get(url, data, header, map) {
-        return this.request(url, 'GET', data, header, map);
-    }
-    post(url, data, header, map) {
-        return this.request(url, 'POST', data, header, map);
-    }
-    put(url, data, header, map) {
-        return this.request(url, 'PUT', data, header, map);
-    }
-    delete(url, data, header, map) {
-        return this.request(url, 'DELETE', data, header, map);
-    }
-}
-class MockRequest extends ARequest {
-    request(url, method, data, header) {
-        return mockStorage.ready().then(() => {
-            let id = data ? data.id : undefined;
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    switch (method) {
-                        case 'GET':
-                            if (id) {
-                                resolve(mockStorage.get(url, id));
-                            }
-                            else {
-                                resolve(mockStorage.getAll(url, data).then(response => {
-                                    return {
-                                        list: response,
-                                        pageSize: response.length,
-                                        total: 1,
-                                        page: 1,
-                                    };
-                                }));
-                            }
-                            break;
-                        case 'POST':
-                            if (data) {
-                                resolve(mockStorage.add(url, data));
-                            }
-                            else {
-                                resolve();
-                            }
-                            break;
-                        case 'PUT':
-                            if (id && data) {
-                                resolve(mockStorage.update(url, id, data));
-                            }
-                            else {
-                                reject(new Error('id或要更新的数据不存在'));
-                            }
-                            break;
-                        case 'DELETE':
-                            if (id) {
-                                resolve(mockStorage.delete(url, id));
-                            }
-                            else {
-                                reject(new Error('必须传入id'));
-                            }
-                            break;
-                    }
-                }, Math.random() * 500);
-            });
-        }).catch((e) => {
-            throw e;
-        });
-    }
-}
-/**
- * 将数据映射到报文字段名
- * @param map key: 视图使用字段名 value: 报文使用字段名
- * @param formData
- */
-function mapDataForRequest(map, formData) {
-    let tempData = {};
-    for (let key in formData) {
-        tempData[map[key] || key] = formData[key];
-    }
-    return tempData;
-}
-/**
- * 将数据映射到视图字段名
- * @param map key: 视图使用字段名 value: 报文使用字段名
- * @param responseData
- */
-function mapDataForView(map, responseData) {
-    let mapZ = {};
-    for (let key in map) {
-        mapZ[map[key]] = key;
-    }
-    return mapDataForRequest(mapZ, responseData);
-}
-class MockRequestEx extends MockRequest {
-    constructor() {
-        super(...arguments);
-        this.counter = 0;
-        this.colors = [
-            '#b14242', '#f18e3a', '#179c07', '#6bc1b9', '#75c16b',
-            '#169e92', '#1859a9', '#7651d0', '#cc72d2', '#e299bb',
-        ];
-    }
-    request(url, method, data, header, map) {
-        this.counter += 1;
-        const counter = this.counter;
-        const color = this.colors[counter % 10];
-        if (map) {
-            data = mapDataForRequest(map, data);
-        }
-        console.time(`[Mock][Request:${counter}] expend time`);
-        console.log(`%c [Mock] %c [Request:${counter}] `, 'color: white; background: black', 'color: white; background: ' + color, url, method, data, header);
-        return super.request(url, method, data, header).then(response => {
-            let responseData = response ? response.data || response : null;
-            if (responseData && map) {
-                if (responseData.list) {
-                    responseData.list = responseData.list.map((item) => mapDataForView(map, item));
-                }
-                else {
-                    responseData = mapDataForView(map, responseData);
-                }
-            }
-            console.log(`%c [Mock] %c [Request:response:${counter}] `, 'color: white; background: black', 'color: white; background: ' + color, url, method, responseData);
-            return response;
-        }).catch(e => {
-            // message.error(e.message);
-            console.log(`%c [Mock] %c [Request:response:${counter}] %c ${e.message}`, 'color: white; background: black', 'color: white; background: ' + color, 'color: red');
-            throw e;
-        }).finally(() => {
-            console.timeEnd(`[Mock][Request:${counter}] expend time`);
-        });
-    }
-}
-var MockRequest$1 = new MockRequestEx();
 
 var CFButtonPosition;
 (function (CFButtonPosition) {
@@ -544,22 +51,22 @@ const defaultButtons = {
             });
         }
     },
-    printTable: {
-        title: '打印',
-        position: [CFButtonPosition.tableHeaderRight],
-        icon: 'printer',
-        onClick: (router, cfConfig, view, form, selectedRecords, record) => {
-            window.print();
-        }
-    },
-    printForm: {
-        title: '打印',
-        position: [CFButtonPosition.drawerFooterRight, CFButtonPosition.inlineFooterCenter],
-        icon: 'printer',
-        onClick: (router, cfConfig, view, form, selectedRecords, record) => {
-            window.print();
-        }
-    },
+    // printTable: {
+    //   title: '打印',
+    //   position: [CFButtonPosition.tableHeaderRight],
+    //   icon: 'printer',
+    //   onClick: (router, cfConfig, view, form, selectedRecords, record) => {
+    //     window.print();
+    //   }
+    // },
+    // printForm: {
+    //   title: '打印',
+    //   position: [CFButtonPosition.drawerFooterRight, CFButtonPosition.inlineFooterCenter],
+    //   icon: 'printer',
+    //   onClick: (router, cfConfig, view, form, selectedRecords, record) => {
+    //     window.print();
+    //   }
+    // },
     cancel: {
         title: '取消',
         position: [CFButtonPosition.drawerFooterRight],
@@ -578,10 +85,10 @@ const defaultButtons = {
     },
 };
 
-class CFRequest {
-}
 class CFConfig {
     constructor() {
+        // 资源url
+        this.url = '';
         // 字段列表
         this.fieldList = [];
         // 默认的按钮组，可以通过覆盖本属性来取消默认按钮，一般情况下只重写buttons属性即可
@@ -596,10 +103,7 @@ class CFConfig {
         this.enableSelect = false;
     }
     static useRequest(request) {
-        if (CFRequest.request) {
-            return;
-        }
-        CFRequest.request = request;
+        this.defaultRequest = request;
     }
     get map() {
         if (!this._map) {
@@ -651,22 +155,25 @@ class CFConfig {
     }
     // 数据请求及数据整理
     get request() {
-        return CFRequest.request || MockRequest$1;
+        if (!CFConfig.defaultRequest) {
+            throw new Error('[vue-cf] CFConfig必须配置默认的请求类，CFConfig.useRequest(ICFRequest)，或者在子类中重写request属性');
+        }
+        return CFConfig.defaultRequest;
     }
-    getList(filter) {
-        return this.request.get(this.url, filter, {}, this.map);
+    getList(pageInfo, filter) {
+        return this.request.getList(this.url, pageInfo, filter);
     }
     getOne(id) {
-        return this.request.get(this.url, { id: id }, {}, this.map);
+        return this.request.get(this.url, { id: id }, {});
     }
     createOne(data) {
-        return this.request.post(this.url, data, {}, this.map);
+        return this.request.post(this.url, data, {});
     }
     updateOne(data) {
-        return this.request.put(this.url, data, {}, this.map);
+        return this.request.put(this.url, data, {});
     }
     deleteOne(id) {
-        return this.request.delete(this.url, { id: id }, {}, this.map);
+        return this.request.delete(this.url, { id: id }, {});
     }
 }
 
