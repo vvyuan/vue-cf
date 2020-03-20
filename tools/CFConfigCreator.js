@@ -176,7 +176,7 @@ export type CF${tableName}Data = {
 const url = '${url}';
 
 // export function getDictFor${tableName}(): Promise<CFDictData[]> {
-//   return ICFRequest.get<CF${tableName}Data>(url).then(res=>res.list.map((item: CF${tableName}Data)=>({value: item.id, label: item.id})))
+//   return ICFRequest.getList<CF${tableName}Data>(url).then(res=>res.list.map((item: CF${tableName}Data)=>({value: item.id, label: item.id})))
 // }
 
 export default class CF${tableName} extends CFConfig<CF${tableName}Data> {
