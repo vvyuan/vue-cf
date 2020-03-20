@@ -374,11 +374,16 @@
           this.reload();
         }
       },
-      getList () {
+      getList (page) {
         if(this.cfConfig) {
           this.loading = true;
-          return this.loadDict().then(()=>this.cfConfig.getList(this.$route.query)).then(response => {
+          return this.loadDict().then(()=>this.cfConfig.getList({page: page || 1}, this.$route.query)).then(response => {
             let list = response.list;
+            const pagination = { ...this.pagination };
+            pagination.total = response.total;
+            pagination.pageSize = response.pageSize;
+            pagination.current = response.page;
+            this.pagination = pagination;
             if(this.fieldWithDictList.length) {
               // 映射字典值
               list.forEach(item=>{
@@ -416,9 +421,10 @@
       },
       handleTableChange (pagination, filters, sorter) {
         console.log(pagination);
-        // const pager = { ...this.pagination };
-        // pager.current = pagination.current;
-        // this.pagination = pager;
+        const pager = { ...this.pagination };
+        pager.current = pagination.current;
+        this.pagination = pager;
+        this.getList(pagination.current);
       },
       filterChange(name, value) {
         if(!this.filterData) { this.filterData = {} }

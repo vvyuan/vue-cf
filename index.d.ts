@@ -237,7 +237,7 @@ export class CFConfig<T extends CFDataBase> {
   // 是否启用行选择模式
   enableSelect: boolean;
 
-  getList(pageInfo: PageInfo, filter?: any): Promise<CFListResponse<T>>;
+  getList(pageInfo?: PageInfo, filter?: any): Promise<CFListResponse<T>>;
   getOne(id: number | string): Promise<T>;
   createOne(data: T): Promise<any>;
   updateOne(data: T): Promise<any>;

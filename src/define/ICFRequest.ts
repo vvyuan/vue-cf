@@ -9,14 +9,14 @@ export type CFDataBase = {
 export type CFListResponse<T extends CFDataBase> = {
   pageSize: number,
   page: number,
-  pageTotal: number,
+  total: number,
   list: T[],
   [propName: string]: any,
 }
 
 export type PageInfo = {
   page: number,
-  pageSize: number,
+  pageSize?: number,
 }
 
 export default interface ICFRequest {
