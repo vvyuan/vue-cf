@@ -993,10 +993,12 @@ staticRenderFns: [],
       },
       handleTableChange (pagination, filters, sorter) {
         console.log(pagination);
-        const pager = { ...this.pagination };
-        pager.current = pagination.current;
-        this.pagination = pager;
-        this.getList(pagination.current);
+        // const pager = { ...this.pagination };
+        // pager.current = pagination.current;
+        // this.pagination = pager;
+        if(this.list.length !== pagination.total) {
+          this.getList(pagination.current);
+        }
       },
       filterChange(name, value) {
         if(!this.filterData) { this.filterData = {}; }
