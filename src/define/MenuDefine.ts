@@ -23,6 +23,7 @@ export type CFMenuUnit<T extends CFDataBase> = {
   description?: string,
   children?: CFMenuUnit<T>[],
   component?: Component,
+  iframeComponent?: Component,
   props?: CFViewProps<T> | ((route: Route)=> CFViewProps<T>),
   meta?: {[key: string]: any},
 }
@@ -73,13 +74,13 @@ function routesCreatorForMenuUnit(menu: CFMenuUnit<any>, parentPath: string = ''
   let notLeaf = menu.children && menu.children.length && menu.children.some(item=>item.display !== false);
   if(notLeaf) {
     // 非叶子节点
-    if(!menu.component) {
+    if(!(menu.component || menu.iframeComponent)) {
       // route.redirect = curMenuPath + '/' + menu.children![0].path;
       route.component = CFParentView;
     }
   } else {
     // 叶子节点
-    if(!menu.component) {
+    if(!(menu.component || menu.iframeComponent)) {
       route.component = CFView;
       // 为所有未指定component的叶子节点添加默认form路由
       // @ts-ignore

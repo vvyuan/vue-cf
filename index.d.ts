@@ -349,6 +349,7 @@ export type CFMenuUnit<T extends CFDataBase> = {
   description?: string,
   children?: CFMenuUnit<T>[],
   component?: Component,
+  iframeComponent?: Component,
   props?: CFViewProps<T> | ((route: Route)=> CFViewProps<T>),
   meta?: any,
 }
