@@ -17,7 +17,7 @@ export type CFDataBase = {
 
 export type CFListResponse<T extends CFDataBase> = {
   pageSize: number,
-  page: number,
+  current: number,
   total: number,
   list: T[],
   [propName: string]: any,

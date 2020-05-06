@@ -382,7 +382,7 @@
             const pagination = { ...this.pagination };
             pagination.total = response.total;
             pagination.pageSize = response.pageSize;
-            pagination.current = response.page;
+            pagination.current = response.current;
             this.pagination = pagination;
             if(this.fieldWithDictList.length) {
               // 映射字典值
@@ -420,12 +420,12 @@
         })
       },
       handleTableChange (pagination, filters, sorter) {
-        console.log(pagination);
-        // const pager = { ...this.pagination };
-        // pager.current = pagination.current;
-        // this.pagination = pager;
         if(this.list.length !== pagination.total) {
           this.getList(pagination.current);
+        } else {
+          const pager = { ...this.pagination };
+          pager.current = pagination.current;
+          this.pagination = pager;
         }
       },
       filterChange(name, value) {

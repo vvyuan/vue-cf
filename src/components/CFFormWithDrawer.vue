@@ -9,6 +9,7 @@
       :width="cfConfig.drawerWidth || 600"
       getContainer="#cf-drawer"
       @close="onClose"
+      :keyboard="false"
     >
       <template slot="title">
         <div style="display: flex; align-items: center; justify-content: space-between">
@@ -60,7 +61,14 @@
       })
     },
     destroyed() {
-      removeEventListener('keyup', this.keyPressEventHandle)
+      removeEventListener('keyup', this.keyPressEventHandle);
+      setTimeout(()=>{
+        document.getElementById('cf-drawer').lastChild.remove();
+      }, 500);
+    },
+    beforeDestroy() {
+      this.visible = false;
+      console.log("beforeDestroy");
     },
     methods: {
       onClose() {
@@ -71,7 +79,7 @@
       },
       keyPressEventHandle(event) {
         if(event.code === 'Escape') {
-          this.onClose()
+          // this.onClose()
         }
       }
     }

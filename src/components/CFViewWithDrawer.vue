@@ -8,7 +8,8 @@
       :visible="visible"
       :width="cfConfig.drawerWidth || 600"
       getContainer="#cf-drawer"
-      @close="close"
+      @close="onClose"
+      :keyboard="false"
     >
       <template slot="title">
         <template v-if="Array.isArray(title) && title.length">
@@ -51,9 +52,16 @@
     },
     destroyed() {
       removeEventListener('keyup', this.keyPressEventHandle)
+      setTimeout(()=>{
+        document.getElementById('cf-drawer').lastChild.remove();
+      }, 500);
+    },
+    beforeDestroy() {
+      this.visible = false;
+      console.log("beforeDestroy");
     },
     methods: {
-      close() {
+      onClose() {
         this.visible = false;
         setTimeout(()=>{
           this.$router.back()
@@ -61,7 +69,7 @@
       },
       keyPressEventHandle(event) {
         if(event.code === 'Escape') {
-          this.onClose()
+          // this.onClose()
         }
       }
     }
