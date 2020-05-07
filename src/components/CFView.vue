@@ -225,7 +225,7 @@
         selectedRowKeys: [],
         selectedRecords: [],
         list: [],
-        pagination: {},
+        pagination: {pageSizeOptions: ['10', '20', '30', '40', '100'], showSizeChanger: true},
         openFilter: false,
         Field: Field,
         filterForm: this.$form.createForm(),
@@ -377,7 +377,7 @@
       getList (page) {
         if(this.cfConfig) {
           this.loading = true;
-          return this.loadDict().then(()=>this.cfConfig.getList({page: page || 1}, this.$route.query)).then(response => {
+          return this.loadDict().then(()=>this.cfConfig.getList({page: page || 1, pageSize: this.pagination.pageSize}, this.$route.query)).then(response => {
             let list = response.list;
             const pagination = { ...this.pagination };
             pagination.total = response.total;
@@ -420,12 +420,10 @@
         })
       },
       handleTableChange (pagination, filters, sorter) {
+        this.pagination = { ...pagination };
         if(this.list.length !== pagination.total) {
           this.getList(pagination.current);
         } else {
-          const pager = { ...this.pagination };
-          pager.current = pagination.current;
-          this.pagination = pager;
         }
       },
       filterChange(name, value) {

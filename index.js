@@ -797,7 +797,7 @@ staticRenderFns: [],
         selectedRowKeys: [],
         selectedRecords: [],
         list: [],
-        pagination: {},
+        pagination: {pageSizeOptions: ['10', '20', '30', '40', '100'], showSizeChanger: true},
         openFilter: false,
         Field: Field,
         filterForm: this.$form.createForm(),
@@ -949,7 +949,7 @@ staticRenderFns: [],
       getList (page) {
         if(this.cfConfig) {
           this.loading = true;
-          return this.loadDict().then(()=>this.cfConfig.getList({page: page || 1}, this.$route.query)).then(response => {
+          return this.loadDict().then(()=>this.cfConfig.getList({page: page || 1, pageSize: this.pagination.pageSize}, this.$route.query)).then(response => {
             let list = response.list;
             const pagination = { ...this.pagination };
             pagination.total = response.total;
@@ -992,12 +992,9 @@ staticRenderFns: [],
         });
       },
       handleTableChange (pagination, filters, sorter) {
+        this.pagination = { ...pagination };
         if(this.list.length !== pagination.total) {
           this.getList(pagination.current);
-        } else {
-          const pager = { ...this.pagination };
-          pager.current = pagination.current;
-          this.pagination = pager;
         }
       },
       filterChange(name, value) {
@@ -1053,7 +1050,7 @@ staticRenderFns: [],
   };
 
 var CFFormWithDrawer = {
-render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('a-drawer',{ref:"container",attrs:{"wrapClassName":"cf-common-form-drawer","placement":"right","closable":false,"maskClosable":false,"visible":_vm.visible,"width":_vm.cfConfig.drawerWidth || 600,"getContainer":"#cf-drawer","keyboard":false},on:{"close":_vm.onClose}},[_c('template',{slot:"title"},[_c('div',{staticStyle:{"display":"flex","align-items":"center","justify-content":"space-between"}},[(Array.isArray(_vm.title) && _vm.title.length)?[_c('div',[(!this.id)?_c('span',[_vm._v("新增 - ")]):_c('span',[_vm._v("编辑 - ")]),_vm._v(_vm._s(_vm.title[_vm.title.length - 1]))])]:[_c('div',[(!this.id)?_c('span',[_vm._v("新增")]):_c('span',[_vm._v("编辑")])])]],2)]),_vm._v(" "),_c('div',[_c('CFForm',{ref:"form",attrs:{"id":_vm.id,"cfConfig":_vm.cfConfig,"inlineForm":false,"initFormValues":_vm.initFormValues},on:{"saved":_vm.onClose}})],1)],2)],1)},
+render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('a-drawer',{attrs:{"wrapClassName":"cf-common-form-drawer","placement":"right","closable":false,"maskClosable":false,"visible":_vm.visible,"width":_vm.cfConfig.drawerWidth || 600,"getContainer":"#cf-drawer","keyboard":false},on:{"close":_vm.onClose}},[_c('template',{slot:"title"},[_c('div',{staticStyle:{"display":"flex","align-items":"center","justify-content":"space-between"}},[(Array.isArray(_vm.title) && _vm.title.length)?[_c('div',[(!this.id)?_c('span',[_vm._v("新增 - ")]):_c('span',[_vm._v("编辑 - ")]),_vm._v(_vm._s(_vm.title[_vm.title.length - 1]))])]:[_c('div',[(!this.id)?_c('span',[_vm._v("新增")]):_c('span',[_vm._v("编辑")])])]],2)]),_vm._v(" "),_c('div',[_c('CFForm',{ref:"form",attrs:{"id":_vm.id,"cfConfig":_vm.cfConfig,"inlineForm":false,"initFormValues":_vm.initFormValues},on:{"saved":_vm.onClose}})],1)],2)],1)},
 staticRenderFns: [],
     name: 'CFFormWithDrawer',
     components: {CFForm},
