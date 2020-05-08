@@ -189,11 +189,11 @@ export class FieldWithDict extends FieldConfig {
       return result;
     } else {
       let self = this;
-      // 监听WatchValueFn返回的对象
+      // 监听WatchValueFn返回的对象，级联更新
       Object.defineProperty(result, 'value', {
         get() { return true },
         set(val) {
-          console.log(val);
+          // console.log(val);
           self.options = val;
         }
       });

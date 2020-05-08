@@ -310,6 +310,7 @@
         let loadFormData = this.id && this.cfConfig ? [this.cfConfig.getOne(this.id)] : [];
         let hide = this.$message.loading('数据加载中...', 0);
         return Promise.all(loadFormData.concat(loadDictList)).then(resList=>{
+          this.$forceUpdate();
           if(this.id) {
             let response = resList[0];
             let values = {id: null};
