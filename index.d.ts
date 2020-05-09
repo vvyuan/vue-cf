@@ -215,7 +215,13 @@ export class CFConfig<T extends CFDataBase> {
    */
   readonly map: {[key: string]: string};
   // 默认的按钮组，可以通过覆盖本属性来取消默认按钮，一般情况下只重写buttons属性即可
-  protected readonly defaultButtons: {[key: string]: CFButton};
+  protected readonly defaultButtons:
+    {[key: string]: CFButton} |
+    {create: CFButton} |
+    {edit: CFButton} |
+    {delete: CFButton} |
+    {cancel: CFButton} |
+    {save: CFButton};
   // 自定义按钮组，可增量覆盖默认按钮组
   protected readonly buttons: {[key: string]: CFButton | null | undefined};
 
