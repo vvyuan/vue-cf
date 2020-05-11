@@ -312,14 +312,16 @@
             }
           })
         }
-        fieldListColumns = fieldListColumns.concat({
-          title: '操作',
-          dataIndex: 'operation',
-          align: 'center',
-          width: 60,
-          fixed: setDefaultColumnWidth ? 'right' : undefined,
-          scopedSlots: { customRender: 'operation' },
-        });
+        if(this.cfConfig.realButtons.tableRowOperations.length) {
+          fieldListColumns = fieldListColumns.concat({
+            title: '操作',
+            dataIndex: 'operation',
+            align: 'center',
+            width: 60,
+            fixed: setDefaultColumnWidth ? 'right' : undefined,
+            scopedSlots: { customRender: 'operation' },
+          });
+        }
         return {columns: fieldListColumns, tableScrollWidth: columnsWidthTotal}
       }
     },
