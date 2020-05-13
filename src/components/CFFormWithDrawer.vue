@@ -56,9 +56,9 @@
     mounted() {
       this.visible = true;
       addEventListener('keyup', this.keyPressEventHandle);
-      this.$nextTick(()=>{
-        this.$refs.form.loadData();
-      })
+      // this.$nextTick(()=>{
+      //   this.$refs.form.loadData();
+      // })
     },
     destroyed() {
       removeEventListener('keyup', this.keyPressEventHandle);

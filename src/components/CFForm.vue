@@ -26,7 +26,7 @@
                     class="input"
                     :disabled="readonly"
                     :placeholder="field.inForm.placeholder"
-                    @change="(e)=>field.inForm.onChange(e)"
+                    @change="(e)=>field.inForm.onChangeForEvent(e)"
                     v-decorator="[field.name, {rules: field.inForm.rules || []}]"
                   />
                 </template>
@@ -53,7 +53,7 @@
                     class="input"
                     :disabled="readonly"
                     :rows="field.inForm.rows"
-                    @change="(e)=>field.inForm.onChange(e)"
+                    @change="(e)=>field.inForm.onChangeForEvent(e)"
                     :placeholder="field.inForm.placeholder"
                     v-decorator="[field.name, {rules: field.inForm.rules || []}]"
                   />
@@ -68,7 +68,7 @@
                     :min="field.inForm.min"
                     :formatter="field.inForm.formatter"
                     :parser="field.inForm.parser"
-                    @change="(e)=>field.inForm.onChange(e)"
+                    @change="(e)=>field.inForm.onChangeForEvent(e)"
                     :placeholder="field.inForm.placeholder"
                     v-decorator="[field.name, {rules: field.inForm.rules || []}]"
                   />
@@ -83,7 +83,7 @@
                     :filterOption="filterOption()"
                     :getPopupContainer="getPopupContainer"
                     :placeholder="field.inForm.placeholder"
-                    @change="(e)=>field.inForm.onChange(e)"
+                    @change="(e)=>field.inForm.onChangeForEvent(e)"
                     v-decorator="[field.name, {rules: field.inForm.rules || []}]"
                     :options="field.inForm.options"
                   />
@@ -99,7 +99,7 @@
                     :filterOption="filterOption()"
                     :getPopupContainer="getPopupContainer"
                     :placeholder="field.inForm.placeholder"
-                    @change="(e)=>field.inForm.onChange(e)"
+                    @change="(e)=>field.inForm.onChangeForEvent(e)"
                     v-decorator="[field.name, {rules: field.inForm.rules || []}]"
                     :options="field.inForm.options"
                   />
@@ -115,7 +115,7 @@
                     :filterOption="filterOption()"
                     :getPopupContainer="getPopupContainer"
                     :placeholder="field.inForm.placeholder"
-                    @change="(e)=>field.inForm.onChange(e)"
+                    @change="(e)=>field.inForm.onChangeForEvent(e)"
                     v-decorator="[field.name, {rules: field.inForm.rules || []}]"
                     :options="field.inForm.options"
                   />
@@ -130,7 +130,7 @@
                     :changeOnSelect="field.inForm.needLoadData"
                     :getPopupContainer="getPopupContainer"
                     :placeholder="field.inForm.placeholder"
-                    @change="(e)=>field.inForm.onChange(e)"
+                    @change="(e)=>field.inForm.onChangeForEvent(e)"
                     v-decorator="[field.name, {rules: field.inForm.rules || []}]"
                     :options="field.inForm.options"
                   />
@@ -141,7 +141,7 @@
                     class="input"
                     :disabled="readonly"
                     :placeholder="field.inForm.placeholder"
-                    @change="(e)=>field.inForm.onChange(e)"
+                    @change="(e)=>field.inForm.onChangeForEvent(e)"
                     v-decorator="[field.name, {rules: field.inForm.rules || []}]"
                     :options="field.inForm.options"
                   />
@@ -152,7 +152,7 @@
                     class="input"
                     :disabled="readonly"
                     :placeholder="field.inForm.placeholder"
-                    @change="(e)=>field.inForm.onChange(e)"
+                    @change="(e)=>field.inForm.onChangeForEvent(e)"
                     v-decorator="[field.name, {rules: field.inForm.rules || []}]"
                     :options="field.inForm.options"
                   />
@@ -165,7 +165,7 @@
                     showTime
                     :getPopupContainer="getPopupContainer"
                     :placeholder="field.inForm.placeholder"
-                    @change="(e)=>field.inForm.onChange(e)"
+                    @change="(e)=>field.inForm.onChangeForEvent(e)"
                     v-decorator="[field.name, {rules: field.inForm.rules || []}]"
                   />
                 </template>
@@ -176,7 +176,7 @@
                     :disabled="readonly"
                     :getPopupContainer="getPopupContainer"
                     :placeholder="field.inForm.placeholder"
-                    @change="(e)=>field.inForm.onChange(e)"
+                    @change="(e)=>field.inForm.onChangeForEvent(e)"
                     v-decorator="[field.name, {rules: field.inForm.rules || []}]"
                   />
                 </template>
@@ -187,7 +187,7 @@
                     :disabled="readonly"
                     :getPopupContainer="getPopupContainer"
                     :placeholder="field.inForm.placeholder"
-                    @change="(e)=>field.inForm.onChange(e)"
+                    @change="(e)=>field.inForm.onChangeForEvent(e)"
                     v-decorator="[field.name, {rules: field.inForm.rules || []}]"
                   />
                 </template>
@@ -256,6 +256,7 @@
         readonly: false,
         visible: false,
         isSaving: false,
+        fieldList: [],
       }
     },
     computed: {
@@ -265,9 +266,10 @@
         }
         return !!this.inlineForm
       },
-      fieldList() {
-        return (this.cfConfig && this.cfConfig.fieldList) ? this.cfConfig.fieldList.filter(field=>!!field.inForm) : []
-      }
+    },
+    mounted() {
+      this.fieldList = (this.cfConfig && this.cfConfig.fieldList) ? this.cfConfig.fieldList.filter(field=>!!field.inForm) : [];
+      this.$nextTick(this.loadData);
     },
     methods: {
       onCFButtonClick(buttonClickFn) {
@@ -301,12 +303,19 @@
       cancel() {
         this.onSaved();
       },
+      // onFieldWithDictOptionsChange(options) {
+        // console.log(options);
+        // this.$nextTick(this.$forceUpdate);
+      // },
       loadData() {
         // 加载字段所需数据
-        let loadDictList = this.cfConfig ? this.cfConfig.fieldList
+        let fieldsWithDict = this.cfConfig ? this.cfConfig.fieldList
             .filter(item=>item.inForm instanceof FieldDefine.FieldWithDict)
-            .map((item)=>item.inForm.loadData())
           : [];
+        let loadDictList = fieldsWithDict.map((item)=>item.inForm.loadData());
+        // fieldsWithDict.forEach(item=>{
+        //   item.inForm.onOptionsChange = this.onFieldWithDictOptionsChange;
+        // });
         let loadFormData = this.id && this.cfConfig ? [this.cfConfig.getOne(this.id)] : [];
         let hide = this.$message.loading('数据加载中...', 0);
         return Promise.all(loadFormData.concat(loadDictList)).then(resList=>{
@@ -322,7 +331,9 @@
             }
             for(let field of this.cfConfig.fieldList) {
               if(field.inForm) {
-                values[field.name] = field.inForm.translateInput(values[field.name]);
+                let value = values[field.name];
+                values[field.name] = field.inForm.translateInput(value);
+                field.inForm.onChangeForEvent(value, true);
               }
             }
             this.form.setFieldsValue(values);

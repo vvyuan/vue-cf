@@ -205,6 +205,7 @@ class FieldConfig {
         // onChange事件响应队列
         this.onChangeFnList = [];
         this.onChangeHandleDelayTimer = 0;
+        this.onChangeFnResultCache = [];
         if (placeholder) {
             this.placeholder = placeholder;
         }
@@ -236,45 +237,76 @@ class FieldConfig {
         return value;
     }
     /**
-     * 选中事件处理方法，方法存在两个含义
-     * 用于级联选择
-     * 当dataSource: GetCFDictDataFn时，onChange作为事件处理方法，将dataSource放入响应处理队列
-     * 用于组件事件响应
-     * 当dataSource: string | string[]时，onChange作为事件响应方法，执行响应处理队列
-     * @param dataSource
+     * 选中事件处理方法，对应于onChange方法
+     * 当dataSource: string | string[] | Event时，执行响应处理队列
+     * 当dataSource: null 时，目标DataSource结果设为空数组
      */
-    onChange(dataSource) {
-        if (typeof dataSource === "function") {
-            // 创建一个被监听对象
-            let obj = { value: [] };
-            this.onChangeFnList.push({ fn: dataSource, watch: obj });
-            return () => obj;
+    /**
+     * 选中事件处理方法，对应于onChange方法
+     * 当dataSource: string | string[] | Event时，执行响应处理队列
+     * 当dataSource: null 时，目标DataSource结果设为空数组
+     * @param newValue
+     * @param immediately 是否立即处理
+     */
+    onChangeForEvent(newValue, immediately) {
+        if (this.onChangeFnList.length === 0) {
+            return Promise.resolve();
         }
-        else {
-            if (this.onChangeFnList.length === 0) {
-                // 无效返回
-                return () => ({ value: [] });
-            }
+        return (new Promise((resolve, reject) => {
             clearTimeout(this.onChangeHandleDelayTimer);
-            this.onChangeHandleDelayTimer = window.setTimeout(() => {
+            const onChangeHandle = () => {
                 // 结果转换
-                let value = dataSource;
+                let value = newValue;
                 if (value instanceof Event) {
                     // @ts-ignore
                     value = value.target.value;
                 }
                 value = this.translateResult(value);
                 // 执行响应队列
-                this.onChangeFnList.forEach(({ fn, watch }) => {
+                let allP = this.onChangeFnList.map(({ fn, watch }, index) => {
+                    if (value === null) {
+                        watch.isCache = true;
+                        watch.value = [];
+                        return Promise.resolve();
+                    }
                     // 执行数据获取方法并将数据写入被监听对象
-                    fn(Array.isArray(value) ? value.length : 0, value).then(res => {
+                    if (!this.onChangeFnResultCache[index]) {
+                        this.onChangeFnResultCache[index] = {};
+                    }
+                    const cache = this.onChangeFnResultCache[index][value.toString()];
+                    if (cache) {
+                        watch.isCache = true;
+                        watch.value = cache;
+                        return Promise.resolve();
+                    }
+                    return fn(Array.isArray(value) ? value.length : 0, value).then(res => {
+                        this.onChangeFnResultCache[index][value.toString()] = res;
+                        watch.isCache = false;
                         watch.value = res;
                     });
                 });
-            }, 500);
-            // 无效返回
-            return () => ({ value: [] });
-        }
+                resolve(Promise.all(allP));
+            };
+            if (immediately === true) {
+                onChangeHandle();
+            }
+            else {
+                this.onChangeHandleDelayTimer = window.setTimeout(onChangeHandle, 500);
+            }
+        })).then(() => { });
+    }
+    /**
+     * 配置其他field的dataSource
+     * 当前field的内容变化后，触发onChangeForSelectEvent方法，调用DataSource获取数据，用于级联选择
+     * 当dataSource: GetCFDictDataFn时，onChange作为事件处理方法，将dataSource放入响应处理队列
+     * @param dataSource
+     * @return 返回一个可监听对象，数据获取后，听过对象监听方式获取最新数据
+     */
+    onChange(dataSource) {
+        // 创建一个被监听对象
+        let obj = { value: [], isCache: false };
+        this.onChangeFnList.push({ fn: dataSource, watch: obj });
+        return () => obj;
     }
 }
 // TODO: 文本验证规则
@@ -353,26 +385,38 @@ class FieldWithDict extends FieldConfig {
     constructor(dataSource, placeholder, position, rules, print) {
         super(placeholder, position, rules, print);
         this.isLoadData = false;
+        this.isWatched = false; // options是否是被监听的对象，即当其他field变化时才获取数据
         this.options = [];
+        this.allOptions = [];
+        this.onOptionsChange = () => { };
+        // dataSource 当传入WatchValueFn时，在首次加载数据后，isWatched会被设置为true
         this._dataSource = dataSource;
     }
     dataSource() {
         // | {value: CFDictData[]}
+        if (this.isWatched) {
+            return false;
+        }
         let result = this._dataSource(0);
         if (result instanceof Promise) {
             return result;
         }
         else {
+            this.isWatched = true;
             let self = this;
             // 监听WatchValueFn返回的对象，级联更新
             Object.defineProperty(result, 'value', {
                 get() { return true; },
                 set(val) {
                     // console.log(val);
+                    if (!result.isCache) {
+                        self.allOptions.splice(0, 0, ...val);
+                    }
                     self.options = val;
+                    self.onOptionsChange(val);
                 }
             });
-            return Promise.resolve([]);
+            return false;
         }
     }
     loadData() {
@@ -381,8 +425,16 @@ class FieldWithDict extends FieldConfig {
             return Promise.resolve(this.options);
         }
         else {
-            return this.dataSource().then(res => {
+            if (this.isWatched) {
+                return Promise.resolve([]);
+            }
+            let dataSourceResult = this.dataSource();
+            if (dataSourceResult === false) {
+                return Promise.resolve([]);
+            }
+            return dataSourceResult.then(res => {
                 this.isLoadData = true;
+                this.allOptions.splice(0, 0, ...res);
                 this.options = res;
                 return res;
             }).catch((e) => {
@@ -670,7 +722,7 @@ function objectToQueryString(obj) {
 }
 
 var CFForm = {
-render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"cf-common-form-container"},[(_vm.cfConfig && _vm.cfConfig.formPrintTemplate)?_c(_vm.cfConfig.formPrintTemplate,{tag:"component"}):_vm._e(),_vm._v(" "),_c('div',[_c('a-form',{ref:"form",attrs:{"form":_vm.form},on:{"submit":function($event){$event.preventDefault();$event.stopPropagation();return _vm.save($event)}}},[_c('a-row',{staticClass:"content common-form-content"},[_vm._l((_vm.fieldList),function(field,index){return [(field.inForm.position & _vm.FieldPosition.form)?_c('a-col',{key:index,attrs:{"xs":_vm._inlineForm ? 24 : 24,"sm":_vm._inlineForm ? 24 : 24,"md":_vm._inlineForm ? 12 : 24,"lg":_vm._inlineForm ? 12 : 24,"xl":_vm._inlineForm ? 8 : 24,"xxl":_vm._inlineForm ? 6 : 24}},[_c('a-form-item',{staticClass:"form-item",attrs:{"disabled":_vm.readonly,"label-col":{span: 5},"wrapper-col":{span: 19},"label":field.title}},[(field.inForm instanceof _vm.FieldDefine.TextField)?[_c('a-input',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:_vm._e(),_vm._v(" "),(field.inForm instanceof _vm.FieldDefine.ReadonlyField || field.inForm instanceof _vm.FieldDefine.ReadonlyFieldWithDict)?[_c('a-input',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name]),expression:"[field.name]"}],staticClass:"input",attrs:{"disabled":true}})]:_vm._e(),_vm._v(" "),(field.inForm instanceof _vm.FieldDefine.PasswordField)?[_c('a-input-password',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder}})]:_vm._e(),_vm._v(" "),(field.inForm instanceof _vm.FieldDefine.TextareaField)?[_c('a-textarea',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"rows":field.inForm.rows,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.NumberField)?[_c('a-input-number',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"step":field.inForm.step,"max":field.inForm.max,"min":field.inForm.min,"formatter":field.inForm.formatter,"parser":field.inForm.parser,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.SingleSelectField)?[_c('a-select',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"showSearch":"","optionFilterProp":"children","filterOption":_vm.filterOption(),"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.MultipleSelectField)?[_c('a-select',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"mode":"multiple","showSearch":"","optionFilterProp":"children","filterOption":_vm.filterOption(),"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.TagField)?[_c('a-select',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"mode":"tags","showSearch":"","optionFilterProp":"children","filterOption":_vm.filterOption(),"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.CascaderField)?[_c('a-cascader',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"showSearch":field.inForm.needLoadData ? false : {filter: _vm.cascaderFilterOption()},"loadData":field.inForm.needLoadData ? field.inForm.loadData.bind(field.inForm) : undefined,"changeOnSelect":field.inForm.needLoadData,"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.RadioField)?[_c('a-radio-group',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.CheckboxField)?[_c('a-checkbox-group',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.DateTimeField)?[_c('a-date-picker',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"showTime":"","getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.DateField)?[_c('a-date-picker',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:(field.inForm instanceof _vm.FieldDefine.TimeField)?[_c('a-time-picker',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChange(e); }}})]:_vm._e()],2)],1):_vm._e()]})],2),_vm._v(" "),(!_vm._inlineForm)?[_c('div',{staticClass:"footer-placeholder"}),_vm._v(" "),_c('div',{staticClass:"footer"},[_c('div',{staticClass:"left-buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.drawerFooterLeft : [])),function(button){return [(button.conditionOfDisplay ? button.conditionOfDisplay(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : true)?_c('a-button',{key:button.key,attrs:{"disabled":button.conditionOfDisable ? button.conditionOfDisable(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : false,"type":button.type,"icon":button.icon,"title":button.tips},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))]):_vm._e()]})],2),_vm._v(" "),_c('div',{staticClass:"right-buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.drawerFooterRight : [])),function(button){return [(button.conditionOfDisplay ? button.conditionOfDisplay(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : true)?_c('a-button',{key:button.key,attrs:{"disabled":button.conditionOfDisable ? button.conditionOfDisable(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : false,"type":button.type,"htmlType":button.htmlType || 'button',"icon":button.icon,"title":button.tips},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))]):_vm._e()]})],2)])]:_vm._e()],2)],1)],1)},
+render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"cf-common-form-container"},[(_vm.cfConfig && _vm.cfConfig.formPrintTemplate)?_c(_vm.cfConfig.formPrintTemplate,{tag:"component"}):_vm._e(),_vm._v(" "),_c('div',[_c('a-form',{ref:"form",attrs:{"form":_vm.form},on:{"submit":function($event){$event.preventDefault();$event.stopPropagation();return _vm.save($event)}}},[_c('a-row',{staticClass:"content common-form-content"},[_vm._l((_vm.fieldList),function(field,index){return [(field.inForm.position & _vm.FieldPosition.form)?_c('a-col',{key:index,attrs:{"xs":_vm._inlineForm ? 24 : 24,"sm":_vm._inlineForm ? 24 : 24,"md":_vm._inlineForm ? 12 : 24,"lg":_vm._inlineForm ? 12 : 24,"xl":_vm._inlineForm ? 8 : 24,"xxl":_vm._inlineForm ? 6 : 24}},[_c('a-form-item',{staticClass:"form-item",attrs:{"disabled":_vm.readonly,"label-col":{span: 5},"wrapper-col":{span: 19},"label":field.title}},[(field.inForm instanceof _vm.FieldDefine.TextField)?[_c('a-input',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChangeForEvent(e); }}})]:_vm._e(),_vm._v(" "),(field.inForm instanceof _vm.FieldDefine.ReadonlyField || field.inForm instanceof _vm.FieldDefine.ReadonlyFieldWithDict)?[_c('a-input',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name]),expression:"[field.name]"}],staticClass:"input",attrs:{"disabled":true}})]:_vm._e(),_vm._v(" "),(field.inForm instanceof _vm.FieldDefine.PasswordField)?[_c('a-input-password',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder}})]:_vm._e(),_vm._v(" "),(field.inForm instanceof _vm.FieldDefine.TextareaField)?[_c('a-textarea',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"rows":field.inForm.rows,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChangeForEvent(e); }}})]:(field.inForm instanceof _vm.FieldDefine.NumberField)?[_c('a-input-number',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"step":field.inForm.step,"max":field.inForm.max,"min":field.inForm.min,"formatter":field.inForm.formatter,"parser":field.inForm.parser,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChangeForEvent(e); }}})]:(field.inForm instanceof _vm.FieldDefine.SingleSelectField)?[_c('a-select',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"showSearch":"","optionFilterProp":"children","filterOption":_vm.filterOption(),"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChangeForEvent(e); }}})]:(field.inForm instanceof _vm.FieldDefine.MultipleSelectField)?[_c('a-select',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"mode":"multiple","showSearch":"","optionFilterProp":"children","filterOption":_vm.filterOption(),"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChangeForEvent(e); }}})]:(field.inForm instanceof _vm.FieldDefine.TagField)?[_c('a-select',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"mode":"tags","showSearch":"","optionFilterProp":"children","filterOption":_vm.filterOption(),"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChangeForEvent(e); }}})]:(field.inForm instanceof _vm.FieldDefine.CascaderField)?[_c('a-cascader',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"showSearch":field.inForm.needLoadData ? false : {filter: _vm.cascaderFilterOption()},"loadData":field.inForm.needLoadData ? field.inForm.loadData.bind(field.inForm) : undefined,"changeOnSelect":field.inForm.needLoadData,"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChangeForEvent(e); }}})]:(field.inForm instanceof _vm.FieldDefine.RadioField)?[_c('a-radio-group',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChangeForEvent(e); }}})]:(field.inForm instanceof _vm.FieldDefine.CheckboxField)?[_c('a-checkbox-group',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"placeholder":field.inForm.placeholder,"options":field.inForm.options},on:{"change":function (e){ return field.inForm.onChangeForEvent(e); }}})]:(field.inForm instanceof _vm.FieldDefine.DateTimeField)?[_c('a-date-picker',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"showTime":"","getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChangeForEvent(e); }}})]:(field.inForm instanceof _vm.FieldDefine.DateField)?[_c('a-date-picker',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChangeForEvent(e); }}})]:(field.inForm instanceof _vm.FieldDefine.TimeField)?[_c('a-time-picker',{directives:[{name:"decorator",rawName:"v-decorator",value:([field.name, {rules: field.inForm.rules || []}]),expression:"[field.name, {rules: field.inForm.rules || []}]"}],staticClass:"input",attrs:{"disabled":_vm.readonly,"getPopupContainer":_vm.getPopupContainer,"placeholder":field.inForm.placeholder},on:{"change":function (e){ return field.inForm.onChangeForEvent(e); }}})]:_vm._e()],2)],1):_vm._e()]})],2),_vm._v(" "),(!_vm._inlineForm)?[_c('div',{staticClass:"footer-placeholder"}),_vm._v(" "),_c('div',{staticClass:"footer"},[_c('div',{staticClass:"left-buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.drawerFooterLeft : [])),function(button){return [(button.conditionOfDisplay ? button.conditionOfDisplay(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : true)?_c('a-button',{key:button.key,attrs:{"disabled":button.conditionOfDisable ? button.conditionOfDisable(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : false,"type":button.type,"icon":button.icon,"title":button.tips},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))]):_vm._e()]})],2),_vm._v(" "),_c('div',{staticClass:"right-buttons"},[_vm._l(((_vm.cfConfig ? _vm.cfConfig.realButtons.drawerFooterRight : [])),function(button){return [(button.conditionOfDisplay ? button.conditionOfDisplay(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : true)?_c('a-button',{key:button.key,attrs:{"disabled":button.conditionOfDisable ? button.conditionOfDisable(_vm.$router, _vm.cfConfig, undefined, _vm.form, undefined, undefined) : false,"type":button.type,"htmlType":button.htmlType || 'button',"icon":button.icon,"title":button.tips},on:{"click":function($event){return _vm.onCFButtonClick(button.onClick)}}},[_vm._v(_vm._s(button.title))]):_vm._e()]})],2)])]:_vm._e()],2)],1)],1)},
 staticRenderFns: [],
     name: 'CFForm',
     props: {
@@ -689,6 +741,7 @@ staticRenderFns: [],
         readonly: false,
         visible: false,
         isSaving: false,
+        fieldList: [],
       }
     },
     computed: {
@@ -698,9 +751,10 @@ staticRenderFns: [],
         }
         return !!this.inlineForm
       },
-      fieldList() {
-        return (this.cfConfig && this.cfConfig.fieldList) ? this.cfConfig.fieldList.filter(field=>!!field.inForm) : []
-      }
+    },
+    mounted() {
+      this.fieldList = (this.cfConfig && this.cfConfig.fieldList) ? this.cfConfig.fieldList.filter(field=>!!field.inForm) : [];
+      this.$nextTick(this.loadData);
     },
     methods: {
       onCFButtonClick(buttonClickFn) {
@@ -734,12 +788,19 @@ staticRenderFns: [],
       cancel() {
         this.onSaved();
       },
+      // onFieldWithDictOptionsChange(options) {
+        // console.log(options);
+        // this.$nextTick(this.$forceUpdate);
+      // },
       loadData() {
         // 加载字段所需数据
-        let loadDictList = this.cfConfig ? this.cfConfig.fieldList
+        let fieldsWithDict = this.cfConfig ? this.cfConfig.fieldList
             .filter(item=>item.inForm instanceof FieldWithDict)
-            .map((item)=>item.inForm.loadData())
           : [];
+        let loadDictList = fieldsWithDict.map((item)=>item.inForm.loadData());
+        // fieldsWithDict.forEach(item=>{
+        //   item.inForm.onOptionsChange = this.onFieldWithDictOptionsChange;
+        // });
         let loadFormData = this.id && this.cfConfig ? [this.cfConfig.getOne(this.id)] : [];
         let hide = this.$message.loading('数据加载中...', 0);
         return Promise.all(loadFormData.concat(loadDictList)).then(resList=>{
@@ -755,7 +816,9 @@ staticRenderFns: [],
             }
             for(let field of this.cfConfig.fieldList) {
               if(field.inForm) {
-                values[field.name] = field.inForm.translateInput(values[field.name]);
+                let value = values[field.name];
+                values[field.name] = field.inForm.translateInput(value);
+                field.inForm.onChangeForEvent(value, true);
               }
             }
             this.form.setFieldsValue(values);
@@ -879,7 +942,7 @@ staticRenderFns: [],
             }
           });
         }
-        if(this.cfConfig.realButtons.tableRowOperations.length) {
+        if(this.cfConfig.realButtons.tableRowOperations.length && fieldListColumns.length) {
           fieldListColumns = fieldListColumns.concat({
             title: '操作',
             dataIndex: 'operation',
@@ -925,9 +988,11 @@ staticRenderFns: [],
         return this.$route.matched.length === 0 || this.$route.matched[this.$route.matched.length - 1].path === this.path
       },
       reload() {
-        this.$nextTick(()=>{
-          this.getList().then(this.resetForInlineForm);
-        });
+        if(this.columnsData.columns.length) {
+          this.$nextTick(()=>{
+            this.getList().then(this.resetForInlineForm);
+          });
+        }
       },
       loadDict() {
         if(this.cfConfig) {
@@ -956,16 +1021,24 @@ staticRenderFns: [],
             if(this.fieldWithDictList.length) {
               // 映射字典值
               list.forEach(item=>{
-                for(let field of this.fieldWithDictList) {
-                  let value = item[field.name];
-                  let label = null;
-                  if(Array.isArray(value)) {
-                    label = value.map(v=>(field.inForm.options.find(option=>option.value === v) || {}).label || value).join(',');
-                  } else {
-                    label = (field.inForm.options.find(option=>option.value === value) || {}).label;
+                Promise.all(this.cfConfig.fieldList.map(field=>{
+                  return field.inForm ? field.inForm.onChangeForEvent(item[field.name], true) : Promise.resolve();
+                })).then(()=>{
+                  for(let field of this.fieldWithDictList) {
+                    let value = item[field.name];
+                    let label = null;
+                    if(Array.isArray(value)) {
+                      label = value.map(v=>(field.inForm.allOptions.find(option=>option.value === v) || {}).label || value).join(',');
+                    } else {
+                      label = (field.inForm.allOptions.find(option=>option.value === value) || {}).label;
+                    }
+                    item[field.name] = label || value;
                   }
-                  item[field.name] = label || value;
-                }
+                });
+              });
+              // 数据配置完成后，重置当前多级选项中的子级选项
+              this.cfConfig.fieldList.forEach(field=>{
+                field.inForm && field.inForm.onChangeForEvent(null, true);
               });
             }
             this.list = list;
@@ -1040,7 +1113,7 @@ staticRenderFns: [],
         });
       },
       onFormSaved() {
-        this.resetForInlineForm();
+        // this.resetForInlineForm();
         this.reload();
       },
     }
@@ -1073,9 +1146,9 @@ staticRenderFns: [],
     mounted() {
       this.visible = true;
       addEventListener('keyup', this.keyPressEventHandle);
-      this.$nextTick(()=>{
-        this.$refs.form.loadData();
-      });
+      // this.$nextTick(()=>{
+      //   this.$refs.form.loadData();
+      // })
     },
     destroyed() {
       removeEventListener('keyup', this.keyPressEventHandle);

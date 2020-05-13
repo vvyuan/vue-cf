@@ -12,7 +12,8 @@ import {CFDictData, FieldPosition} from "./FieldUtil";
  * value是当前的值，根据该值查询
  */
 type GetCFDictDataFn = (level: number, value?: any)=>Promise<CFDictData[]>;
-type WatchValueFn = ()=>{value: CFDictData[]};
+type WatchValue = {value: CFDictData[], isCache: boolean};
+type WatchValueFn = ()=>WatchValue;
 export abstract class FieldConfig {
   // defaultValue?: any;
   readonly placeholder?: string;
@@ -20,8 +21,9 @@ export abstract class FieldConfig {
   readonly rules?: ValidationRule[];
   readonly print?: string; // 对应打印模板中的变量名
   // onChange事件响应队列
-  private onChangeFnList: {fn: GetCFDictDataFn, watch: {value: CFDictData[]}}[] = [];
+  private onChangeFnList: {fn: GetCFDictDataFn, watch: WatchValue}[] = [];
   private onChangeHandleDelayTimer: number = 0;
+  private onChangeFnResultCache: {[key: string]: CFDictData[]}[] = [];
   /**
    * 输入值转换函数，默认为原始值
    * @param value 从数据源获取到的值
@@ -61,44 +63,75 @@ export abstract class FieldConfig {
     }
   }
   /**
-   * 选中事件处理方法，方法存在两个含义
-   * 用于级联选择
-   * 当dataSource: GetCFDictDataFn时，onChange作为事件处理方法，将dataSource放入响应处理队列
-   * 用于组件事件响应
-   * 当dataSource: string | string[]时，onChange作为事件响应方法，执行响应处理队列
-   * @param dataSource
+   * 选中事件处理方法，对应于onChange方法
+   * 当dataSource: string | string[] | Event时，执行响应处理队列
+   * 当dataSource: null 时，目标DataSource结果设为空数组
    */
-  onChange(dataSource: GetCFDictDataFn | string | string[] | Event): WatchValueFn {
-    if(typeof dataSource === "function") {
-      // 创建一个被监听对象
-      let obj = {value: []};
-      this.onChangeFnList.push({fn: dataSource, watch: obj});
-      return ()=>obj;
-    } else {
-      if(this.onChangeFnList.length === 0) {
-        // 无效返回
-        return ()=>({value: []})
-      }
+  /**
+   * 选中事件处理方法，对应于onChange方法
+   * 当dataSource: string | string[] | Event时，执行响应处理队列
+   * 当dataSource: null 时，目标DataSource结果设为空数组
+   * @param newValue
+   * @param immediately 是否立即处理
+   */
+  onChangeForEvent(newValue: string | string[] | Event | null, immediately?: boolean): Promise<any> {
+    if(this.onChangeFnList.length === 0) {
+      return Promise.resolve();
+    }
+    return (new Promise((resolve, reject) => {
+      let a = {a: newValue};
+      let b = 100010;
       clearTimeout(this.onChangeHandleDelayTimer);
-      this.onChangeHandleDelayTimer = window.setTimeout(()=>{
+      const onChangeHandle = ()=>{
         // 结果转换
-        let value = dataSource;
+        let value = newValue;
         if(value instanceof Event) {
           // @ts-ignore
           value = value.target.value;
         }
         value = this.translateResult(value);
         // 执行响应队列
-        this.onChangeFnList.forEach(({fn, watch})=>{
+        let allP: Promise<any>[] = this.onChangeFnList.map(({fn, watch}, index)=>{
+          if(value === null) {
+            watch.isCache = true;
+            watch.value = [];
+            return Promise.resolve();
+          }
           // 执行数据获取方法并将数据写入被监听对象
-          fn(Array.isArray(value) ? value.length : 0, value).then(res=>{
+          if(!this.onChangeFnResultCache[index]) {this.onChangeFnResultCache[index] = {}}
+          const cache = this.onChangeFnResultCache[index][value.toString()];
+          if(cache) {
+            watch.isCache = true;
+            watch.value = cache;
+            return Promise.resolve();
+          }
+          return fn(Array.isArray(value) ? value.length : 0, value).then(res=>{
+            this.onChangeFnResultCache[index][value!.toString()] = res;
+            watch.isCache = false;
             watch.value = res;
           })
-        })
-      }, 500);
-      // 无效返回
-      return ()=>({value: []})
-    }
+        });
+        resolve(Promise.all(allP));
+      };
+      if(immediately === true) {
+        onChangeHandle();
+      } else {
+        this.onChangeHandleDelayTimer = window.setTimeout(onChangeHandle, 500);
+      }
+    })).then(()=>{});
+  }
+  /**
+   * 配置其他field的dataSource
+   * 当前field的内容变化后，触发onChangeForSelectEvent方法，调用DataSource获取数据，用于级联选择
+   * 当dataSource: GetCFDictDataFn时，onChange作为事件处理方法，将dataSource放入响应处理队列
+   * @param dataSource
+   * @return 返回一个可监听对象，数据获取后，听过对象监听方式获取最新数据
+   */
+  onChange(dataSource: GetCFDictDataFn): WatchValueFn {
+    // 创建一个被监听对象
+    let obj: WatchValue = {value: [], isCache: false};
+    this.onChangeFnList.push({fn: dataSource, watch: obj});
+    return ()=>obj;
   }
 }
 // TODO: 文本验证规则
@@ -177,27 +210,38 @@ export class FieldWithDict extends FieldConfig {
   // 构造方法传入的dataSource，有可能是一个onChange
   private readonly _dataSource: GetCFDictDataFn | WatchValueFn;
   private isLoadData: boolean = false;
+  private isWatched: boolean = false; // options是否是被监听的对象，即当其他field变化时才获取数据
   options: CFDictData[] = [];
+  allOptions: CFDictData[] = [];
+  onOptionsChange: (options: CFDictData[])=>void = ()=>{};
+
   constructor(dataSource: GetCFDictDataFn | WatchValueFn, placeholder?: string, position?: FieldPosition, rules?: ValidationRule[] | true, print?: string) {
     super(placeholder, position, rules, print);
+    // dataSource 当传入WatchValueFn时，在首次加载数据后，isWatched会被设置为true
     this._dataSource = dataSource;
   }
-  dataSource(): Promise<CFDictData[]> {
+  dataSource(): Promise<CFDictData[]> | false {
   // | {value: CFDictData[]}
+    if(this.isWatched) { return false }
     let result = this._dataSource(0);
     if(result instanceof Promise) {
       return result;
     } else {
+      this.isWatched = true;
       let self = this;
       // 监听WatchValueFn返回的对象，级联更新
       Object.defineProperty(result, 'value', {
         get() { return true },
         set(val) {
           // console.log(val);
+          if(!(result as WatchValue).isCache) {
+            self.allOptions.splice(0, 0, ...val)
+          }
           self.options = val;
+          self.onOptionsChange(val);
         }
       });
-      return Promise.resolve([])
+      return false
     }
   }
   loadData(): Promise<CFDictData[]> {
@@ -205,8 +249,16 @@ export class FieldWithDict extends FieldConfig {
       // console.log("load dict from cache");
       return Promise.resolve(this.options);
     } else {
-      return this.dataSource().then(res=>{
+      if(this.isWatched) {
+        return Promise.resolve([]);
+      }
+      let dataSourceResult = this.dataSource();
+      if(dataSourceResult === false) {
+        return Promise.resolve([]);
+      }
+      return dataSourceResult.then(res=>{
         this.isLoadData = true;
+        this.allOptions.splice(0, 0, ...res);
         this.options = res;
         return res
       }).catch((e: Error)=>{

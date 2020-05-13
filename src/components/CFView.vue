@@ -312,7 +312,7 @@
             }
           })
         }
-        if(this.cfConfig.realButtons.tableRowOperations.length) {
+        if(this.cfConfig.realButtons.tableRowOperations.length && fieldListColumns.length) {
           fieldListColumns = fieldListColumns.concat({
             title: '操作',
             dataIndex: 'operation',
@@ -358,9 +358,11 @@
         return this.$route.matched.length === 0 || this.$route.matched[this.$route.matched.length - 1].path === this.path
       },
       reload() {
-        this.$nextTick(()=>{
-          this.getList().then(this.resetForInlineForm);
-        });
+        if(this.columnsData.columns.length) {
+          this.$nextTick(()=>{
+            this.getList().then(this.resetForInlineForm);
+          });
+        }
       },
       loadDict() {
         if(this.cfConfig) {
@@ -389,16 +391,24 @@
             if(this.fieldWithDictList.length) {
               // 映射字典值
               list.forEach(item=>{
-                for(let field of this.fieldWithDictList) {
-                  let value = item[field.name];
-                  let label = null;
-                  if(Array.isArray(value)) {
-                    label = value.map(v=>(field.inForm.options.find(option=>option.value === v) || {}).label || value).join(',')
-                  } else {
-                    label = (field.inForm.options.find(option=>option.value === value) || {}).label;
+                Promise.all(this.cfConfig.fieldList.map(field=>{
+                  return field.inForm ? field.inForm.onChangeForEvent(item[field.name], true) : Promise.resolve();
+                })).then(()=>{
+                  for(let field of this.fieldWithDictList) {
+                    let value = item[field.name];
+                    let label = null;
+                    if(Array.isArray(value)) {
+                      label = value.map(v=>(field.inForm.allOptions.find(option=>option.value === v) || {}).label || value).join(',')
+                    } else {
+                      label = (field.inForm.allOptions.find(option=>option.value === value) || {}).label;
+                    }
+                    item[field.name] = label || value;
                   }
-                  item[field.name] = label || value;
-                }
+                });
+              });
+              // 数据配置完成后，重置当前多级选项中的子级选项
+              this.cfConfig.fieldList.forEach(field=>{
+                field.inForm && field.inForm.onChangeForEvent(null, true);
               })
             }
             this.list = list;
@@ -474,7 +484,7 @@
         })
       },
       onFormSaved() {
-        this.resetForInlineForm();
+        // this.resetForInlineForm();
         this.reload();
       },
     }
