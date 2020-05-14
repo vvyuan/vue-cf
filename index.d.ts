@@ -321,7 +321,7 @@ type CFButtons = {
 export interface ICFForm {
   cancel(): void;
   loadData(): void;
-  save(e?: Event, otherData?: any): void;
+  save(e?: Event, otherData?: any): Promise<any>;
   form: WrappedFormUtils;
 }
 
