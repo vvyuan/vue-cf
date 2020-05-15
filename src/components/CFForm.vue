@@ -290,7 +290,10 @@
               console.log('Received values of form: ', rawValues, translatedValues);
               let hide = this.$message.loading('正在保存，请稍候...', 0);
               let handle = this.id ? this.cfConfig.updateOne({id: this.id, ...translatedValues, ...otherData}) : this.cfConfig.createOne({...translatedValues, ...otherData});
-              resolve(handle.then(this.onSaved).catch(e=>{ this.$message.error(e.message || e) }).finally(hide))
+              resolve(handle.then(this.onSaved).catch(e=>{
+                this.$message.error(e.message || e);
+                throw e;
+              }).finally(hide))
             }
           });
         }).finally(()=>{

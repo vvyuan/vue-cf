@@ -372,7 +372,7 @@ export class CFForm extends Vue implements ICFForm {
   form: WrappedFormUtils;
   cancel(): void;
   loadData(): void;
-  save(e?: Event, otherData?: any): void;
+  save(e?: Event, otherData?: any): Promise<any>;
 }
 
 export class CFParentView extends Vue{}

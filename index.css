@@ -1,3 +1,26 @@
+.cf-common-form-container .form-item .input {
+  width: 100% !important;
+}
+.cf-common-form-container .footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  background: white;
+  z-index: 1;
+}
+.cf-common-form-container .footer .left-buttons > *,
+.cf-common-form-container .footer .right-buttons > * {
+  margin-left: 8px;
+}
+.cf-common-form-container .footer .left-buttons > *:first-child,
+.cf-common-form-container .footer .right-buttons > *:first-child {
+  margin-left: 0;
+}
+.cf-common-form-container .footer-placeholder {
+  height: 0;
+}
 .cf-common-view-container .operation {
   display: flex;
   align-items: center;
@@ -41,27 +64,4 @@
 }
 .cf-common-form-drawer .footer-placeholder {
   height: 10px;
-}
-.cf-common-form-container .form-item .input {
-  width: 100% !important;
-}
-.cf-common-form-container .footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 50px;
-  background: white;
-  z-index: 1;
-}
-.cf-common-form-container .footer .left-buttons > *,
-.cf-common-form-container .footer .right-buttons > * {
-  margin-left: 8px;
-}
-.cf-common-form-container .footer .left-buttons > *:first-child,
-.cf-common-form-container .footer .right-buttons > *:first-child {
-  margin-left: 0;
-}
-.cf-common-form-container .footer-placeholder {
-  height: 0;
 }
