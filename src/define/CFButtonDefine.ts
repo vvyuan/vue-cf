@@ -44,8 +44,16 @@ export type CFButton = {
    * @param selectedRecords
    */
   onTableSelected?(selectedRecords: any[]): void,
-  conditionOfDisable?(router: VueRouter, cfConfig: any, view?: ICFView, form?: ICFForm, selectedRecords?: any[], record?: any): boolean;
-  conditionOfDisplay?(router: VueRouter, cfConfig: any, view?: ICFView, form?: ICFForm, selectedRecords?: any[], record?: any): boolean;
+  _conditionOfDisable?: boolean;
+  /**
+   * 禁用条件，参数同onClick
+   */
+  conditionOfDisable?(router: VueRouter, cfConfig: any, view?: ICFView, form?: ICFForm, selectedRecords?: any[], record?: any): boolean | Promise<boolean>;
+  _conditionOfDisplay?: boolean;
+  /**
+   * 显示条件，参数同onClick
+   */
+  conditionOfDisplay?(router: VueRouter, cfConfig: any, view?: ICFView, form?: ICFForm, selectedRecords?: any[], record?: any): boolean | Promise<boolean>;
 }
 
 export type CFButtons = {

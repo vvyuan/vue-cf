@@ -202,8 +202,8 @@
               <template v-for="button in (cfConfig ? cfConfig.realButtons.drawerFooterLeft : [])">
                 <a-button
                   :key="button.key"
-                  v-if="button.conditionOfDisplay ? button.conditionOfDisplay($router, cfConfig, undefined, form, undefined, undefined) : true"
-                  :disabled="button.conditionOfDisable ? button.conditionOfDisable($router, cfConfig, undefined, form, undefined, undefined) : false"
+                  v-if="button._conditionOfDisable"
+                  :disabled="button._conditionOfDisable"
                   :type="button.type"
                   @click="onCFButtonClick(button.onClick)"
                   :icon="button.icon"
@@ -215,8 +215,8 @@
               <template v-for="button in (cfConfig ? cfConfig.realButtons.drawerFooterRight : [])">
                 <a-button
                   :key="button.key"
-                  v-if="button.conditionOfDisplay ? button.conditionOfDisplay($router, cfConfig, undefined, form, undefined, undefined) : true"
-                  :disabled="button.conditionOfDisable ? button.conditionOfDisable($router, cfConfig, undefined, form, undefined, undefined) : false"
+                  v-if="button._conditionOfDisplay"
+                  :disabled="button._conditionOfDisable"
                   :type="button.type"
                   :htmlType="button.htmlType || 'button'"
                   @click="onCFButtonClick(button.onClick)"
@@ -310,7 +310,46 @@
         // console.log(options);
         // this.$nextTick(this.$forceUpdate);
       // },
+      /**
+       * 获取所有相关按钮的状态
+       * @param values 远程获取的数据
+       * @return []
+       */
+      getAllButtonsStatus(values) {
+        console.warn('cfForm getAllButtonsStatus')
+        if(this.cfConfig) {
+          let tButtons = this.cfConfig.realButtons.drawerFooterLeft.concat(this.cfConfig.realButtons.drawerFooterRight);
+          let buttonIds = []; // 滤重
+          tButtons.forEach(button=> {
+            if(buttonIds.indexOf(button.key) >= 0) {return}
+            buttonIds.push(button.key);
+            if(button.conditionOfDisable) {
+              let r = button.conditionOfDisable(this.$router, this.cfConfig, undefined, this.$refs.form, undefined, values)
+              if(r instanceof Promise) {
+                r.then(res=>button._conditionOfDisable = res);
+              } else {
+                button._conditionOfDisable = r;
+              }
+            } else {
+              button._conditionOfDisable = false;
+            }
+            if(button.conditionOfDisplay) {
+              let r = button.conditionOfDisplay(this.$router, this.cfConfig, undefined, this.$refs.form, undefined, values)
+              if(r instanceof Promise) {
+                r.then(res=>button._conditionOfDisplay = res);
+              } else {
+                button._conditionOfDisplay = r;
+              }
+            } else {
+              button._conditionOfDisplay = true;
+            }
+          })
+        }
+      },
       loadData() {
+        if(!this.id) {
+          this.getAllButtonsStatus();
+        }
         // 加载字段所需数据
         let fieldsWithDict = this.cfConfig ? this.cfConfig.fieldList
             .filter(item=>item.inForm instanceof FieldDefine.FieldWithDict)
@@ -329,6 +368,7 @@
             for(let field of this.cfConfig.fieldList) {
               values[field.name] = response[field.name]
             }
+            this.getAllButtonsStatus(values);
             if(!this.cfConfig.fieldList.find(field=>field.name === 'id' && field.inForm)) {
               delete values.id;
             }
